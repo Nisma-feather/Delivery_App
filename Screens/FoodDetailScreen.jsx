@@ -11,41 +11,80 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, Octicons } from "@expo/vector-icons";
-import Color from "../constanst/Color";
+import Color from "../constants/Color";
+import { api } from "../api/apiConfig";
+import { useAuth } from "../context/AuthContext";
 
-// Define the primary color based on your existing setup (Color.DARK is assumed to be the red/primary color)
 const PRIMARY_COLOR = Color.DARK || "#EB3E3E";
 
 const FoodDetailScreen = ({ navigation, route }) => {
-  // Fallback item using your provided data structure
-  const item = route?.params?.item || {
-    id: 1,
-    name: "Paneer Butter Masala",
-    categories: ["Vegetarian", "Rice & Biryani"],
-    price: 220,
-    description:
-      "Cottage cheese cubes cooked in rich tomato butter gravy. Cottage cheese cubes cooked in rich tomato butter gravy. This rich and creamy dish is a delight for vegetarians.",
-    isAvailable: true,
-    image: require("../assets/biriyani.png"),
+  const { foodItemId } = route.params;
+  const { auth } = useAuth();
+
+  const [food, setFood] = useState({});
+  const [favourite, setFavourite] = useState(false);
+  const [quantity, setQuantity] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  // ✅ Fetch Food Details
+  const fetchFoodDetails = async () => {
+    try {
+      const res = await api.get(`/foodItem/${foodItemId}`);
+      setFood(res.data?.foodItem);
+    } catch (e) {
+      console.log("Error fetching food:", e.message);
+    }
   };
 
-  const [food] = useState(item);
-  const [favourite, setFavourite] = useState(false);
-  const [quantity, setQuantity] = useState(1); // Start quantity at 1 for a detail screen
+  // ✅ Check if item exists in cart
+  const checkItemExists = async () => {
+    try {
+      const res = await api.post(`/cart/check-item/${auth.userId}`, {
+        foodId: foodItemId,
+      });
+      if (res.data.exists) {
+        setTotalPrice(res.data.price);
+        setQuantity(res.data.quantity);
+      } else {
+        setQuantity(0);
+        setTotalPrice(0);
+      }
+    } catch (e) {
+      console.log("Error checking cart:", e.message);
+    }
+  };
 
-  // Calculate total price based on quantity
-  const totalPrice = quantity * food.price;
+  // ✅ Add / Remove from Cart
+  const handleCartUpdate = async (op) => {
+    try {
+      const change = op === "+" ? 1 : -1;
 
-  // Quantity Handlers
-  const increaseQuantity = () => setQuantity((prev) => prev + 1);
-  const decreaseQuantity = () =>
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+      const res = await api.post("/cart", {
+        FoodId: foodItemId,
+        userId: auth.userId,
+        quantity: change,
+      });
 
-  // Hide default navigation header
+      if (res.data && res.data.updatedItem) {
+        setQuantity(res.data.updatedItem.quantity);
+        setTotalPrice(res.data.updatedItem.totalPrice);
+      }
+    } catch (e) {
+      console.log("Error updating cart:", e.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchFoodDetails();
+  }, [foodItemId]);
+
+  useEffect(() => {
+    checkItemExists();
+  }, [foodItemId]);
+
+  // Hide header
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
+    navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
   return (
@@ -58,14 +97,16 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        // Adding paddingBottom to ensure the last content doesn't get covered by the footer
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* --- Header Image Section --- */}
         <View style={styles.imageContainer}>
-          <Image source={food.image} style={styles.image} resizeMode="cover" />
+          <Image
+            source={require("../assets/biriyani.png")}
+            style={styles.image}
+            resizeMode="cover"
+          />
 
-          {/* Overlay Buttons */}
           <View style={styles.headerContainer}>
             <TouchableOpacity
               style={styles.backButton}
@@ -87,65 +128,77 @@ const FoodDetailScreen = ({ navigation, route }) => {
           </View>
         </View>
 
-        {/* --- Food Details Content --- */}
+        {/* --- Food Details --- */}
         <View style={styles.content}>
           <Text style={styles.title}>{food.name}</Text>
 
-          {/* Price and Quantity Row (Styled to be side-by-side) */}
           <View style={styles.priceQuantityRow}>
             <View>
               <Text style={styles.priceLabel}>Item Price</Text>
               <Text style={styles.priceValue}>₹ {food.price}</Text>
             </View>
 
-            {/* Quantity Control (on the right) */}
-            <View style={styles.quantityControl}>
+            {quantity === 0 ? (
               <TouchableOpacity
-                style={styles.quantityButton}
-                onPress={decreaseQuantity}
-                disabled={quantity === 1} // Disable when quantity is 1
+                style={{
+                  backgroundColor: Color.DARK,
+                  padding: 10,
+                  paddingVertical: 6,
+                  borderRadius: 5,
+                }}
+                onPress={() => handleCartUpdate("+")}
               >
-                <Text style={[styles.quantityButtonText, { color: "#333" }]}>
-                  -
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontFamily: "Inter-Bold",
+                    fontSize: 15,
+                  }}
+                >
+                  Add to Cart
                 </Text>
               </TouchableOpacity>
+            ) : (
+              <View style={styles.quantityControl}>
+                <TouchableOpacity
+                  style={styles.quantityButton}
+                  onPress={() => handleCartUpdate("-")}
+                  disabled={quantity === 0}
+                >
+                  <Text style={[styles.quantityButtonText, { color: "#333" }]}>
+                    -
+                  </Text>
+                </TouchableOpacity>
 
-              <Text style={styles.quantityCount}>{quantity}</Text>
+                <Text style={styles.quantityCount}>{quantity}</Text>
 
-              <TouchableOpacity
-                style={[
-                  styles.quantityButton,
-                  { backgroundColor: PRIMARY_COLOR },
-                ]}
-                onPress={increaseQuantity}
-              >
-                <Text style={styles.quantityButtonText}>+</Text>
-              </TouchableOpacity>
-            </View>
+                <TouchableOpacity
+                  style={[
+                    styles.quantityButton,
+                    { backgroundColor: PRIMARY_COLOR },
+                  ]}
+                  onPress={() => handleCartUpdate("+")}
+                >
+                  <Text style={styles.quantityButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
 
-          {/* Description Section */}
           <View style={styles.descriptionSection}>
             <Text style={styles.descLabel}>Description</Text>
             <Text style={styles.descText}>{food.description}</Text>
           </View>
-
-          {/* Add more customization sections (e.g., Spice Slider) here if needed */}
         </View>
       </ScrollView>
 
-      {/* --- Sticky Footer (Order/Cart Buttons) --- */}
+      {/* --- Footer --- */}
       <View style={styles.footer}>
-        {/* <View style={styles.footerPriceBox}>
-          <Text style={styles.footerPriceLabel}>Total Price</Text>
-          <Text style={styles.footerPriceValue}>₹ {totalPrice.toFixed(2)}</Text>
-        </View> */}
-
         <TouchableOpacity
           style={styles.orderButton}
           onPress={() =>
-            console.log("Order Now clicked:", {
-              foodId: food.id,
+            console.log("Order Now:", {
+              foodId: foodItemId,
               quantity,
               totalPrice,
             })
@@ -156,7 +209,7 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
         <TouchableOpacity
           style={styles.cartButton}
-          onPress={() => console.log("Go to Cart clicked")}
+          onPress={() => navigation.navigate("Cart")}
         >
           <Text style={styles.cartButtonText}>Go to Cart</Text>
         </TouchableOpacity>
@@ -214,9 +267,9 @@ const styles = StyleSheet.create({
     paddingTop: 10, // Reduced top padding
   },
   title: {
-    fontSize: 26,
+    fontSize: 25,
     fontFamily: "Inter-Bold",
-    fontWeight: "700",
+
     marginBottom: 15,
     color: "#333",
   },
@@ -345,7 +398,7 @@ const styles = StyleSheet.create({
   orderButton: {
     flex: 1, // Takes up more space
     backgroundColor: PRIMARY_COLOR,
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderRadius: 13,
     justifyContent: "center",
     alignItems: "center",
@@ -353,13 +406,13 @@ const styles = StyleSheet.create({
   },
   orderButtonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 15,
+
     fontFamily: "Inter-Bold",
   },
   cartButton: {
     backgroundColor: "#333", // Dark color for the secondary button
-    paddingVertical: 15,
+    paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 13,
     justifyContent: "center",
@@ -368,7 +421,7 @@ const styles = StyleSheet.create({
   cartButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+
     fontFamily: "Inter-Bold",
   },
 });

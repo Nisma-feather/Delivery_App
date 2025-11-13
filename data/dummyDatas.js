@@ -2,6 +2,10 @@
 
 export const categories = [
   {
+    id: 10,
+    name: "All",
+  },
+  {
     id: 1,
     name: "Vegetarian",
   },
@@ -256,6 +260,56 @@ export const foodItems = [
     description: "Rich chocolate shake topped with whipped cream.",
     isAvailable: true,
   },
+];
+
+export const dummyCart = [
+
+      { 
+        
+        foodId: {
+          _id: "6737b111e982b9a10001a001",
+          name: "Chicken Biryani",
+          category: "Biryani",
+          price: 250,
+          image:
+            "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/12/chicken-biryani.jpg",
+        },
+        quantity: 2,
+      },
+      {
+        foodId: {
+          _id: "6737b111e982b9a10001a002",
+          name: "Butter Naan",
+          category: "Bread",
+          price: 40,
+          image:
+            "https://www.cookwithmanali.com/wp-content/uploads/2020/05/Butter-Naan.jpg",
+        },
+        quantity: 3,
+      },
+      {
+        foodId: {
+          _id: "6737b111e982b9a10001a003",
+          name: "Paneer Butter Masala",
+          category: "Curry",
+          price: 220,
+          image:
+            "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/12/paneer-butter-masala.jpg",
+        },
+        quantity: 1,
+      },
+      {
+        foodId: {
+          _id: "6737b111e982b9a10001a004",
+          name: "Gulab Jamun",
+          category: "Dessert",
+          price: 90,
+          image:
+            "https://www.indianhealthyrecipes.com/wp-content/uploads/2022/11/gulab-jamun-recipe.jpg",
+        },
+        quantity: 2,
+      },
+   
 ];
 
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   View,
@@ -13,13 +13,15 @@ import {
 import { Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import Color from "../constanst/Color";
+import Color from "../constants/Color";
 import { categories } from "../data/dummyDatas";
-import { foodItems } from "../data/dummyDatas";
+// import { foodItems } from "../data/dummyDatas";
+import { api } from "../api/apiConfig";
 
 // Component to render individual food cards
-const FoodCard = ({ item }) => (
-    <View style={styles.newCardContainer}>
+const FoodCard = ({ item , handlePress}) => (
+  
+    <TouchableOpacity style={styles.newCardContainer} onPress={handlePress}>
         
         {/* Food Image Wrapper (with the orange add button) */}
         <View style={styles.cardImageWrapper}>
@@ -56,10 +58,45 @@ const FoodCard = ({ item }) => (
                 </View>
             </View>
         </View>
-    </View>
+    </TouchableOpacity>
 );
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
+
+  const [foodItems,setFoodItems] = useState([]);
+  const [categories,setCategories] = useState([]);
+
+  //Fetching the foodItems
+  const fetchFoodItems=async(req,res)=>{
+    try{
+      const res= await api.get("/foodItem");
+      setFoodItems(res.data.foodItems || [])
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  //fetching the categories
+  const fetchCategories=async(req,res)=>{
+    try{
+     const res = await api.get("/category");
+     setCategories(res.data.categories || [])
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+  useEffect(()=>{
+   fetchFoodItems()
+
+  },[])
+
+  useEffect(()=>{
+   fetchCategories();
+  },[])
+
+  console.log(foodItems)
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -111,47 +148,55 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Image
-          source={require("../assets/Banner.png")}
-          style={{ width: "100%", height: 180 }}
-        />
-        <View style={{ marginVertical:20}}>
-          {
-            <FlatList
-              data={categories}
-              keyExtractor={(item) => item.id.toString()}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    padding: 5,
-                    backgroundColor: Color.DARK,
-                    marginLeft: 10,
-                    paddingHorizontal: 15,
-                    borderRadius: 5,
-                  }}
-                >
-                  <Text style={{ color: "#fff", fontFamily: "Inter-Bold" }}>
-                    {item.name}
-                  </Text>
-                </View>
-              )}
-            />
-          }
-        </View>
+
+   
         <View>
           <FlatList
+          showsVerticalScrollIndicator={false}
+            ListHeaderComponent={() => (
+              <>
+                <Image
+                  source={require("../assets/Banner.png")}
+                  style={{ width: "100%", height: 180 }}
+                />
+                <View style={{ marginVertical: 20 }}>
+                  {
+                    <FlatList
+                      data={categories}
+                      keyExtractor={(item) => item._id.toString()}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      renderItem={({ item }) => (
+                        <View
+                          style={{
+                            padding: 5,
+                            backgroundColor: Color.DARK,
+                            marginLeft: 10,
+                            paddingHorizontal: 15,
+                            borderRadius: 5,
+                          }}
+                        >
+                          <Text
+                            style={{ color: "#fff", fontFamily: "Inter-Bold" }}
+                          >
+                            {item.name}
+                          </Text>
+                        </View>
+                      )}
+                    />
+                  }
+                </View>
+              </>
+            )}
             data={foodItems}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item._id.toString()}
             numColumns={2}
             columnWrapperStyle={styles.row}
             contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => <FoodCard item={item} />}
+            renderItem={({ item }) => <FoodCard item={item} handlePress={()=> navigation.navigate("Food Details", {foodItemId : item._id} ) }/>}
           />
         </View>
-      </ScrollView>
+    
     </SafeAreaView>
   );
 };
