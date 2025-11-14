@@ -10,55 +10,45 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome, Ionicons } from "@expo/vector-icons"; // Added Ionicons for back button
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Color from "../constants/Color";
 import { useLayoutEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../api/apiConfig";
-// --- MOCK DATA & CONSTANTS (Replace with your actual imports) ---
 
-// Mock Color Constant
+const CartCard = ({
+  item,
+  onhandleSelect,
+  checked,
+  onDelete,
+  updateItem
 
+}) => {
+  console.log(item);
+  const { auth } = useAuth();
+ 
 
-// Mock dummyCart Data
-const dummyCart = [
-  {
-    _id: "cartItem1",
-    quantity: 1,
-    foodId: {
-      _id: "food1",
-      name: "Chicken Biriyani",
-      price: 15.99,
-      image: require("../assets/biriyani.png"), // Assuming you have an image at this path
-    },
-  },
-  {
-    _id: "cartItem2",
-    quantity: 3,
-    foodId: {
-      _id: "food2",
-      name: "Veggie Burger",
-      price: 8.5,
-      image: require("../assets/biriyani.png"), // Using the same mock image for all items
-    },
-  },
-  {
-    _id: "cartItem3",
-    quantity: 2,
-    foodId: {
-      _id: "food3",
-      name: "Coca-Cola",
-      price: 2.0,
-      image: require("../assets/biriyani.png"), // Using the same mock image for all items
-    },
-  },
-];
+  const handleCartUpdate = async (op) => {
+    try {
+      const change = op === "+" ? 1 : -1;
+      const res = await api.post("/cart", {
+        FoodId: item.foodItem._id,
+        userId: auth.userId,
+        quantity: change,
+      });
+      if (res.data && res.data.updatedItem) {
+       updateItem({
+  foodItem: item.foodItem._id,
+  quantity: res.data.updatedItem.quantity,
+  totalPrice: res.data.updatedItem.totalPrice,
+});
 
+      }
+    } catch (e) {
+      console.log("Error updating cart:", e.message);
+    }
+  };
 
-
-
-const CartCard = ({ item, onhandleSelect, checked }) => {
-  console.log(item); // Keeping the console.log as requested
   return (
     <Pressable style={styles.foodCard}>
       {/* Checkbox/Selector Area */}
@@ -67,7 +57,7 @@ const CartCard = ({ item, onhandleSelect, checked }) => {
           checked
             ? { backgroundColor: Color.DARK }
             : { borderWidth: 2, borderColor: "#888" },
-          styles.checkboxContainer, // Applied new style for consistency
+          styles.checkboxContainer,
         ]}
         onPress={onhandleSelect}
       >
@@ -77,27 +67,34 @@ const CartCard = ({ item, onhandleSelect, checked }) => {
       {/* Food Image */}
       <View style={{ width: 80, height: 75, borderRadius: 10 }}>
         <Image
-          source={item.foodId.image} // Using the mock image from dummyCart
+          source={require("../assets/biriyani.png")}
           style={{ width: "100%", height: "100%", borderRadius: 15 }}
         />
       </View>
 
-      {/* Food Details (Name, Price, Quantity Control) */}
+      {/* Food Details */}
       <View style={styles.detailsContainer}>
-        <Text style={styles.foodName}>{item.foodId.name}</Text>
+        <Text style={styles.foodName}>{item.foodItem.name}</Text>
         <Text style={styles.priceLabel}>
           Price:{" "}
-          <Text style={styles.priceValue}>${item.foodId.price.toFixed(2)}</Text>
+          <Text style={styles.priceValue}>${item.totalPrice.toFixed(2)}</Text>
         </Text>
 
         {/* Quantity Control */}
         <View style={styles.quantityControl}>
           <TouchableOpacity
             style={styles.quantityButton}
-            disabled={item.quantity === 1} // Disable when quantity is 1
-            onPress={() => console.log("Decrement tapped")} // Added mock onPress
+            disabled={item.quantity === 1}
+            onPress={() => handleCartUpdate("-")}
           >
-            <Text style={[styles.quantityButtonText, { color: "#333" }]}>
+            <Text
+              style={[
+                styles.quantityButtonText,
+                item.quantity === 1
+                  ? { color: "#ccc" }
+                  : { color: "#333" },
+              ]}
+            >
               -
             </Text>
           </TouchableOpacity>
@@ -106,7 +103,7 @@ const CartCard = ({ item, onhandleSelect, checked }) => {
 
           <TouchableOpacity
             style={[styles.quantityButton, { backgroundColor: Color.DARK }]}
-            onPress={() => console.log("Increment tapped")} // Added mock onPress
+            onPress={() => handleCartUpdate("+")}
           >
             <Text style={styles.quantityButtonText}>+</Text>
           </TouchableOpacity>
@@ -115,10 +112,16 @@ const CartCard = ({ item, onhandleSelect, checked }) => {
 
       {/* Total Price for Item */}
       <View style={styles.itemTotalPriceContainer}>
-        <View style={{flexDirection:'row'}}>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={onDelete} // Fixed: Now calls the delete function
+        >
+          <Ionicons name="close-circle" size={24} color={Color.DARK} />
+        </TouchableOpacity>
+        <View style={{ flexDirection: "row" }}>
           <Text> ₹</Text>
-          <Text style={[styles.itemTotalPrice,{ fontSize: 18 }]}>
-            {(item.foodId.price * item.quantity).toFixed(2)}
+          <Text style={[styles.itemTotalPrice, { fontSize: 18 }]}>
+            {item.totalPrice}
           </Text>
         </View>
       </View>
@@ -126,28 +129,24 @@ const CartCard = ({ item, onhandleSelect, checked }) => {
   );
 };
 
-// --- CartScreen Component ---
-
-const CartScreen = ({navigation}) => {
-  
-  const {auth} = useAuth();
-  
-  const [cart, setCart] = useState([]); // Kept as requested, though dummyCart is used for display
+const CartScreen = ({ navigation }) => {
+  const { auth } = useAuth();
+  const [cart, setCart] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [totalAmount,setTotalAmount] = useState(0);
+  const [loading,setLoading] = useState(false)
 
-    useLayoutEffect(() => {
-      // Hide the tab bar when this screen is focused
+  useLayoutEffect(() => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: { display: "none" },
+    });
+    return () => {
       navigation.getParent()?.setOptions({
-        tabBarStyle: { display: "none" },
+        tabBarStyle: { display: "flex" },
       });
+    };
+  }, [navigation]);
 
-      // Restore when leaving the screen
-      return () => {
-        navigation.getParent()?.setOptions({
-          tabBarStyle: { display: "flex" },
-        });
-      };
-    }, [navigation]);
   const handleAddToCheckout = (id) => {
     if (selectedItems.includes(id)) {
       setSelectedItems(selectedItems.filter((item) => item !== id));
@@ -155,57 +154,96 @@ const CartScreen = ({navigation}) => {
       setSelectedItems([...selectedItems, id]);
     }
   };
+   const handleTotalAmountCaluclation=()=>{
+       const updatedAmount = cart
+      .filter((item) => selectedItems.includes(item.foodItem._id))
+      .reduce((sum, item) => sum + item.totalPrice, 0);
 
-  // Calculate total for selected items
-  const totalAmount = dummyCart
-    .filter((item) => selectedItems.includes(item.foodId._id))
-    .reduce((sum, item) => sum + item.foodId.price * item.quantity, 0);
-  console.log("auth",auth);
-
-  const fetchCartProducts=async()=>{
-    try{
-      console.log(auth.userId)
-      const res = await api.get(`/cart/${auth.userId}`);
-       setCart(res.data?.cartItems)
-    }
-    catch(e){
-      console.log(e)
-    }
-  }
-
+      setTotalAmount(updatedAmount)
+   }
   useEffect(()=>{
+    if(cart && !loading){
+          handleTotalAmountCaluclation();
+    }
+
+  },[cart,selectedItems])
+ 
+
+  const fetchCartProducts = async () => {
+    try {
+      setLoading(true)
+      const res = await api.get(`/cart/${auth.userId}`);
+      const cartData = res.data?.Items?.cartItems;
+      setCart(cartData);
+      setSelectedItems(cartData.map((item) => item.foodItem._id));
+    } catch (e) {
+      console.log(e);
+    }
+    finally{
+      setLoading(false)
+    }
+  };
+
+  useEffect(() => {
     fetchCartProducts();
-  },[]);
+  }, []);
 
-
+  const handleCartDelete = async (foodId) => {
+    try {
+      console.log(auth.userId)
+      const res = await api.delete(`/cart/removeItem/${foodId}`,{
+        data: { userId: auth.userId } 
+      });
+      if (res.status === 200) {
+        const updatedcart = cart.filter((item) => item.foodItem._id !== foodId);
+        setCart(updatedcart);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+const updateCartItem = (updatedItem) => {
+  setCart((prev) =>
+    prev.map((item) =>
+      item.foodItem._id === updatedItem.foodItem
+        ? {
+            ...item,
+            quantity: updatedItem.quantity,
+            totalPrice: updatedItem.totalPrice,
+          }
+        : item
+    )
+  );
+};
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={()=>navigation.goBack()}>
+        <Pressable onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#333" />
         </Pressable>
         <Text style={styles.headerTitle}>My Cart</Text>
-        <View style={{ width: 24 }} /> {/* Spacer to align title */}
+        <View style={{ width: 24 }} />
       </View>
 
       <FlatList
-        data={dummyCart}
+        data={cart}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <CartCard
             item={item}
-            onhandleSelect={() => handleAddToCheckout(item?.foodId?._id)}
-            checked={selectedItems.includes(item.foodId._id)}
+            onhandleSelect={() => handleAddToCheckout(item?.foodItem?._id)}
+            onDelete={() => handleCartDelete(item.foodItem._id)} // Fixed: Now properly passed
+            checked={selectedItems.includes(item.foodItem._id)}
+       
+             updateItem={updateCartItem} 
           />
         )}
         contentContainerStyle={styles.listContent}
       />
 
       {/* Checkout/Total Footer */}
-      {/* Checkout/Total Footer */}
       <View style={styles.footer}>
-        {/* Promo code input */}
         <View
           style={{
             backgroundColor: "#f8f8f8",
@@ -218,21 +256,18 @@ const CartScreen = ({navigation}) => {
           <Text style={{ color: "#999" }}>Enter your promo code</Text>
         </View>
 
-        {/* Subtotal */}
         <View style={styles.totalContainer}>
           <Text style={[styles.totalText, { color: "#444" }]}>Subtotal</Text>
           <Text style={[styles.totalPriceText, { color: "#444" }]}>
-            ₹{totalAmount.toFixed(2)}
+            ₹{totalAmount.toFixed(2)} {/* Fixed: Uncommented */}
           </Text>
         </View>
 
-        {/* Shipping */}
         <View style={styles.totalContainer}>
           <Text style={[styles.totalText, { color: "#444" }]}>Shipping</Text>
           <Text style={[styles.totalPriceText, { color: "#444" }]}>₹40.00</Text>
         </View>
 
-        {/* Divider */}
         <View
           style={{
             borderBottomColor: "#ccc",
@@ -242,7 +277,6 @@ const CartScreen = ({navigation}) => {
           }}
         />
 
-        {/* Total Amount */}
         <View style={styles.totalContainer}>
           <Text
             style={[
@@ -253,11 +287,10 @@ const CartScreen = ({navigation}) => {
             Total amount
           </Text>
           <Text style={[styles.totalPriceText, { fontSize: 19 }]}>
-            ₹{(totalAmount + 40).toFixed(2)}
+            ₹{(totalAmount + 40).toFixed(2)} {/* Fixed: Uncommented */}
           </Text>
         </View>
 
-        {/* Checkout Button */}
         <TouchableOpacity
           style={[
             styles.checkoutButton,
@@ -278,15 +311,12 @@ const CartScreen = ({navigation}) => {
   );
 };
 
-// --- Stylesheet ---
-
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Platform.OS === "android" ? 0 : 0, // Removed padding: 10 from container, moved to listContent
+    paddingTop: Platform.OS === "android" ? 0 : 0,
     backgroundColor: "#fff",
     flex: 1,
   },
-  // --- Header Styles ---
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -300,33 +330,28 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-Bold",
     color: "#333",
   },
-  // --- FlatList Styles ---
   listContent: {
-    padding: 10, // Apply padding here for content
+    padding: 10,
   },
   foodCard: {
     flexDirection: "row",
-    alignItems: "center", // Align items vertically
+    alignItems: "center",
     paddingVertical: 15,
-
     backgroundColor: "#fff",
     borderRadius: 15,
-    // Shadow for foodCard
     borderBottomWidth: 1,
     borderBottomColor: "#e7dfdfff",
   },
-  // --- Checkbox/Selector Styles ---
   checkboxContainer: {
     height: 20,
-    width: 20, // Reduced width to match height for a square button
-    borderRadius: 4, // Added border radius
+    width: 20,
+    borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 15,
   },
-  // --- Details Styles ---
   detailsContainer: {
-    flex: 1, // Allows this view to take up available space
+    flex: 1,
     paddingHorizontal: 15,
   },
   foodName: {
@@ -338,31 +363,29 @@ const styles = StyleSheet.create({
   priceLabel: {
     fontSize: 14,
     color: "#888",
-    fontFamily:"Inter-Regular",
+    fontFamily: "Inter-Regular",
     marginBottom: 10,
   },
   priceValue: {
     fontWeight: "600",
     color: "#333",
   },
-  // --- Quantity Control Styles (Copied exactly) ---
   quantityControl: {
     flexDirection: "row",
     alignItems: "center",
     gap: 15,
-    backgroundColor: "#f5f5f5", // Light background for the control area
+    backgroundColor: "#f5f5f5",
     borderRadius: 15,
     padding: 5,
     width: 110,
   },
   quantityButton: {
-    backgroundColor: "#fff", // White background for buttons
+    backgroundColor: "#fff",
     width: 25,
     height: 25,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 12,
-    // Add shadow to quantity buttons
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -376,7 +399,7 @@ const styles = StyleSheet.create({
   quantityButtonText: {
     fontSize: 15,
     color: "#fff",
-    fontFamily:"Inter-Bold"
+    fontFamily: "Inter-Bold",
   },
   quantityCount: {
     fontSize: 16,
@@ -385,20 +408,21 @@ const styles = StyleSheet.create({
     minWidth: 20,
     textAlign: "center",
   },
-  // --- Item Total Price Styles ---
   itemTotalPriceContainer: {
-    // aligns with flex-end of foodCard
-    alignSelf: "flex-end", // Align to start of the row (top), then pushed to the right by flex:1 in detailsContainer
-    marginLeft: "auto", // Pushes it to the far right
+    alignSelf: "flex-end",
+    marginLeft: "auto",
     paddingRight: 10,
-   
+  },
+  deleteButton: {
+    // Added missing style
+    marginBottom: 8,
+    alignSelf: "flex-end",
   },
   itemTotalPrice: {
     fontSize: 14,
     color: "#333",
     fontFamily: "Inter-Bold",
   },
-  // --- Footer/Checkout Styles ---
   footer: {
     padding: 15,
     borderTopWidth: 1,
@@ -412,12 +436,12 @@ const styles = StyleSheet.create({
   },
   totalText: {
     fontSize: 15,
-    fontFamily:"Inter-Regular",
+    fontFamily: "Inter-Regular",
     color: "#888",
   },
   totalPriceText: {
     fontSize: 17,
-    fontFamily:"Inter-Bold",
+    fontFamily: "Inter-Bold",
     color: Color.DARK,
   },
   checkoutButton: {
@@ -432,7 +456,7 @@ const styles = StyleSheet.create({
   checkoutButtonText: {
     color: "#fff",
     fontSize: 17,
-    fontFamily:"Inter-Bold"
+    fontFamily: "Inter-Bold",
   },
 });
 
