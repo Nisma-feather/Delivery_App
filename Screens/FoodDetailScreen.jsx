@@ -209,7 +209,8 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
         <TouchableOpacity
           style={styles.cartButton}
-          onPress={() => navigation.navigate("Cart")}
+          onPress={() => navigation.navigate("Cart", { screen: "Cart Screen" })
+        }
         >
           <Text style={styles.cartButtonText}>Go to Cart</Text>
         </TouchableOpacity>

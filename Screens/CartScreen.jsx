@@ -154,6 +154,7 @@ const CartScreen = ({ navigation }) => {
       setSelectedItems([...selectedItems, id]);
     }
   };
+  
    const handleTotalAmountCaluclation=()=>{
        const updatedAmount = cart
       .filter((item) => selectedItems.includes(item.foodItem._id))
@@ -235,7 +236,6 @@ const updateCartItem = (updatedItem) => {
             onhandleSelect={() => handleAddToCheckout(item?.foodItem?._id)}
             onDelete={() => handleCartDelete(item.foodItem._id)} // Fixed: Now properly passed
             checked={selectedItems.includes(item.foodItem._id)}
-       
              updateItem={updateCartItem} 
           />
         )}
@@ -300,7 +300,10 @@ const updateCartItem = (updatedItem) => {
             },
           ]}
           disabled={selectedItems.length === 0}
-          onPress={() => console.log("Proceed to Checkout")}
+          onPress={() => {
+            navigation.navigate("CheckoutScreen",{selectedItems});
+
+          }}
         >
           <Text style={[styles.checkoutButtonText, { fontSize: 17 }]}>
             CHECKOUT

@@ -12,35 +12,57 @@ import LoginScreen from "./Screens/LoginScreen";
 import SignUpScreen from "./Screens/SignUpScreen";
 import EmailOTPVerification from "./Screens/EmailOTPVerification";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import MainProfileScreen from "./Screens/ProfileSection/MainProfileScreen";
+import AddressScreen from "./Screens/ProfileSection/AddressScreen";
+import AddressChoose from "./Screens/AddressChoose";
+import EditAddressScreen from "./Screens/EditAddressScreen";
+import PaymentMethodScreen from "./Screens/PaymentMethodScreen";
+import OrderSuccessfulScreen from "./Screens/OrderSuccessfulScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const HomeStack = () => (
-  <Stack.Navigator initialRouteName="Home">
-    <Stack.Screen
-      name="Home"
-      component={HomeScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Food Details"
-      component={FoodDetailScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Cart"
-      component={CartScreen}
-      options={{ headerShown: false }}
-    />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen name="Food Details" component={FoodDetailScreen} />
   </Stack.Navigator>
 );
+
+
+//CART STACK
+
+const CartStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Cart Screen" component={CartScreen} />
+    <Stack.Screen name="CheckoutScreen" component={AddressChoose} />
+    <Stack.Screen name="Choose Address" component={EditAddressScreen} />
+    <Stack.Screen name="Payment Method" component={PaymentMethodScreen} />
+    <Stack.Screen name="Order Successful" component={OrderSuccessfulScreen} />
+  </Stack.Navigator>
+);
+
+const ProfileStack=()=>{
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+    
+    >
+      <Stack.Screen name="Main Profile" component={MainProfileScreen} />
+      <Stack.Screen name="Address" component={AddressScreen} />
+     
+    </Stack.Navigator>
+  );
+}
 
 const UserTabs = () => (
   <Tab.Navigator screenOptions={{ headerShown: false }}>
     <Tab.Screen name="HomeStack" component={HomeStack} />
+    <Tab.Screen name="Profile" component={ProfileStack} />
+    <Tab.Screen name="Cart" component={CartStack} />
   </Tab.Navigator>
 );
+
 
 function RootNavigator() {
   const { auth, loading } = useAuth();
