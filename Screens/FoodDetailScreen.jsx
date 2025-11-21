@@ -19,13 +19,17 @@ const PRIMARY_COLOR = Color.DARK || "#EB3E3E";
 
 const FoodDetailScreen = ({ navigation, route }) => {
   const { foodItemId } = route.params;
-  const { auth } = useAuth();
 
+  const { auth } = useAuth();
+  const {  updateCartCount } = useAuth();
   const [food, setFood] = useState({});
   const [favourite, setFavourite] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+   const {favourites,toggleFavourite} = useAuth();
 
+   const isFav = favourites.some((food)=>food._id === foodItemId)
+   
   // ✅ Fetch Food Details
   const fetchFoodDetails = async () => {
     try {
@@ -58,17 +62,34 @@ const FoodDetailScreen = ({ navigation, route }) => {
   const handleCartUpdate = async (op) => {
     try {
       const change = op === "+" ? 1 : -1;
-
-      const res = await api.post("/cart", {
-        FoodId: foodItemId,
-        userId: auth.userId,
-        quantity: change,
-      });
-
-      if (res.data && res.data.updatedItem) {
-        setQuantity(res.data.updatedItem.quantity);
-        setTotalPrice(res.data.updatedItem.totalPrice);
+      if (quantity === 1 && op === "-") {
+          const res = await api.delete(`/cart/removeItem/${foodItemId}`,
+              {
+                data: { userId: auth.userId } 
+              });
+              setQuantity(0);
+              setTotalPrice(0);
+              updateCartCount();
       }
+      else{
+         const res = await api.post("/cart", {
+           FoodId: foodItemId,
+           userId: auth.userId,
+           quantity: change,
+         });
+
+         if (res.data && res.data.updatedItem) {
+           setQuantity(res.data.updatedItem.quantity);
+           setTotalPrice(res.data.updatedItem.totalPrice);
+         }
+
+         if (quantity === 0) {
+           updateCartCount();
+         }
+      }
+
+     
+
     } catch (e) {
       console.log("Error updating cart:", e.message);
     }
@@ -117,11 +138,11 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => setFavourite(!favourite)}
+              onPress={() => toggleFavourite(foodItemId)}
             >
               <Octicons
-                name={favourite ? "heart-fill" : "heart"}
-                color={favourite ? PRIMARY_COLOR : "#000"}
+                name={isFav ? "heart-fill" : "heart"}
+                color={isFav ? "red" : "#000"}
                 size={20}
               />
             </TouchableOpacity>

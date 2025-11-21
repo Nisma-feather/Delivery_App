@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useCallback} from "react";
 import {
   FlatList,
   View,
@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Color from "../constants/Color";
 import { useLayoutEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../api/apiConfig";
 
@@ -130,7 +131,7 @@ const CartCard = ({
 };
 
 const CartScreen = ({ navigation }) => {
-  const { auth } = useAuth();
+  const { auth,updateCartCount } = useAuth();
   const [cart, setCart] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalAmount,setTotalAmount] = useState(0);
@@ -172,6 +173,7 @@ const CartScreen = ({ navigation }) => {
 
   const fetchCartProducts = async () => {
     try {
+      
       setLoading(true)
       const res = await api.get(`/cart/${auth.userId}`);
       const cartData = res.data?.Items?.cartItems;
@@ -185,10 +187,12 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    fetchCartProducts();
-  }, []);
-
+useFocusEffect(
+  useCallback(() => {
+    fetchCartProducts(); // 🔥 Runs every time Cart tab becomes active
+    return () => {}; // cleanup not needed
+  }, [])
+);
   const handleCartDelete = async (foodId) => {
     try {
       console.log(auth.userId)
@@ -198,6 +202,8 @@ const CartScreen = ({ navigation }) => {
       if (res.status === 200) {
         const updatedcart = cart.filter((item) => item.foodItem._id !== foodId);
         setCart(updatedcart);
+        updateCartCount()
+        
       }
     } catch (e) {
       console.log(e);

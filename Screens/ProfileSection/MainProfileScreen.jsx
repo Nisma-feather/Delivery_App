@@ -33,6 +33,12 @@ const settingsData = [
     key: "password",
   },
   {
+    icon: "cart",
+    label: "My Orders",
+    key: "orders",
+    path: "My Orders",
+  },
+  {
     icon: "notifications-outline",
 
     label: "Notifications",
@@ -40,11 +46,11 @@ const settingsData = [
   },
   {
     icon: "location-outline",
-    label:"Address",
-    key:"address"
-  
+    label: "Address",
+    key: "address",
+    path: "Address",
   },
- 
+
   { icon: "help-circle-outline", label: "FAQ", key: "faq" },
   {
     icon: "chatbox-ellipses-outline",
@@ -79,7 +85,7 @@ const ColorfulSettingRow = ({ iconName, iconColor, label, onPress }) => (
 );
 
 // --- Main Component ---
-const MainProfileScreen = () => {
+const MainProfileScreen = ({navigation}) => {
   const {logout} = useAuth();
 
   const handleLogout = () => {
@@ -105,7 +111,12 @@ const MainProfileScreen = () => {
         <View style={{ width: 28 }} />
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 40, 
+        }}
+      >
         {/* User Info Card */}
         <TouchableOpacity
           style={newStyles.userInfoCard}
@@ -129,7 +140,13 @@ const MainProfileScreen = () => {
               iconName={item.icon}
               iconColor={item.color}
               label={item.label}
-              onPress={() => console.log(`Navigating to ${item.label}`)}
+              onPress={() => {
+                if (item?.path) {
+                  navigation.navigate(item.path);
+                } else {
+                  console.log("Navigation");
+                }
+              }}
             />
           ))}
 

@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useFonts } from "expo-font";
-
+import {Ionicons,Foundation} from "@expo/vector-icons"
 import HomeScreen from "./Screens/HomeScreen";
 import FoodDetailScreen from "./Screens/FoodDetailScreen";
 import CartScreen from "./Screens/CartScreen";
@@ -18,6 +18,8 @@ import AddressChoose from "./Screens/AddressChoose";
 import EditAddressScreen from "./Screens/EditAddressScreen";
 import PaymentMethodScreen from "./Screens/PaymentMethodScreen";
 import OrderSuccessfulScreen from "./Screens/OrderSuccessfulScreen";
+import FavouriteScreen from "./Screens/FavouriteScreen";
+import MyOrders from "./Screens/MyOrders";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,13 +36,21 @@ const HomeStack = () => (
 
 const CartStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Cart Screen" component={CartScreen} />
+    <Stack.Screen name="CartScreen" component={CartScreen} />
     <Stack.Screen name="CheckoutScreen" component={AddressChoose} />
     <Stack.Screen name="Choose Address" component={EditAddressScreen} />
     <Stack.Screen name="Payment Method" component={PaymentMethodScreen} />
     <Stack.Screen name="Order Successful" component={OrderSuccessfulScreen} />
   </Stack.Navigator>
 );
+
+//FavouriteStack 
+const FavouriteStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
+  </Stack.Navigator>
+);
+
 
 const ProfileStack=()=>{
   return (
@@ -50,18 +60,110 @@ const ProfileStack=()=>{
     >
       <Stack.Screen name="Main Profile" component={MainProfileScreen} />
       <Stack.Screen name="Address" component={AddressScreen} />
-     
+      <Stack.Screen name="My Orders" component = {MyOrders}/>
     </Stack.Navigator>
   );
 }
 
-const UserTabs = () => (
-  <Tab.Navigator screenOptions={{ headerShown: false }}>
-    <Tab.Screen name="HomeStack" component={HomeStack} />
-    <Tab.Screen name="Profile" component={ProfileStack} />
-    <Tab.Screen name="Cart" component={CartStack} />
-  </Tab.Navigator>
-);
+const UserTabs = () => 
+{
+const {cartLength} = useAuth();
+
+ return (
+   <Tab.Navigator
+     screenOptions={({ route }) => ({
+       headerShown: false,
+
+       // 1. SHOW THE LABEL
+       tabBarShowLabel: true,
+       tabBarItemStyle: {
+         justifyContent: "center",
+         alignItems: "center",
+       },
+
+       // 2. STYLING THE TAB BAR CONTAINER
+       tabBarStyle: {
+         height: 80, // Increased height for label + icon
+         backgroundColor: "#ffffff",
+         elevation: 8, // Android shadow
+         borderTopWidth: 0,
+         paddingBottom: 5,
+         borderRadius: 50,
+         marginBottom: 10,
+       },
+
+       // 3. COLOR FOR ACTIVE/INACTIVE ICONS AND LABELS
+       tabBarActiveTintColor: "#ff5e00ff", // Primary color (e.g., orange)
+       tabBarInactiveTintColor: "#8e8e8e", // Grey color
+
+       // 4. STYLE THE LABEL TEXT (Set to UPPERCASE)
+       tabBarLabelStyle: {
+         fontSize: 10,
+         fontWeight: "600",
+         textTransform: "uppercase", // 🔥 Important: Set the text to CAPITALS
+         marginBottom: 3,
+         fontFamily: "Inter-SemiBold", // Assuming you want a custom font
+       },
+
+       // 5. ICON RENDERING
+       tabBarIcon: ({ focused, color, size }) => {
+         let iconName;
+         // Use a slightly smaller size since the label is now displayed
+         const iconSize = 22;
+
+         if (route.name === "HomeStack") {
+           iconName = focused ? "home" : "home-outline";
+         } else if (route.name === "Profile") {
+           iconName = focused ? "person" : "person-outline";
+         } else if (route.name === "Favourite") {
+           iconName = focused ? "heart" : "heart-outline";
+         } else if (route.name === "Cart") {
+           iconName = focused ? "cart" : "cart-outline";
+         }
+
+         return (
+           <Ionicons
+             name={iconName}
+             size={iconSize}
+             color={color} // Automatically uses active/inactive color
+           />
+         );
+       },
+     })}
+   >
+     {/* Setting individual tab options (like the label text) */}
+     <Tab.Screen
+       name="HomeStack"
+       component={HomeStack}
+       options={{ tabBarLabel: "Home" }} // Customize label here if needed
+     />
+     <Tab.Screen
+       name="Profile"
+       component={ProfileStack}
+       options={{ tabBarLabel: "Profile" }}
+     />
+     <Tab.Screen
+       name="Favourite"
+       component={FavouriteStack}
+       options={{ tabBarLabel: "Favourite" }}
+     />
+     <Tab.Screen
+       name="Cart"
+       component={CartStack}
+       options={{
+         tabBarLabel: "Cart",
+         tabBarBadge: cartLength > 0 ? cartLength : null,
+         tabBarBadgeStyle: {
+           backgroundColor: "#ff5e00ff",
+           color: "white",
+           fontSize: 10,
+           fontWeight: "bold",
+         },
+       }}
+     />
+   </Tab.Navigator>
+ );
+}
 
 
 function RootNavigator() {

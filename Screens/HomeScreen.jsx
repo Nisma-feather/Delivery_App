@@ -12,91 +12,89 @@ import {
 } from "react-native";
 import { Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign, Octicons } from "@expo/vector-icons";
 import Color from "../constants/Color";
 import { categories } from "../data/dummyDatas";
 // import { foodItems } from "../data/dummyDatas";
 import { api } from "../api/apiConfig";
+import { useAuth } from "../context/AuthContext";
 
 // Component to render individual food cards
-const FoodCard = ({ item , handlePress}) => (
-  
-    <TouchableOpacity style={styles.newCardContainer} onPress={handlePress}>
-        
-        {/* Food Image Wrapper (with the orange add button) */}
-        <View style={styles.cardImageWrapper}>
-            <Image 
-                source={require("../assets/biriyani.png")} 
-                style={styles.newCardImage}
-                resizeMode="cover" // Use 'cover' to fit the space
-            />
-            {/* Orange Plus Button */}
-            <TouchableOpacity style={styles.addButton}>
-                <Ionicons name="add" size={24} color="#fff" />
-            </TouchableOpacity>
-        </View>
+export const FoodCard = ({ item, handlePress, isFav, onToggleFav }) => (
+  <TouchableOpacity style={styles.newCardContainer} onPress={handlePress}>
+    {/* Image + Heart Button */}
+    <View style={styles.cardImageWrapper}>
+      <Image
+        source={require("../assets/biriyani.png")}
+        style={styles.newCardImage}
+        resizeMode="cover"
+      />
 
-        {/* Text Details */}
-        <View style={styles.newCardDetails}>
-            <Text style={styles.cardTitle}>{item.title || item.name}</Text>
-            
-            {/* Description/SubText */}
-            <Text style={styles.cardDescription} numberOfLines={1}>
-                {item.description || item.subText} 
-            </Text>
+      {/* ❤️ Heart Button */}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => onToggleFav(item._id)}
+      >
+        <Octicons
+          name={isFav ? "heart-fill" : "heart"}
+          size={20}
+          color={isFav ? "red" : "black"}
+        />
+      </TouchableOpacity>
+    </View>
 
-            <View style={styles.cardBottomRow}>
-                {/* Price */}
-                <Text style={styles.cardPrice}>
-                    ${item.price ? item.price.toFixed(2) : '0.00'} 
-                </Text>
-                
-                {/* Rating */}
-                <View style={styles.cardRating}>
-                    <Ionicons name="star" size={14} color="#FFD700" />
-                    <Text style={styles.cardRatingText}>{item.rating}</Text>
-                </View>
-            </View>
+    {/* Text Details */}
+    <View style={styles.newCardDetails}>
+      <Text style={styles.cardTitle}>{item.title || item.name}</Text>
+
+      <Text style={styles.cardDescription} numberOfLines={1}>
+        {item.description || item.subText}
+      </Text>
+
+      <View style={styles.cardBottomRow}>
+        <Text style={styles.cardPrice}>
+          ₹{item.price ? item.price.toFixed(2) : "0.00"}
+        </Text>
+
+        <View style={styles.cardRating}>
+          <Ionicons name="star" size={14} color="#FFD700" />
+          <Text style={styles.cardRatingText}>{item.rating}</Text>
         </View>
-    </TouchableOpacity>
+      </View>
+    </View>
+  </TouchableOpacity>
 );
+const HomeScreen = ({ navigation }) => {
+  const { favourites, toggleFavourite } = useAuth();
 
-const HomeScreen = ({navigation}) => {
+  const [foodItems, setFoodItems] = useState([]);
+  const [categories, setCategoriesList] = useState([]);
 
-  const [foodItems,setFoodItems] = useState([]);
-  const [categories,setCategories] = useState([]);
-
-  //Fetching the foodItems
-  const fetchFoodItems=async(req,res)=>{
-    try{
-      const res= await api.get("/foodItem");
-      setFoodItems(res.data.foodItems || [])
+  // Fetch Food Items
+  const fetchFoodItems = async () => {
+    try {
+      const res = await api.get("/foodItem");
+      setFoodItems(res.data.foodItems || []);
+    } catch (e) {
+      console.log("Food error:", e);
     }
-    catch(e){
-      console.log(e)
+  };
+
+  // Fetch Categories
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/category");
+      setCategoriesList(res.data.categories || []);
+    } catch (e) {
+      console.log("Category error:", e);
     }
-  }
+  };
 
-  //fetching the categories
-  const fetchCategories=async(req,res)=>{
-    try{
-     const res = await api.get("/category");
-     setCategories(res.data.categories || [])
-    }
-    catch(e){
-      console.log(e)
-    }
-  }
-  useEffect(()=>{
-   fetchFoodItems()
+  useEffect(() => {
+    fetchFoodItems();
+    fetchCategories();
+  }, []);
 
-  },[])
-
-  useEffect(()=>{
-   fetchCategories();
-  },[])
-
-  console.log(foodItems)
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -108,95 +106,70 @@ const HomeScreen = ({navigation}) => {
             <Ionicons name="notifications-outline" color="#444" size={26} />
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            marginVertical: 20,
-            gap: 10,
-          }}
-        >
-          <View
-            style={{
-              position: "relative",
 
-              borderWidth: 1,
-              borderColor: "#999",
-              borderRadius: 10,
-              flex: 1,
-            }}
-          >
+        {/* Search Bar */}
+        <View style={styles.searchRow}>
+          <View style={styles.searchBox}>
             <Ionicons
               name="search-outline"
               color="#444"
               size={24}
-              style={{ position: "absolute", top: "25%", left: 10 }}
+              style={styles.searchIcon}
             />
-            <TextInput placeholder="searchFood" style={{ paddingLeft: 40 }} />
+            <TextInput
+              placeholder="Search food..."
+              style={{ paddingLeft: 40 }}
+            />
           </View>
-          <TouchableOpacity
-            style={{
-              width: 40,
-              height: 40,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: Color.DARK,
-              borderRadius: 7,
-            }}
-          >
+
+          <TouchableOpacity style={styles.filterButton}>
             <Ionicons name="filter" color="#fff" size={20} />
           </TouchableOpacity>
         </View>
       </View>
 
-   
-        <View>
-          <FlatList
-          showsVerticalScrollIndicator={false}
-            ListHeaderComponent={() => (
-              <>
-                <Image
-                  source={require("../assets/Banner.png")}
-                  style={{ width: "100%", height: 180 }}
-                />
-                <View style={{ marginVertical: 20 }}>
-                  {
-                    <FlatList
-                      data={categories}
-                      keyExtractor={(item) => item._id.toString()}
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      renderItem={({ item }) => (
-                        <View
-                          style={{
-                            padding: 5,
-                            backgroundColor: Color.DARK,
-                            marginLeft: 10,
-                            paddingHorizontal: 15,
-                            borderRadius: 5,
-                          }}
-                        >
-                          <Text
-                            style={{ color: "#fff", fontFamily: "Inter-Bold" }}
-                          >
-                            {item.name}
-                          </Text>
-                        </View>
-                      )}
-                    />
-                  }
-                </View>
-              </>
-            )}
-            data={foodItems}
-            keyExtractor={(item) => item._id.toString()}
-            numColumns={2}
-            columnWrapperStyle={styles.row}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => <FoodCard item={item} handlePress={()=> navigation.navigate("Food Details", {foodItemId : item._id} ) }/>}
+      {/* MAIN LIST */}
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={() => (
+          <>
+            <Image
+              source={require("../assets/Banner.png")}
+              style={{ width: "100%", height: 180 }}
+            />
+
+            {/* Categories */}
+            <View style={{ marginVertical: 20 }}>
+              <FlatList
+                data={categories}
+                keyExtractor={(item) => item._id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <View style={styles.categoryPill}>
+                    <Text style={styles.categoryText}>{item.name}</Text>
+                  </View>
+                )}
+              />
+            </View>
+          </>
+        )}
+        data={foodItems}
+        keyExtractor={(item) => item._id}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.listContainer}
+        renderItem={({ item }) => (
+          <FoodCard
+            item={item}
+            isFav={favourites.some(f => f._id === item._id)}
+            onToggleFav={toggleFavourite}
+            handlePress={() =>
+              navigation.navigate("Food Details", { foodItemId: item._id })
+            }
           />
-        </View>
-    
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -214,7 +187,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   listContainer: {
-
     paddingBottom: 20,
   },
   row: {
@@ -260,7 +232,7 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     borderRadius: 10, // Rounded square
-    backgroundColor: "#FF8C00", // Bright Orange
+    backgroundColor: "#Fff", // Bright Orange
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
