@@ -20,6 +20,8 @@ import PaymentMethodScreen from "./Screens/PaymentMethodScreen";
 import OrderSuccessfulScreen from "./Screens/OrderSuccessfulScreen";
 import FavouriteScreen from "./Screens/FavouriteScreen";
 import MyOrders from "./Screens/MyOrders";
+import OrderDetailsScreen from "./Screens/ProfileSection/OrderDetailsScreen";
+import OrderTrackScreen from "./Screens/ProfileSection/OrderTrackScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -61,6 +63,8 @@ const ProfileStack=()=>{
       <Stack.Screen name="Main Profile" component={MainProfileScreen} />
       <Stack.Screen name="Address" component={AddressScreen} />
       <Stack.Screen name="My Orders" component = {MyOrders}/>
+      <Stack.Screen name="Order Details" component={OrderDetailsScreen} />
+      <Stack.Screen name="Track Order" component={OrderTrackScreen} />
     </Stack.Navigator>
   );
 }
@@ -206,6 +210,10 @@ export default function App() {
     "Inter-SemiBold": require("./assets/fonts/Inter_18pt-SemiBold.ttf"),
     "Inter-Bold": require("./assets/fonts/Inter_18pt-Bold.ttf"),
     "Inter-ExtraBold": require("./assets/fonts/Inter_18pt-ExtraBold.ttf"),
+    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-SemiBold": require("./assets/fonts/Poppins-SemiBold.ttf"),
+    "Poppins-Medium": require("./assets/fonts/Poppins-Medium.ttf"),
+    "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
 
   if (!fontsLoaded) {
