@@ -10,13 +10,15 @@ import {
 import { api } from "../api/apiConfig";
 import { useAuth } from "../context/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Color from "../constants/Color";
+
 
 const OrderItem = ({ item, navigation }) => {
   const foodNames = item.items
     .slice(0, 2)
     .map((food) => food.foodItemId?.name)
     .join(", ");
-
+  console.log("Item",item)
   const moreCount =
     item.items.length > 2 ? ` +${item.items.length - 2} more` : "";
 
@@ -50,14 +52,19 @@ const OrderItem = ({ item, navigation }) => {
       </View>
 
       {/* Track Button (only if not delivered) */}
-      {item.orderStatus !== "DELIVERED" && (
+   
         <TouchableOpacity
           style={styles.trackButton}
-          onPress={() => navigation.navigate("Track Order")}
+          onPress={() => navigation.navigate("Track Order",{
+             trackOrder:{
+               orderStatus: item.orderStatus,
+               timeline: item.timeline
+             }
+          })}
         >
           <Text style={styles.trackButtonText}>Track</Text>
         </TouchableOpacity>
-      )}
+   
     </View>
   );
 };
@@ -196,7 +203,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   activeTab: {
-    backgroundColor: "#1E8449",
+    backgroundColor: Color.DARK,
     borderRadius: 30,
   },
   activeTabText: {
@@ -220,7 +227,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     marginRight: 15,
-    borderRadius:10
+    borderRadius: 10,
   },
   orderDetailContainer: {
     flex: 1,
@@ -240,7 +247,7 @@ const styles = StyleSheet.create({
   },
 
   trackButton: {
-    backgroundColor: "#1E8449",
+    backgroundColor: Color.DARK,
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 20,
@@ -252,15 +259,16 @@ const styles = StyleSheet.create({
   viewDetailsButton: {
     marginTop: 6,
     borderWidth: 1,
-    borderColor: "#1E8449",
+
+    borderColor: Color.DARK,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     width: 120,
   },
   viewDetailsText: {
-    color: "#1E8449",
-    fontWeight: "600",
+    color: Color.DARK,
+    fontFamily: "Poppins-SemiBold",
     textAlign: "center",
   },
 });

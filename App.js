@@ -22,6 +22,8 @@ import FavouriteScreen from "./Screens/FavouriteScreen";
 import MyOrders from "./Screens/MyOrders";
 import OrderDetailsScreen from "./Screens/ProfileSection/OrderDetailsScreen";
 import OrderTrackScreen from "./Screens/ProfileSection/OrderTrackScreen";
+import MenuManagement from "./Screens/HotelScreens/MenuManagement";
+import CategoryManagement from "./Screens/HotelScreens/CategoryManagement";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -220,10 +222,22 @@ export default function App() {
     return <Text>Loading fonts...</Text>;
   }
 
+
+   const HotelNavigator = () => {
+      return (
+        <Stack.Navigator screenOptions={{headerShown:false}}>
+          <Stack.Screen name="Menu Management" component={MenuManagement}/>
+          <Stack.Screen name="Category Management" component={CategoryManagement}/>
+        </Stack.Navigator>
+      )
+   }
+  
+
   return (
     <AuthProvider>
       <NavigationContainer>
-        <RootNavigator />
+        {/* <RootNavigator /> */}
+        <HotelNavigator/>
       </NavigationContainer>
       <StatusBar style="auto" />
     </AuthProvider>

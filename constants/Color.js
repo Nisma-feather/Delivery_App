@@ -1,5 +1,8 @@
 
 export default {
-  DARK: "#E9810A",
-  DARK_PAIR:"#fff"
+  DARK: "#ed8835",
+  DARK_PAIR: "#fff",
 };
+
+
+// #E9810A
