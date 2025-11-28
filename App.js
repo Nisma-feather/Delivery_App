@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useFonts } from "expo-font";
-import {Ionicons,Foundation} from "@expo/vector-icons"
+import { Ionicons,Foundation} from "@expo/vector-icons"
 import HomeScreen from "./Screens/HomeScreen";
 import FoodDetailScreen from "./Screens/FoodDetailScreen";
 import CartScreen from "./Screens/CartScreen";
