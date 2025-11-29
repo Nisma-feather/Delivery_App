@@ -1,24 +1,24 @@
-import React, { useState, useRef, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as ImagePicker from "expo-image-picker";
-
+import React, { useState, useEffect, useRef } from "react";
 import {
-  Switch,
-  Text,
-  TouchableOpacity,
   View,
-  Image,
-  StyleSheet,
+  Text,
   TextInput,
-  Animated,
-  ScrollView,
-  TouchableHighlight,
+  TouchableOpacity,
+  StyleSheet,
   Alert,
+  ScrollView,
+  Switch,
+  Image,
+ 
+  TouchableHighlight,
   ActivityIndicator,
+  Animated,
 } from "react-native";
 import { Octicons, Entypo } from "@expo/vector-icons";
-import Color from "../../constants/Color";
+import * as ImagePicker from "expo-image-picker";
 import { api } from "../../api/apiConfig";
+import Color from "../../constants/Color";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const FloatingInput = ({
   value,
@@ -84,7 +84,10 @@ const FloatingInput = ({
   );
 };
 
-const AddNewMenu = () => {
+const AddNewMenu = ({ navigation, route }) => {
+  const { isUpdate, foodItem } = route?.params || {};
+
+  // Initialize menu state based on whether we're updating or adding
   const [menu, setMenu] = useState({
     name: "",
     price: "",
@@ -93,13 +96,31 @@ const AddNewMenu = () => {
     categories: [],
     isAvailable: true,
   });
+  console.log("menu",menu)
+
   const [errors, setErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Initialize form with existing data if updating
+  useEffect(() => {
+    if (isUpdate && foodItem) {
+      setMenu({
+        name: foodItem.name || "",
+        price: foodItem.price ? foodItem.price.toString() : "",
+        description: foodItem.description || "",
+        image: foodItem.image || "",
+        categories: foodItem.categories?.map((value) => value._id) || [],
+        isAvailable:
+          foodItem.isAvailable !== undefined ? foodItem.isAvailable : true,
+      });
+
+      
+    }
+  }, [isUpdate, foodItem]);
+
   const pickImage = async () => {
     try {
-      // Request permissions
       const { status } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
@@ -110,7 +131,7 @@ const AddNewMenu = () => {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:'images',
+        mediaTypes: "images",
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.7,
@@ -119,8 +140,8 @@ const AddNewMenu = () => {
 
       if (!result.canceled && result.assets[0]) {
         const asset = result.assets[0];
-        console.log("filesixze",asset.fileSize)
-        // Check file size (1MB limit)
+        console.log("filesize", asset.fileSize);
+
         if (asset.fileSize && asset.fileSize > 1000000) {
           Alert.alert("Error", "Image size should not exceed 1 MB");
           return;
@@ -128,7 +149,6 @@ const AddNewMenu = () => {
 
         const base64 = `data:image/jpeg;base64,${asset.base64}`;
         setMenu((prev) => ({ ...prev, image: base64 }));
-        // Clear any previous image errors
         setErrors((prev) => ({ ...prev, image: undefined }));
       }
     } catch (error) {
@@ -147,7 +167,7 @@ const AddNewMenu = () => {
     } else {
       setMenu({ ...menu, [name]: val });
     }
-    // Clear error when user starts typing
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -209,28 +229,44 @@ const AddNewMenu = () => {
 
       const menuData = {
         ...menu,
-        price: parseFloat(menu.price), // Convert to number for backend
+        price: parseFloat(menu.price),
       };
 
-      const res = await api.post("/foodItem", menuData);
-      console.log(res.data);
+      let res;
+      if (isUpdate && foodItem) {
+        // Update existing item
+        res = await api.put(`/foodItem/${foodItem._id}`, menuData);
+        console.log("Update response:", res.data);
+        Alert.alert("Success", "Menu item updated successfully!");
+      } else {
+        // Add new item
+        res = await api.post("/foodItem", menuData);
+        console.log("Add response:", res.data);
+        Alert.alert("Success", "Menu item added successfully!");
 
-      // Reset form after successful submission
-      setMenu({
-        name: "",
-        price: "",
-        description: "",
-        image: "",
-        categories: [],
-        isAvailable: true,
-      });
+        // Reset form only when adding new item
+        setMenu({
+          name: "",
+          price: "",
+          description: "",
+          image: "",
+          categories: [],
+          isAvailable: true,
+        });
+      }
+
       setErrors({});
 
-      Alert.alert("Success", "Menu item added successfully!");
+      // Navigate back after successful operation
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1500);
     } catch (e) {
-      console.log(e);
-      console.log(e)
-      Alert.alert("Error", "Failed to add menu item. Please try again.");
+      console.log("API Error:", e);
+      const errorMessage = isUpdate
+        ? "Failed to update menu item. Please try again."
+        : "Failed to add menu item. Please try again.";
+      Alert.alert("Error", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -243,7 +279,6 @@ const AddNewMenu = () => {
         ? prev.categories.filter((x) => x !== categoryId)
         : [...prev.categories, categoryId];
 
-      // Clear category error when user selects at least one category
       if (updatedCategories.length > 0 && errors.categories) {
         setErrors((prev) => ({ ...prev, categories: undefined }));
       }
@@ -252,17 +287,24 @@ const AddNewMenu = () => {
     });
   };
 
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <View style={{ backgroundColor: "#eee" }}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => console.log("Go Back")}>
+            <TouchableOpacity onPress={handleGoBack}>
               <Octicons name="arrow-left" color="#000" size={25} />
             </TouchableOpacity>
 
-            <Text style={styles.headerTitle}>Add Menu Item</Text>
+            <Text style={styles.headerTitle}>
+              {isUpdate ? "Update Menu Item" : "Add Menu Item"}
+            </Text>
 
             <View style={styles.availabilityContainer}>
               <Text style={styles.availabilityText}>
@@ -371,12 +413,15 @@ const AddNewMenu = () => {
         style={[styles.buttonContainer, loading && styles.buttonDisabled]}
         onPress={handleAddMenuItem}
         disabled={loading}
+        underlayColor={Color.DARK}
       >
         <View style={styles.buttonContent}>
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Add Menu Item</Text>
+            <Text style={styles.buttonText}>
+              {isUpdate ? "Update Menu Item" : "Add Menu Item"}
+            </Text>
           )}
         </View>
       </TouchableHighlight>

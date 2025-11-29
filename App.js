@@ -24,6 +24,7 @@ import OrderDetailsScreen from "./Screens/ProfileSection/OrderDetailsScreen";
 import OrderTrackScreen from "./Screens/ProfileSection/OrderTrackScreen";
 import MenuManagement from "./Screens/HotelScreens/MenuManagement";
 import CategoryManagement from "./Screens/HotelScreens/CategoryManagement";
+import AddNewMenu from "./Screens/HotelScreens/AddNewMenu";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -227,6 +228,7 @@ export default function App() {
       return (
         <Stack.Navigator screenOptions={{headerShown:false}}>
           <Stack.Screen name="Menu Management" component={MenuManagement}/>
+          <Stack.Screen name="Add Menu" component={AddNewMenu}/>
           <Stack.Screen name="Category Management" component={CategoryManagement}/>
         </Stack.Navigator>
       )

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,90 +8,38 @@ import {
   TouchableOpacity,
   TextInput,
   Switch,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+
 import Color from "../../constants/Color";
 import { api } from "../../api/apiConfig";
 
-// --- 1. Data Structure ---
-const menuData = [
-  {
-    id: "1",
-    name: "Veg Sandwich",
-    price: 5.0,
-    category: "FAST FOOD",
-    isVeg: true,
-    isAvailable: true,
-  },
-  {
-    id: "2",
-    name: "Veg Cheese Sandwich",
-    price: 3.5,
-    category: "FAST FOOD",
-    isVeg: true,
-    isAvailable: true,
-  },
-  {
-    id: "3",
-    name: "Veg Frankie",
-    price: 4.0,
-    category: "FAST FOOD",
-    isVeg: true,
-    isAvailable: false,
-  },
-  {
-    id: "4",
-    name: "Fried Chicken",
-    price: 7.0,
-    category: "FAST FOOD",
-    isVeg: false,
-    isAvailable: true,
-  },
-  {
-    id: "5",
-    name: "Farmville Pizza",
-    price: 5.5,
-    category: "FAST FOOD",
-    isVeg: true,
-    isAvailable: true,
-  },
-];
-const fetchFoodItems=async()=>{
-  try{
-   const res = await api.get("/foodItem");
-   console.log(res.data)
-  }
-  catch(e){
-    console.log(e)
-  }
-}
-
-
- 
-
-
-// Reusable component for the category tab
-const CategoryTab = ({ title, isActive }) => (
-  <TouchableOpacity style={styles.tabContainer}>
-    <Text style={[styles.tabText, isActive && styles.activeTabText]}>
-      {title}
-    </Text>
-    {isActive && <View style={styles.activeTabUnderline} />}
-  </TouchableOpacity>
-);
 
 // Reusable component for a single menu item row
-const MenuItem = ({ item }) => {
-  const [isAvailable, setIsAvailable] = useState(item.isAvailable);
+const MenuItem = ({ item,handleOnPress}) => {
+  const [available, setAvailable] = useState(item.isAvailable);
 
   // Function to toggle stock status
-  const toggleStock = () => {
-    setIsAvailable((previousState) => !previousState);
+  const toggleStock = async () => {
+    try {
+      const newAvailability = !available;
+      const res = await api.put(`foodItem/${item._id}`,{isAvailable:newAvailability})
+      setAvailable(newAvailability);
+
+     
+     
+    } catch (error) {
+      // Revert state if API call fails
+      setAvailable(!available);
+      Alert.alert("Error", "Failed to update stock status");
+    }
   };
 
   return (
-    <View style={styles.menuItemContainer}>
+    <TouchableOpacity style={styles.menuItemContainer} onPress={handleOnPress}>
+      
       {item?.image ? (
         <Image
           source={{ uri: item.image }}
@@ -109,9 +57,10 @@ const MenuItem = ({ item }) => {
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.name}</Text>
         <View style={styles.priceRow}>
-          {/* Veg/Non-Veg Indicator */}
          
-          <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+          <Text style={styles.itemPrice}>
+            ₹ {item.price?.toFixed(2) || "0.00"}
+          </Text>
         </View>
       </View>
 
@@ -119,38 +68,121 @@ const MenuItem = ({ item }) => {
         <Text
           style={[
             styles.stockText,
-            { color: isAvailable ? "#FFB300" : "#888" },
+            { color: available ? "#FFB300" : "#888" },
           ]}
         >
-          {isAvailable ? "In Stock" : "Out of Stock"}
+          {available ? "Available" : "Not Available"}
         </Text>
         <Switch
-          value={isAvailable}
+          value={available}
           onValueChange={toggleStock}
           trackColor={{ false: "gray", true: Color.DARK }}
-          thumbColor={isAvailable ? "#fff" : "#f4f3f4"}
+          thumbColor={available ? "#fff" : "#f4f3f4"}
         />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 // Main Component
-const MenuManagement = () => {
+const MenuManagement = ({navigation}) => {
   const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState([{ _id: "ALL", name: "ALL" }]);
+  const [menu, setMenu] = useState([]);
   const [activeCategory, setActiveCategory] = useState("ALL");
+  const [loading, setLoading] = useState(true);
+  const [searchTimeout, setSearchTimeout] = useState(null);
 
-  // Filter menu items based on search and category
-  const filteredMenuData = menuData.filter((item) => {
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesCategory =
-      activeCategory === "ALL" || item.category === activeCategory;
-    return matchesSearch && matchesCategory;
-  });
+  useEffect(() => {
+    fetchFoodItems();
+    fetchCategories();
+  }, []);
 
-  const categories = ["ALL", "FAST FOOD", "BEVERAGES", "DESSERTS"]; // Add more categories as needed
+  // Fetch food items with backend filtering
+  const fetchFoodItems = async () => {
+    try {
+      setLoading(true);
+
+      // Build query parameters for backend filtering
+      const params = {};
+      if (activeCategory !== "ALL") {
+        params.category = activeCategory;
+      }
+
+      if (search.trim() !== "") {
+        params.search = search.trim();
+      }
+
+      const res = await api.get("/foodItem", { params });
+      setMenu(res.data?.foodItems || []);
+    } catch (e) {
+      console.log("Error fetching food items:", e);
+      Alert.alert("Error", "Failed to load menu items");
+      setMenu([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/category");
+      const fetchedCategories = res.data?.categories || [];
+      // Add "ALL" category at the beginning
+      const allCategories = [{ _id: "ALL", name: "ALL" }, ...fetchedCategories];
+      setCategories(allCategories);
+    } catch (e) {
+      console.log("Error fetching categories:", e);
+      // Keep "ALL" category even if API fails
+      setCategories([{ _id: "ALL", name: "ALL" }]);
+    }
+  };
+
+  // Handle category change
+  const handleCategoryChange = (categoryId) => {
+    setActiveCategory(categoryId);
+  };
+
+  // Handle search with debouncing
+  const handleSearch = (text) => {
+    setSearch(text);
+
+    // Clear previous timeout
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    // Set new timeout for debouncing (500ms delay)
+    const newTimeout = setTimeout(() => {
+      fetchFoodItems();
+    }, 500);
+
+    setSearchTimeout(newTimeout);
+  };
+
+  // Fetch data when category changes
+  useEffect(() => {
+    fetchFoodItems();
+  }, [activeCategory]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
+
+  // Update stock status on server and refresh data
+  
+  const renderMenuItem = ({ item }) => (
+
+    <MenuItem item={item} handleOnPress={()=>navigation.navigate('Add Menu',{
+      isUpdate:true,
+      foodItem:item
+    })}/>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -168,7 +200,7 @@ const MenuManagement = () => {
           style={styles.searchInput}
           value={search}
           placeholder="Search menu items..."
-          onChangeText={setSearch}
+          onChangeText={handleSearch}
         />
       </View>
 
@@ -176,19 +208,19 @@ const MenuManagement = () => {
       <View style={styles.tabsContainer}>
         {categories.map((category) => (
           <TouchableOpacity
-            key={category}
+            key={category._id}
             style={styles.tabContainer}
-            onPress={() => setActiveCategory(category)}
+            onPress={() => handleCategoryChange(category._id)}
           >
             <Text
               style={[
                 styles.tabText,
-                activeCategory === category && styles.activeTabText,
+                activeCategory === category._id && styles.activeTabText,
               ]}
             >
-              {category}
+              {category.name}
             </Text>
-            {activeCategory === category && (
+            {activeCategory === category._id && (
               <View style={styles.activeTabUnderline} />
             )}
           </TouchableOpacity>
@@ -196,16 +228,27 @@ const MenuManagement = () => {
       </View>
 
       {/* Menu List */}
-      <FlatList
-        data={filteredMenuData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <MenuItem item={item} />}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <Text>Loading menu items...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={menu}
+          keyExtractor={(item) => item.id || item._id} // Handle both id and _id
+          renderItem={renderMenuItem}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text>No menu items found</Text>
+            </View>
+          }
+        />
+      )}
 
       {/* Floating Action Button (FAB) - Orange '+' */}
-      <TouchableOpacity style={styles.fab}>
+      <TouchableOpacity style={styles.fab} onPress={()=>navigation.navigate("Add Menu")}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -329,6 +372,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     marginBottom: 5,
+  },
+  // --- Loading and Empty States ---
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 50,
   },
   // --- FAB Styles ---
   fab: {
