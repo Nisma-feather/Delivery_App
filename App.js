@@ -25,6 +25,8 @@ import OrderTrackScreen from "./Screens/ProfileSection/OrderTrackScreen";
 import MenuManagement from "./Screens/HotelScreens/MenuManagement";
 import CategoryManagement from "./Screens/HotelScreens/CategoryManagement";
 import AddNewMenu from "./Screens/HotelScreens/AddNewMenu";
+import OrdersScreen from "./Screens/HotelScreens/OrdersScreen";
+import OrderStatusUpdateScreen from "./Screens/HotelScreens/OrdersStatusUpdateScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -226,10 +228,12 @@ export default function App() {
 
    const HotelNavigator = () => {
       return (
-        <Stack.Navigator screenOptions={{headerShown:false}}>
+        <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName="Orders">
           <Stack.Screen name="Menu Management" component={MenuManagement}/>
           <Stack.Screen name="Add Menu" component={AddNewMenu}/>
           <Stack.Screen name="Category Management" component={CategoryManagement}/>
+           <Stack.Screen name="Orders" component={OrdersScreen}/>
+           <Stack.Screen name="Status Update" component={OrderStatusUpdateScreen} />
         </Stack.Navigator>
       )
    }

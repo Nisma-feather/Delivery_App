@@ -235,6 +235,7 @@ const AddNewMenu = ({ navigation, route }) => {
       let res;
       if (isUpdate && foodItem) {
         // Update existing item
+        console.log("foodItemId",foodItem._id)
         res = await api.put(`/foodItem/${foodItem._id}`, menuData);
         console.log("Update response:", res.data);
         Alert.alert("Success", "Menu item updated successfully!");

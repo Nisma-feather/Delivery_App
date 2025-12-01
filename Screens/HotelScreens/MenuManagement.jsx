@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,24 +13,22 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-
+import { useFocusEffect } from "@react-navigation/native";
 import Color from "../../constants/Color";
 import { api } from "../../api/apiConfig";
 
-
 // Reusable component for a single menu item row
-const MenuItem = ({ item,handleOnPress}) => {
+const MenuItem = ({ item, handleOnPress }) => {
   const [available, setAvailable] = useState(item.isAvailable);
 
   // Function to toggle stock status
   const toggleStock = async () => {
     try {
       const newAvailability = !available;
-      const res = await api.put(`foodItem/${item._id}`,{isAvailable:newAvailability})
+      const res = await api.put(`foodItem/${item._id}`, {
+        isAvailable: newAvailability,
+      });
       setAvailable(newAvailability);
-
-     
-     
     } catch (error) {
       // Revert state if API call fails
       setAvailable(!available);
@@ -39,7 +38,6 @@ const MenuItem = ({ item,handleOnPress}) => {
 
   return (
     <TouchableOpacity style={styles.menuItemContainer} onPress={handleOnPress}>
-      
       {item?.image ? (
         <Image
           source={{ uri: item.image }}
@@ -57,7 +55,6 @@ const MenuItem = ({ item,handleOnPress}) => {
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.name}</Text>
         <View style={styles.priceRow}>
-         
           <Text style={styles.itemPrice}>
             ₹ {item.price?.toFixed(2) || "0.00"}
           </Text>
@@ -85,7 +82,7 @@ const MenuItem = ({ item,handleOnPress}) => {
 };
 
 // Main Component
-const MenuManagement = ({navigation}) => {
+const MenuManagement = ({ navigation }) => {
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState([{ _id: "ALL", name: "ALL" }]);
   const [menu, setMenu] = useState([]);
@@ -175,13 +172,44 @@ const MenuManagement = ({navigation}) => {
   }, [searchTimeout]);
 
   // Update stock status on server and refresh data
-  
-  const renderMenuItem = ({ item }) => (
 
-    <MenuItem item={item} handleOnPress={()=>navigation.navigate('Add Menu',{
-      isUpdate:true,
-      foodItem:item
-    })}/>
+  const renderMenuItem = ({ item }) => (
+    <MenuItem
+      item={item}
+      handleOnPress={() =>
+        navigation.navigate("Add Menu", {
+          isUpdate: true,
+          foodItem: item,
+        })
+      }
+    />
+  );
+
+  //fetching the menu on the focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchFoodItems();
+    }, [])
+  );
+
+  // Render function for category tabs
+  const renderCategoryTab = ({ item }) => (
+    <TouchableOpacity
+      style={styles.tabContainer}
+      onPress={() => handleCategoryChange(item._id)}
+    >
+      <Text
+        style={[
+          styles.tabText,
+          activeCategory === item._id && styles.activeTabText,
+        ]}
+      >
+        {item.name}
+      </Text>
+      {activeCategory === item._id && (
+        <View style={styles.activeTabUnderline} />
+      )}
+    </TouchableOpacity>
   );
 
   return (
@@ -204,27 +232,16 @@ const MenuManagement = ({navigation}) => {
         />
       </View>
 
-      {/* Category Tabs */}
+      {/* Category Tabs - Now Horizontally Scrollable */}
       <View style={styles.tabsContainer}>
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category._id}
-            style={styles.tabContainer}
-            onPress={() => handleCategoryChange(category._id)}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeCategory === category._id && styles.activeTabText,
-              ]}
-            >
-              {category.name}
-            </Text>
-            {activeCategory === category._id && (
-              <View style={styles.activeTabUnderline} />
-            )}
-          </TouchableOpacity>
-        ))}
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item._id}
+          renderItem={renderCategoryTab}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsContentContainer}
+        />
       </View>
 
       {/* Menu List */}
@@ -248,7 +265,10 @@ const MenuManagement = ({navigation}) => {
       )}
 
       {/* Floating Action Button (FAB) - Orange '+' */}
-      <TouchableOpacity style={styles.fab} onPress={()=>navigation.navigate("Add Menu")}>
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate("Add Menu")}
+      >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -282,11 +302,10 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, paddingVertical: 10 },
   // --- Tabs Styles ---
   tabsContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
     marginBottom: 10,
+  },
+  tabsContentContainer: {
+    paddingHorizontal: 10,
   },
   tabContainer: {
     paddingVertical: 10,
