@@ -13,8 +13,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
 import Color from "../../constants/Color";
+
 import { api } from "../../api/apiConfig";
 
 // Reusable component for a single menu item row
@@ -152,7 +154,7 @@ const MenuManagement = ({ navigation }) => {
     // Set new timeout for debouncing (500ms delay)
     const newTimeout = setTimeout(() => {
       fetchFoodItems();
-    }, 500);
+    }, 300);
 
     setSearchTimeout(newTimeout);
   };
@@ -214,56 +216,62 @@ const MenuManagement = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Food Management</Text>
+      <StatusBar style="dark" backgroundColor="white" />
 
-      {/* Search */}
-      <View style={styles.searchContainer}>
-        <Ionicons
-          name="search"
-          size={22}
-          color="#444"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          value={search}
-          placeholder="Search menu items..."
-          onChangeText={handleSearch}
-        />
-      </View>
+      {/* Header */}
+      <View style={styles.topContainer}>
+        <View style={styles.headingContainer}>
+          {/* Title */}
+          <Text style={styles.title}>Menu Management</Text>
 
-      {/* Category Tabs - Now Horizontally Scrollable */}
-      <View style={styles.tabsContainer}>
+          {/* Menu Icon (Right Side) */}
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
+            <Ionicons name="menu" size={28} color="#000" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={22} color="#444" />
+          <TextInput
+            style={styles.searchInput}
+            value={search}
+            placeholder="Search by email or order number..."
+            onChangeText={(val)=>handleSearch(val)}
+          />
+        </View>
+
         <FlatList
           data={categories}
           keyExtractor={(item) => item._id}
           renderItem={renderCategoryTab}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tabsContentContainer}
+          contentContainerStyle={styles.tabContainer}
         />
       </View>
 
-      {/* Menu List */}
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <Text>Loading menu items...</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={menu}
-          keyExtractor={(item) => item.id || item._id} // Handle both id and _id
-          renderItem={renderMenuItem}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text>No menu items found</Text>
-            </View>
-          }
-        />
-      )}
+      {/* Category Tabs - Now Horizontally Scrollable */}
 
+      {/* Menu List */}
+      <View style={{ padding: 15 }}>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <Text>Loading menu items...</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={menu}
+            keyExtractor={(item) => item.id || item._id} // Handle both id and _id
+            renderItem={renderMenuItem}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text>No menu items found</Text>
+              </View>
+            }
+          />
+        )}
+      </View>
       {/* Floating Action Button (FAB) - Orange '+' */}
       <TouchableOpacity
         style={styles.fab}
@@ -278,9 +286,10 @@ const MenuManagement = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+
     backgroundColor: "#F5F5F5",
   },
+
   header: {
     fontSize: 28,
     fontWeight: "800",
@@ -289,17 +298,22 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   searchContainer: {
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 15,
+    borderColor: "#ddd",
+    borderRadius: 12,
     paddingHorizontal: 10,
-    marginBottom: 20,
-    backgroundColor: "white",
+    height: 45,
+    backgroundColor: "#fff",
   },
-  searchIcon: { padding: 5, marginRight: 5 },
-  searchInput: { flex: 1, paddingVertical: 10 },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontFamily: "Poppins-Medium",
+    fontSize: 14,
+  },
   // --- Tabs Styles ---
   tabsContainer: {
     marginBottom: 10,
@@ -358,6 +372,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginBottom: 4,
+  },
+
+  topContainer: {
+    backgroundColor: "white",
+    padding: 15,
+    paddingBottom: 5,
   },
   priceRow: {
     flexDirection: "row",
@@ -425,6 +445,26 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "white",
     lineHeight: 30,
+  },
+  topContainer: {
+    backgroundColor: "white",
+    padding: 15,
+    paddingBottom: 5,
+  },
+  headingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal:10,
+
+
+    backgroundColor: "#fff",
+    justifyContent: "space-between", // TITLE LEFT | MENU RIGHT
+  
+  },
+  title: {
+    fontSize: 17,
+    fontFamily:"Poppins-SemiBold",
+    color: "#000",
   },
 });
 

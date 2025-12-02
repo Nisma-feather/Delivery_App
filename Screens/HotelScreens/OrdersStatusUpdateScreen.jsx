@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import Color from "../../constants/Color";
+import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
+
 import { api } from "../../api/apiConfig";// your axios instance
 
 const OrderDetailsScreen = ({ route, navigation }) => {
@@ -47,7 +49,7 @@ const OrderDetailsScreen = ({ route, navigation }) => {
         orderId:orderId,
         status: nextStatus,
       });
-
+      navigation.navigate("Orders");
       fetchOrderDetails();
     } catch (err) {
       console.log("Status update error:", err);
@@ -77,8 +79,8 @@ const OrderDetailsScreen = ({ route, navigation }) => {
           </Text>
 
           <View style={styles.iconRow}>
-            <Feather name="message-circle" size={22} color="#F6A725" />
-            <Feather name="phone-call" size={22} color="#F6A725" />
+            <Feather name="message-circle" size={22} color={Color.DARK} />
+            <Feather name="phone-call" size={22} color={Color.DARK} />
           </View>
         </View>
 
@@ -87,8 +89,6 @@ const OrderDetailsScreen = ({ route, navigation }) => {
 
         {order.items.map((item) => (
           <View key={item._id} style={styles.itemRow}>
-           
-
             <View style={{ flex: 1 }}>
               <Text style={styles.itemName}>{item.foodItemId.name}</Text>
             </View>
@@ -129,17 +129,27 @@ const OrderDetailsScreen = ({ route, navigation }) => {
         <Text style={styles.sectionTitle}>DELIVERY ADDRESS</Text>
 
         <View style={styles.addressBox}>
-          <Text style={styles.addressText}>
-            {order.deliveryAddress.fullAddress}
-          </Text>
-          <Text style={styles.addressText}>
-            {order.deliveryAddress.city}, {order.deliveryAddress.state}
-          </Text>
-          <Text style={styles.addressText}>
-            {order.deliveryAddress.pincode}, {order.deliveryAddress.country}
-          </Text>
+          <View>
+            <Ionicons name="location" size={24} color="#333" />
+          </View>
+          <View>
+            <Text style={styles.addressText}>
+              {order.deliveryAddress.fullAddress}
+            </Text>
+            <Text style={styles.addressText}>
+              {order.deliveryAddress.city}, {order.deliveryAddress.state}
+            </Text>
+            <Text style={styles.addressText}>
+              {order.deliveryAddress.pincode}, {order.deliveryAddress.country}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.addressBox}>
+          <View>
+            <FontAwesome name="phone" size={24} color="#333" />
+          </View>
           <Text style={[styles.addressText, { marginTop: 5 }]}>
-            📞 {order.contactNo}
+            {order.contactNo}
           </Text>
         </View>
       </ScrollView>
@@ -173,8 +183,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
-  customerName: { fontSize: 20, fontWeight: "600", color: "#000" },
-  orderId: { fontSize: 13, marginTop: 5, color: "#6c6c6c" },
+
+  customerName: {
+    fontSize: 20,
+    color: "#000",
+    fontFamily: "Poppins-Bold",
+  },
+
+  orderId: {
+    fontSize: 13,
+    marginTop: 5,
+    color: "#6c6c6c",
+    fontFamily: "Poppins-Regular",
+  },
 
   iconRow: {
     flexDirection: "row",
@@ -190,8 +211,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 20,
     fontSize: 13,
-    fontWeight: "600",
     color: "#6c6c6c",
+    fontFamily: "Poppins-SemiBold",
   },
 
   itemRow: {
@@ -203,23 +224,28 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
     alignItems: "center",
   },
-  itemName: { flex: 1, fontSize: 15, color: "#000" },
-  qty: { width: 30, textAlign: "center", fontSize: 15, color: "#444" },
-  price: { width: 70, textAlign: "right", fontSize: 15, color: "#000" },
 
-  dotVeg: {
-    width: 10,
-    height: 10,
-    backgroundColor: "green",
-    borderRadius: 5,
-    marginRight: 10,
+  itemName: {
+    flex: 1,
+    fontSize: 15,
+    color: "#000",
+    fontFamily: "Poppins-Medium",
   },
-  dotNonVeg: {
-    width: 10,
-    height: 10,
-    backgroundColor: "red",
-    borderRadius: 5,
-    marginRight: 10,
+
+  qty: {
+    width: 30,
+    textAlign: "center",
+    fontSize: 15,
+    color: "#444",
+    fontFamily: "Poppins-Regular",
+  },
+
+  price: {
+    width: 70,
+    textAlign: "right",
+    fontSize: 15,
+    color: "#000",
+    fontFamily: "Poppins-Medium",
   },
 
   paymentRow: {
@@ -231,17 +257,51 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
-  payLabel: { fontSize: 15, color: "#6c6c6c" },
-  payValue: { fontSize: 15, color: "#000" },
+
+  payLabel: {
+    fontSize: 15,
+    color: "#6c6c6c",
+    fontFamily: "Poppins-Regular",
+  },
+
+  payValue: {
+    fontSize: 15,
+    color: "#000",
+    fontFamily: "Poppins-Medium",
+  },
 
   addressBox: {
+    flexDirection: "row",
+    gap: 10,
     backgroundColor: "#fff",
     padding: 20,
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
-  addressText: { fontSize: 14, color: "#444", marginBottom: 3 },
 
-  bottomBtn: { backgroundColor: "#F6A725", padding: 18, alignItems: "center" },
-  bottomText: { fontSize: 18, fontWeight: "600", color: "#000" },
+  addressText: {
+    fontSize: 14,
+    color: "#444",
+    marginBottom: 3,
+    fontFamily: "Poppins-Regular",
+  },
+
+  bottomBtn: {
+    backgroundColor: Color.DARK,
+    padding: 18,
+    alignItems: "center",
+  },
+
+  bottomText: {
+    fontSize: 18,
+    color: "#000",
+    fontFamily: "Poppins-Bold",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 15,
+    flexWrap: "wrap",
+  },
 });
+

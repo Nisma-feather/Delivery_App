@@ -167,6 +167,15 @@ const OrdersScreen = ({navigation}) => {
 
       {/* SEARCH BAR */}
       <View style={styles.topContainer}>
+        <View style={styles.headingContainer}>
+                  {/* Title */}
+                  <Text style={styles.title}>Menu Management</Text>
+        
+                  {/* Menu Icon (Right Side) */}
+                  <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                    <Ionicons name="menu" size={28} color="#000" />
+                  </TouchableOpacity>
+                </View>
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={22} color="#444" />
           <TextInput
@@ -235,9 +244,9 @@ export default OrdersScreen;
 
 /* ---------------- STYLES ---------------- */
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#f5f5f5" 
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
 
   centerContent: {
@@ -374,5 +383,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Poppins-SemiBold",
     textTransform: "uppercase",
+  },
+  headingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    marginBottom:10,
+    backgroundColor: "#fff",
+    justifyContent: "space-between", // TITLE LEFT | MENU RIGHT
+  },
+  title: {
+    fontSize: 18,
+    fontFamily: "Poppins-SemiBold",
+    color: "#000",
+   
   },
 });
