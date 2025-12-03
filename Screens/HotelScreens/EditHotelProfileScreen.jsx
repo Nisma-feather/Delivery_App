@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,21 +7,26 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { api } from "../../api/apiConfig";
 
 const EditHotelProfile = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [restaurantName, setRestaurantName] = useState("");
-  const [address, setAddress] = useState("");
+  const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [stateName, setStateName] = useState("");
   const [pincode, setPincode] = useState("");
   const [contact, setContact] = useState("");
-  const [openingTime, setOpeningTime] = useState("");
-  const [closingTime, setClosingTime] = useState("");
+  const [loading,setLoading] = useState(false);
+  const [updating,setUpdating] = useState(false);
+  // Store Date objects directly
+  const [openingTime, setOpeningTime] = useState(null);
+  const [closingTime, setClosingTime] = useState(null);
 
   const [showOpenPicker, setShowOpenPicker] = useState(false);
   const [showClosePicker, setShowClosePicker] = useState(false);
@@ -43,7 +48,10 @@ const EditHotelProfile = ({ navigation }) => {
     }
   };
 
-  const formatTime = (date) => {
+  // Format Date for display only
+  const formatTimeForDisplay = (date) => {
+    if (!date) return "Select Time";
+
     let hours = date.getHours();
     let minutes = date.getMinutes();
     let ampm = hours >= 12 ? "PM" : "AM";
@@ -59,37 +67,86 @@ const EditHotelProfile = ({ navigation }) => {
 
     if (!restaurantName.trim())
       newErrors.restaurantName = "Restaurant Name is required";
-    if (!address.trim()) newErrors.address = "Address is required";
+    if (!street.trim()) newErrors.address = "Address is required";
     if (!city.trim()) newErrors.city = "City is required";
     if (!stateName.trim()) newErrors.stateName = "State is required";
     if (!pincode.trim()) newErrors.pincode = "Pincode is required";
     if (!contact.trim()) newErrors.contact = "Contact Number is required";
-    if (!openingTime.trim()) newErrors.openingTime = "Opening Time is required";
-    if (!closingTime.trim()) newErrors.closingTime = "Closing Time is required";
 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   };
 
-  const onSave = () => {
+  const onSave = async () => {
     if (!validate()) return;
 
     const data = {
+      email: "admin@gmail.com",
       restaurantName,
-      address,
-      city,
-      stateName,
-      pincode,
+      address: {
+        street,
+        city,
+        stateName,
+        pincode,
+      },
       contact,
-      openingTime,
-      closingTime,
+      openingTime: openingTime.toISOString(), // Send ISO string to backend
+      closingTime: closingTime.toISOString(), // Send ISO string to backend
       profileImage,
     };
 
     console.log("Saved Data:", data);
-    navigation.goBack();
+
+    try {
+      // Send to backend - backend will convert ISO string to Date
+      setUpdating(true)
+      await api.put("/hotel/profile", data);
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
+    finally{
+      setUpdating(false)
+    }
   };
+
+  const getHotelData = async () => {
+    try {
+      const res = await api.get("/hotel");
+      console.log("Hotel data:", res.data.restaurantData);
+
+      const data = res.data.restaurantData;
+
+      // Set all fields
+      setRestaurantName(data.restaurantName || "");
+      setStreet(data.address?.street || "");
+      setCity(data.address?.city || "");
+      setStateName(data.address?.stateName || "");
+      setPincode(data.address?.pincode || "");
+      setContact(data.contact || "");
+      setProfileImage(data.profileImage || null);
+
+      // Backend now returns Date objects or ISO strings
+      if (data.openingTime) {
+        // If it's already a Date object
+        const openingDate = new Date(data.openingTime);
+        setOpeningTime(openingDate);
+      }
+
+      if (data.closingTime) {
+        // If it's already a Date object
+        const closingDate = new Date(data.closingTime);
+        setClosingTime(closingDate);
+      }
+    } catch (e) {
+      console.log("Error fetching hotel data:", e);
+    }
+  };
+
+  useEffect(() => {
+    getHotelData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -137,9 +194,9 @@ const EditHotelProfile = ({ navigation }) => {
           <Text style={styles.label}>Address</Text>
           <TextInput
             style={styles.input}
-            value={address}
+            value={street}
             placeholder="Street / Area"
-            onChangeText={setAddress}
+            onChangeText={setStreet}
           />
           {errors.address && <Text style={styles.error}>{errors.address}</Text>}
 
@@ -193,7 +250,7 @@ const EditHotelProfile = ({ navigation }) => {
             style={styles.input}
             onPress={() => setShowOpenPicker(true)}
           >
-            <Text>{openingTime || "Select Opening Time"}</Text>
+            <Text>{formatTimeForDisplay(openingTime)}</Text>
           </TouchableOpacity>
           {errors.openingTime && (
             <Text style={styles.error}>{errors.openingTime}</Text>
@@ -201,10 +258,10 @@ const EditHotelProfile = ({ navigation }) => {
           {showOpenPicker && (
             <DateTimePicker
               mode="time"
-              value={new Date()}
+              value={openingTime || new Date()} // Date object
               onChange={(event, selected) => {
                 setShowOpenPicker(false);
-                if (selected) setOpeningTime(formatTime(selected));
+                if (selected) setOpeningTime(selected); // Store Date object
               }}
             />
           )}
@@ -215,7 +272,7 @@ const EditHotelProfile = ({ navigation }) => {
             style={styles.input}
             onPress={() => setShowClosePicker(true)}
           >
-            <Text>{closingTime || "Select Closing Time"}</Text>
+            <Text>{formatTimeForDisplay(closingTime)}</Text>
           </TouchableOpacity>
           {errors.closingTime && (
             <Text style={styles.error}>{errors.closingTime}</Text>
@@ -223,10 +280,10 @@ const EditHotelProfile = ({ navigation }) => {
           {showClosePicker && (
             <DateTimePicker
               mode="time"
-              value={new Date()}
+              value={closingTime || new Date()} // Date object
               onChange={(event, selected) => {
                 setShowClosePicker(false);
-                if (selected) setClosingTime(formatTime(selected));
+                if (selected) setClosingTime(selected); // Store Date object
               }}
             />
           )}
@@ -234,8 +291,12 @@ const EditHotelProfile = ({ navigation }) => {
       </ScrollView>
 
       {/* Save Button */}
-      <TouchableOpacity style={styles.saveBtn} onPress={onSave}>
-        <Text style={styles.saveText}>Save Changes</Text>
+      <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={updating}>
+        {updating ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <Text style={styles.saveText}>Save Changes</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

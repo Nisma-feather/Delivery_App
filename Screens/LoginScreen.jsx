@@ -60,7 +60,7 @@ const handleLogin = async () => {
     console.log(res.data)
     if (res.data?.token && res.data?.user) {
       // ✅ Store in context + AsyncStorage
-      await login(res.data.token, res.data.user.userId, email, res.data.user.role);
+      await login(res.data.token, res.data.user.userId, res.data.user.role);
 
       alert("Login successful!");
       navigation.navigate("User Home");

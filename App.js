@@ -187,7 +187,7 @@ const {cartLength} = useAuth();
 
 function RootNavigator() {
   const { auth, loading } = useAuth();
-
+  console.log(auth)
   // Show loading spinner while verifying token
   if (loading) {
     return (
@@ -199,24 +199,115 @@ function RootNavigator() {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {auth?.token ? (
-        // ✅ If token verified → show main app
-        <Stack.Screen name="User Home" component={UserTabs} />
-      ) : (
-        // ❌ No token → show login/signup flow
-        <>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Signup" component={SignUpScreen} />
-          <Stack.Screen
-            name="Email Verification"
-            component={EmailOTPVerification}
-          />
-        </>
-      )}
-    </Stack.Navigator>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    {(auth?.token && auth?.role === "user") ? (
+      <Stack.Screen name="User Home" component={UserTabs} />
+    ) : (auth?.token && auth?.role === "restaurant") ? (
+      <Stack.Screen name="Restaurant" component={MainRestaurantNavigator} />
+    ) : (
+      <>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Signup" component={SignUpScreen} />
+        <Stack.Screen name="Email Verification" component={EmailOTPVerification} />
+      </>
+    )}
+  </Stack.Navigator>
   );
 }
+
+   const HotelNavigator = () => {
+     return (
+       <Stack.Navigator
+         screenOptions={{ headerShown: false }}
+         initialRouteName="Orders"
+       >
+         <Stack.Screen name="Menu Management" component={MenuManagement} />
+         <Stack.Screen name="Add Menu" component={AddNewMenu} />
+         <Stack.Screen
+           name="Category Management"
+           component={CategoryManagement}
+         />
+         <Stack.Screen name="Orders" component={OrdersScreen} />
+         <Stack.Screen
+           name="Status Update"
+           component={OrderStatusUpdateScreen}
+         />
+       </Stack.Navigator>
+     );
+   };
+   const HotelProfileStack = () => {
+     return (
+       <Stack.Navigator screenOptions={{ headerShown: false }}>
+         <Stack.Screen name="MainProfile" component={HotelProfileScreen} />
+         <Stack.Screen name="Profile Edit" component={EditHotelProfile} />
+       </Stack.Navigator>
+     );
+   };
+
+   const MainRestaurantNavigator = () => {
+     return (
+       <Drawer.Navigator
+         screenOptions={{
+           headerShown: false,
+           drawerActiveTintColor: Color.DARK,
+           drawerInactiveTintColor: "#555",
+           drawerActiveBackgroundColor: "#fff",
+           drawerLabelStyle: {
+             fontSize: 16,
+             fontFamily: "Poppins-Medium", // example
+           },
+         }}
+       >
+         <Drawer.Screen
+           name="Menu Management"
+           component={MenuManagement}
+           options={{
+             drawerIcon: ({ focused, color }) => (
+               <Ionicons name="fast-food-outline" color={color} size={26} />
+             ),
+           }}
+         />
+
+         <Drawer.Screen
+           name="Add Menu"
+           component={AddNewMenu}
+           options={{
+             drawerIcon: ({ focused, color }) => (
+               <Feather name="shopping-bag" color={color} size={24} />
+             ),
+           }}
+         />
+         <Drawer.Screen
+           name="Category Management"
+           component={CategoryManagement}
+           options={{
+             drawerIcon: ({ focused, color }) => (
+               <MaterialCommunityIcons
+                 name="silverware"
+                 color={color}
+                 size={24}
+               />
+             ),
+           }}
+         />
+         <Drawer.Screen
+           name="Orders"
+           component={OrdersScreen}
+           options={{
+             drawerIcon: ({ focused, color }) => (
+               <Feather name="shopping-bag" color={color} size={24} />
+             ),
+           }}
+         />
+         <Drawer.Screen
+           name="Status Update"
+           component={OrderStatusUpdateScreen}
+         />
+         <Drawer.Screen name="Profile" component={HotelProfileStack} />
+       </Drawer.Navigator>
+     );
+   };
+  
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -236,102 +327,13 @@ export default function App() {
   }
 
 
-   const HotelNavigator = () => {
-      return (
-        <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName="Orders">
-          <Stack.Screen name="Menu Management" component={MenuManagement}/>
-          <Stack.Screen name="Add Menu" component={AddNewMenu}/>
-          <Stack.Screen name="Category Management" component={CategoryManagement}/>
-           <Stack.Screen name="Orders" component={OrdersScreen}/>
-           <Stack.Screen name="Status Update" component={OrderStatusUpdateScreen} />
-        </Stack.Navigator>
-      )
-   }
-   const HotelProfileStack=()=>{
-       return (
-         <Stack.Navigator>
-           <Stack.Screen
-             name="MainProfile"
-             component={HotelProfileScreen}
-           />
-           <Stack.Screen name="Profile Edit" component={EditHotelProfile} />
-         </Stack.Navigator>
-       );
-   }
-
-
-   const MainRestaurantNavigator=()=>{
-   
-    return (
-      <Drawer.Navigator
-        screenOptions={{
-          headerShown: false,
-          drawerActiveTintColor: Color.DARK,
-          drawerInactiveTintColor: "#555",
-          drawerActiveBackgroundColor: "#fff",
-          drawerLabelStyle: {
-            fontSize: 16,
-            fontFamily: "Poppins-Medium", // example
-          },
-        }}
-      >
-        <Drawer.Screen
-          name="Menu Management"
-          component={MenuManagement}
-          options={{
-            drawerIcon: ({ focused, color }) => (
-              <Ionicons name="fast-food-outline" color={color} size={26} />
-            ),
-          }}
-        />
-
-        <Drawer.Screen
-          name="Add Menu"
-          component={AddNewMenu}
-          options={{
-            drawerIcon: ({ focused, color }) => (
-              <Feather name="shopping-bag" color={color} size={24} />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="Category Management"
-          component={CategoryManagement}
-          options={{
-            drawerIcon: ({ focused, color }) => (
-             <MaterialCommunityIcons name="silverware" color={color} size={24} />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="Orders"
-          component={OrdersScreen}
-          options={{
-            drawerIcon: ({ focused, color }) => (
-              <Feather name="shopping-bag" color={color} size={24} />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="Status Update"
-          component={OrderStatusUpdateScreen}
-        />
-        <Drawer.Screen 
-        name="Profile"
-        component={HotelProfileStack}
-
-        />
-      </Drawer.Navigator>
-    );
-   }
-  
 
   return (
     <AuthProvider>
       <NavigationContainer>
-        {/* <RootNavigator /> */}
+        <RootNavigator />
         {/* <HotelNavigator/> */}
-        <MainRestaurantNavigator/>
+        {/* <MainRestaurantNavigator/> */}
       </NavigationContainer>
       <StatusBar style="auto" />
     </AuthProvider>

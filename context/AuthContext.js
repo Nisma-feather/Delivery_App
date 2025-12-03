@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
           setAuth({
             token: storedToken,
             userId: res.data.userId,
-            role: res.data.userRole,
+            role: res.data.role,
           });
         } else {
           await AsyncStorage.removeItem("token");
