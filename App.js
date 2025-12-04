@@ -36,6 +36,8 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Color from "./constants/Color";
 import HotelProfileScreen from "./Screens/HotelScreens/HotelProfileScreen";
 import EditHotelProfile from "./Screens/HotelScreens/EditHotelProfileScreen";
+import TermsAndConditionsScreen from "./Screens/HotelScreens/TermsAndConditionsScreen";
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -240,9 +242,38 @@ function RootNavigator() {
        <Stack.Navigator screenOptions={{ headerShown: false }}>
          <Stack.Screen name="MainProfile" component={HotelProfileScreen} />
          <Stack.Screen name="Profile Edit" component={EditHotelProfile} />
+         <Stack.Screen name="Terms Conditions" component={TermsAndConditionsScreen}/>
+         
        </Stack.Navigator>
      );
    };
+
+   const MenuManagementStack=()=>{
+    return(
+      <Stack.Navigator screenOptions={{headerShown:false}}>
+          <Stack.Screen name="Menu Manangement" component={MenuManagement} />
+          <Stack.Screen name="Add Menu" component={AddNewMenu} />
+      </Stack.Navigator>
+     
+    )
+   }
+
+   const HotelOrdersManagement=()=>{
+    return (
+      <Stack.Navigator screenOptions={{headerShown:false}}>
+        <Stack.Screen
+          name="Orders"
+          component={OrdersScreen}
+          
+        />
+        <Stack.Screen
+          name="Status Update"
+          component={OrderStatusUpdateScreen}
+          
+        />
+      </Stack.Navigator>
+    );
+   }
 
    const MainRestaurantNavigator = () => {
      return (
@@ -259,51 +290,52 @@ function RootNavigator() {
          }}
        >
          <Drawer.Screen
-           name="Menu Management"
-           component={MenuManagement}
+           name="Menu"
+           component={MenuManagementStack}
            options={{
              drawerIcon: ({ focused, color }) => (
-               <Ionicons name="fast-food-outline" color={color} size={26} />
+               <Ionicons name="restaurant-outline" color={color} size={26} />
              ),
            }}
          />
 
          <Drawer.Screen
-           name="Add Menu"
-           component={AddNewMenu}
-           options={{
-             drawerIcon: ({ focused, color }) => (
-               <Feather name="shopping-bag" color={color} size={24} />
-             ),
-           }}
-         />
-         <Drawer.Screen
            name="Category Management"
            component={CategoryManagement}
            options={{
              drawerIcon: ({ focused, color }) => (
-               <MaterialCommunityIcons
-                 name="silverware"
-                 color={color}
-                 size={24}
-               />
+               <Ionicons name="fast-food-outline" color={color} size={24} />
              ),
            }}
          />
          <Drawer.Screen
-           name="Orders"
-           component={OrdersScreen}
+           name="Orders Screen"
+           component={HotelOrdersManagement}
            options={{
+             title: "Orders",
              drawerIcon: ({ focused, color }) => (
                <Feather name="shopping-bag" color={color} size={24} />
              ),
            }}
          />
-         <Drawer.Screen
+         {/* <Drawer.Screen
            name="Status Update"
            component={OrderStatusUpdateScreen}
+           options={{
+             drawerIcon: ({ focused, color }) => (
+               <MaterialCommunityIcons name="update" color={color} size={24} />
+             ),
+           }}
+         /> */}
+         <Drawer.Screen
+           name="Profile"
+           component={HotelProfileStack}
+           options={{
+             drawerIcon: ({ focused, color }) => (
+               <Ionicons name="person-outline" color={color} size={24} />
+             ),
+           }}
          />
-         <Drawer.Screen name="Profile" component={HotelProfileStack} />
        </Drawer.Navigator>
      );
    };

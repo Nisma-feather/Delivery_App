@@ -9,6 +9,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -148,158 +149,166 @@ const EditHotelProfile = ({ navigation }) => {
     getHotelData();
   }, []);
 
-  return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
-          <View style={{ width: 24 }} />
-        </View>
+ return (
+   <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+     <ScrollView
+       contentContainerStyle={{ paddingBottom: 40 }}
+       showsVerticalScrollIndicator={false}
+     >
+       {/* Header */}
+       <View style={styles.header}>
+         <TouchableOpacity onPress={() => navigation.goBack()}>
+           <Ionicons name="arrow-back" size={24} color="#000" />
+         </TouchableOpacity>
+         <Text style={styles.headerTitle}>Edit Profile</Text>
+         <View style={{ width: 24 }} />
+       </View>
 
-        {/* Profile Image */}
-        <View style={styles.imageWrap}>
-          <TouchableOpacity onPress={pickImage}>
-            {profileImage ? (
-              <Image
-                source={{ uri: profileImage }}
-                style={styles.profileImage}
-              />
-            ) : (
-              <View style={styles.imagePlaceholder}>
-                <Feather name="camera" size={28} color="#777" />
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
+       {/* Profile Image */}
+       <View style={styles.imageWrap}>
+         <TouchableOpacity onPress={pickImage}>
+           {profileImage ? (
+             <Image
+               source={{ uri: profileImage }}
+               style={styles.profileImage}
+             />
+           ) : (
+             <View style={styles.imagePlaceholder}>
+               <Feather name="camera" size={28} color="#777" />
+             </View>
+           )}
+         </TouchableOpacity>
+       </View>
 
-        {/* Inputs */}
-        <View style={styles.form}>
-          {/* Restaurant Name */}
-          <Text style={styles.label}>Restaurant Name</Text>
-          <TextInput
-            style={styles.input}
-            value={restaurantName}
-            placeholder="Enter restaurant name"
-            onChangeText={setRestaurantName}
-          />
-          {errors.restaurantName && (
-            <Text style={styles.error}>{errors.restaurantName}</Text>
-          )}
+       {/* Inputs */}
+       <View style={styles.form}>
+         {/* Restaurant Name */}
+         <Text style={styles.label}>Restaurant Name</Text>
+         <TextInput
+           style={styles.input}
+           value={restaurantName}
+           placeholder="Enter restaurant name"
+           onChangeText={setRestaurantName}
+         />
+         {errors.restaurantName && (
+           <Text style={styles.error}>{errors.restaurantName}</Text>
+         )}
 
-          {/* Address */}
-          <Text style={styles.label}>Address</Text>
-          <TextInput
-            style={styles.input}
-            value={street}
-            placeholder="Street / Area"
-            onChangeText={setStreet}
-          />
-          {errors.address && <Text style={styles.error}>{errors.address}</Text>}
+         {/* Address */}
+         <Text style={styles.label}>Address</Text>
+         <TextInput
+           style={styles.input}
+           value={street}
+           placeholder="Street / Area"
+           onChangeText={setStreet}
+         />
+         {errors.address && <Text style={styles.error}>{errors.address}</Text>}
 
-          {/* City */}
-          <Text style={styles.label}>City</Text>
-          <TextInput
-            style={styles.input}
-            value={city}
-            placeholder="Ex: Chennai"
-            onChangeText={setCity}
-          />
-          {errors.city && <Text style={styles.error}>{errors.city}</Text>}
+         {/* City */}
+         <Text style={styles.label}>City</Text>
+         <TextInput
+           style={styles.input}
+           value={city}
+           placeholder="Ex: Chennai"
+           onChangeText={setCity}
+         />
+         {errors.city && <Text style={styles.error}>{errors.city}</Text>}
 
-          {/* State */}
-          <Text style={styles.label}>State</Text>
-          <TextInput
-            style={styles.input}
-            value={stateName}
-            placeholder="Ex: Tamil Nadu"
-            onChangeText={setStateName}
-          />
-          {errors.stateName && (
-            <Text style={styles.error}>{errors.stateName}</Text>
-          )}
+         {/* State */}
+         <Text style={styles.label}>State</Text>
+         <TextInput
+           style={styles.input}
+           value={stateName}
+           placeholder="Ex: Tamil Nadu"
+           onChangeText={setStateName}
+         />
+         {errors.stateName && (
+           <Text style={styles.error}>{errors.stateName}</Text>
+         )}
 
-          {/* Pincode */}
-          <Text style={styles.label}>Pincode</Text>
-          <TextInput
-            style={styles.input}
-            value={pincode}
-            keyboardType="number-pad"
-            placeholder="Ex: 600001"
-            onChangeText={setPincode}
-          />
-          {errors.pincode && <Text style={styles.error}>{errors.pincode}</Text>}
+         {/* Pincode */}
+         <Text style={styles.label}>Pincode</Text>
+         <TextInput
+           style={styles.input}
+           value={pincode}
+           keyboardType="number-pad"
+           placeholder="Ex: 600001"
+           onChangeText={setPincode}
+         />
+         {errors.pincode && <Text style={styles.error}>{errors.pincode}</Text>}
 
-          {/* Contact */}
-          <Text style={styles.label}>Contact Number</Text>
-          <TextInput
-            style={styles.input}
-            value={contact}
-            keyboardType="phone-pad"
-            placeholder="Restaurant phone number"
-            onChangeText={setContact}
-          />
-          {errors.contact && <Text style={styles.error}>{errors.contact}</Text>}
+         {/* Contact */}
+         <Text style={styles.label}>Contact Number</Text>
+         <TextInput
+           style={styles.input}
+           value={contact}
+           keyboardType="phone-pad"
+           placeholder="Restaurant phone number"
+           onChangeText={setContact}
+         />
+         {errors.contact && <Text style={styles.error}>{errors.contact}</Text>}
 
-          {/* Opening Time */}
-          <Text style={styles.label}>Opening Time</Text>
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setShowOpenPicker(true)}
-          >
-            <Text>{formatTimeForDisplay(openingTime)}</Text>
-          </TouchableOpacity>
-          {errors.openingTime && (
-            <Text style={styles.error}>{errors.openingTime}</Text>
-          )}
-          {showOpenPicker && (
-            <DateTimePicker
-              mode="time"
-              value={openingTime || new Date()} // Date object
-              onChange={(event, selected) => {
-                setShowOpenPicker(false);
-                if (selected) setOpeningTime(selected); // Store Date object
-              }}
-            />
-          )}
+         {/* Opening Time */}
+         <Text style={styles.label}>Opening Time</Text>
+         <TouchableOpacity
+           style={styles.input}
+           onPress={() => setShowOpenPicker(true)}
+         >
+           <Text>{formatTimeForDisplay(openingTime)}</Text>
+         </TouchableOpacity>
+         {errors.openingTime && (
+           <Text style={styles.error}>{errors.openingTime}</Text>
+         )}
+         {showOpenPicker && (
+           <DateTimePicker
+             mode="time"
+             value={openingTime || new Date()}
+             onChange={(event, selected) => {
+               setShowOpenPicker(false);
+               if (selected) setOpeningTime(selected);
+             }}
+           />
+         )}
 
-          {/* Closing Time */}
-          <Text style={styles.label}>Closing Time</Text>
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setShowClosePicker(true)}
-          >
-            <Text>{formatTimeForDisplay(closingTime)}</Text>
-          </TouchableOpacity>
-          {errors.closingTime && (
-            <Text style={styles.error}>{errors.closingTime}</Text>
-          )}
-          {showClosePicker && (
-            <DateTimePicker
-              mode="time"
-              value={closingTime || new Date()} // Date object
-              onChange={(event, selected) => {
-                setShowClosePicker(false);
-                if (selected) setClosingTime(selected); // Store Date object
-              }}
-            />
-          )}
-        </View>
-      </ScrollView>
+         {/* Closing Time */}
+         <Text style={styles.label}>Closing Time</Text>
+         <TouchableOpacity
+           style={styles.input}
+           onPress={() => setShowClosePicker(true)}
+         >
+           <Text>{formatTimeForDisplay(closingTime)}</Text>
+         </TouchableOpacity>
+         {errors.closingTime && (
+           <Text style={styles.error}>{errors.closingTime}</Text>
+         )}
+         {showClosePicker && (
+           <DateTimePicker
+             mode="time"
+             value={closingTime || new Date()}
+             onChange={(event, selected) => {
+               setShowClosePicker(false);
+               if (selected) setClosingTime(selected);
+             }}
+           />
+         )}
+       </View>
+     </ScrollView>
 
-      {/* Save Button */}
-      <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={updating}>
-        {updating ? (
-          <ActivityIndicator size="small" />
-        ) : (
-          <Text style={styles.saveText}>Save Changes</Text>
-        )}
-      </TouchableOpacity>
-    </View>
-  );
+     {/* Save Button */}
+     <TouchableOpacity
+       style={styles.saveBtn}
+       onPress={onSave}
+       disabled={updating}
+     >
+       {updating ? (
+         <ActivityIndicator size="small" />
+       ) : (
+         <Text style={styles.saveText}>Save Changes</Text>
+       )}
+     </TouchableOpacity>
+   </SafeAreaView>
+ );
+
 };
 
 export default EditHotelProfile;

@@ -142,37 +142,7 @@ const MenuManagement = ({ navigation }) => {
     setActiveCategory(categoryId);
   };
 
-  // Handle search with debouncing
-  const handleSearch = (text) => {
-    setSearch(text);
-
-    // Clear previous timeout
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-
-    // Set new timeout for debouncing (500ms delay)
-    const newTimeout = setTimeout(() => {
-      fetchFoodItems();
-    }, 300);
-
-    setSearchTimeout(newTimeout);
-  };
-
-  // Fetch data when category changes
-  useEffect(() => {
-    fetchFoodItems();
-  }, [activeCategory]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
-      }
-    };
-  }, [searchTimeout]);
-
+  
   // Update stock status on server and refresh data
 
   const renderMenuItem = ({ item }) => (
@@ -188,11 +158,14 @@ const MenuManagement = ({ navigation }) => {
   );
 
   //fetching the menu on the focus
-  useFocusEffect(
-    useCallback(() => {
-      fetchFoodItems();
-    }, [])
-  );
+useFocusEffect(
+  useCallback(() => {
+    fetchFoodItems();
+  }, [activeCategory,search])
+);
+
+
+
 
   // Render function for category tabs
   const renderCategoryTab = ({ item }) => (
@@ -235,7 +208,7 @@ const MenuManagement = ({ navigation }) => {
             style={styles.searchInput}
             value={search}
             placeholder="Search by email or order number..."
-            onChangeText={(val)=>handleSearch(val)}
+            onChangeText={(val)=>setSearch(val)}
           />
         </View>
 
@@ -286,17 +259,17 @@ const MenuManagement = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: "#F5F5F5",
   },
 
   header: {
     fontSize: 28,
-    fontWeight: "800",
+    fontFamily: "Poppins-Bold",
     marginTop: 10,
     marginBottom: 20,
     color: "#333",
   },
+
   searchContainer: {
     marginTop: 10,
     flexDirection: "row",
@@ -314,6 +287,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 14,
   },
+
   // --- Tabs Styles ---
   tabsContainer: {
     marginBottom: 10,
@@ -328,12 +302,12 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: "Poppins-Medium",
     color: "#888",
   },
   activeTabText: {
     color: "#000",
-    fontWeight: "700",
+    fontFamily: "Poppins-SemiBold",
   },
   activeTabUnderline: {
     height: 3,
@@ -343,6 +317,7 @@ const styles = StyleSheet.create({
     left: 15,
     right: 15,
   },
+
   // --- Menu Item Styles ---
   listContent: {
     paddingBottom: 20,
@@ -368,8 +343,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   itemName: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginBottom: 4,
   },
@@ -379,6 +354,7 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingBottom: 5,
   },
+
   priceRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -397,21 +373,25 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
+
   itemPrice: {
     fontSize: 14,
     color: "#555",
-    fontWeight: "500",
+    fontFamily: "Poppins-Medium",
   },
+
   stockControl: {
     flexDirection: "column",
     alignItems: "center",
     marginRight: 5,
   },
+
   stockText: {
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: "Poppins-Medium",
     marginBottom: 5,
   },
+
   // --- Loading and Empty States ---
   loadingContainer: {
     flex: 1,
@@ -424,6 +404,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 50,
   },
+
   // --- FAB Styles ---
   fab: {
     position: "absolute",
@@ -445,27 +426,23 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "white",
     lineHeight: 30,
+    fontFamily: "Poppins-Medium",
   },
-  topContainer: {
-    backgroundColor: "white",
-    padding: 15,
-    paddingBottom: 5,
-  },
+
   headingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal:10,
-
-
+    paddingHorizontal: 10,
     backgroundColor: "#fff",
-    justifyContent: "space-between", // TITLE LEFT | MENU RIGHT
-  
+    justifyContent: "space-between",
   },
+
   title: {
     fontSize: 17,
-    fontFamily:"Poppins-SemiBold",
+    fontFamily: "Poppins-SemiBold",
     color: "#000",
   },
 });
+
 
 export default MenuManagement;

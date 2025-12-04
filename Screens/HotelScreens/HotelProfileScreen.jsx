@@ -12,6 +12,7 @@ import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { api } from "../../api/apiConfig";
 import { useAuth } from "../../context/AuthContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HotelProfileScreen = ({navigation}) => {
   const [loading,setLoading] = useState(false);
@@ -35,85 +36,84 @@ const HotelProfileScreen = ({navigation}) => {
   useFocusEffect(useCallback(()=>{
     fetchRestaurantData();
   },[]))
-  return (
-    <ScrollView style={styles.container}>
-      {/* HEADER */}
-      <Text style={styles.title}>My Account</Text>
+ return (
+   <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+     <ScrollView
+       style={styles.container}
+       contentContainerStyle={{ paddingBottom: 30 }}
+       showsVerticalScrollIndicator={false}
+     >
+       {/* HEADER */}
+       <Text style={styles.title}>My Account</Text>
 
-      {/* PROFILE SECTION */}
-      <View style={styles.profileRow}>
-        <View style={styles.imageWrapper}>
-          {data?.name ? (
-            // Show Image if name exists
-            <Image
-              source={require("../../assets/biriyani.png")}
-              style={styles.profileImage}
-            />
-          ) : (
-            // Show Icon if name does NOT exist
-            <View style={styles.placeholder}>
-              <Ionicons name="person" size={30} color="gray" />
-            </View>
-          )}
-        </View>
+       {/* PROFILE SECTION */}
+       <View style={styles.profileRow}>
+         <View style={styles.imageWrapper}>
+           {data?.name ? (
+             <Image
+               source={require("../../assets/biriyani.png")}
+               style={styles.profileImage}
+             />
+           ) : (
+             <View style={styles.placeholder}>
+               <Ionicons name="person" size={30} color="gray" />
+             </View>
+           )}
+         </View>
 
-        <View style={{ marginLeft: 12 }}>
-          <Text style={styles.hotelName}>{data?.restaurantName}</Text>
+         <View style={{ marginLeft: 12 }}>
+           <Text style={styles.hotelName}>{data?.restaurantName}</Text>
 
-          <View style={styles.locationRow}>
-            <Ionicons name="location" size={14} color="#888" />
-            <Text style={styles.locationText}>
-              {data?.address?.street}, {data?.address?.city},{" "}
-              {data?.address?.pincode},{data?.address?.stateName}
-            </Text>
-          </View>
+           <View style={styles.locationRow}>
+             <Ionicons name="location" size={14} color="#888" />
+             <Text style={styles.locationText}>
+               {data?.address?.street}, {data?.address?.city},{" "}
+               {data?.address?.pincode}, {data?.address?.stateName}
+             </Text>
+           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Profile Edit")}>
-            <Text style={styles.profileLink}>Restaurant Profile</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+           <TouchableOpacity
+             onPress={() => navigation.navigate("Profile Edit")}
+           >
+             <Text style={styles.profileLink}>Restaurant Profile</Text>
+           </TouchableOpacity>
+         </View>
+       </View>
 
-      {/* DIVIDER */}
-      <View style={styles.divider} />
+       {/* DIVIDER */}
+       <View style={styles.divider} />
 
-      {/* MENU ITEMS */}
-      {/* <MenuItem label="Insights" icon="bar-chart" type="Feather" />
-      <MenuItem label="Wallet" icon="wallet-outline" type="Ionicons" />
-      <MenuItem label="My Reviews" icon="star-outline" type="Ionicons" />
-      <MenuItem
-        label="Authentication"
-        icon="lock-closed-outline"
-        type="Ionicons"
-      /> */}
-      <MenuItem
-        label="Terms & Conditions"
-        icon="document-text-outline"
-        type="Ionicons"
-      />
-      <MenuItem label="Support" icon="help-circle-outline" type="Ionicons" />
+       {/* MENU ITEMS */}
+       <MenuItem
+         label="Terms & Conditions"
+         icon="document-text-outline"
+         type="Ionicons"
+         handleOnPress={() => navigation.navigate("Terms Conditions")}
+       />
+       {/* <MenuItem
+         label="Support"
+         icon="help-circle-outline"
+         type="Ionicons"
+         handleOnPress={() => navigation.navigate("Support")}
+       /> */}
 
-      {/* LOGOUT */}
-      <MenuItem
-        label="Logout"
-        icon="log-out-outline"
-        type="Ionicons"
-        color="#D9534F"
-        handleOnPress={() =>
-          Alert.alert("Logout", "Are you sure you want to logout?", [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "OK",
-              onPress: () => logout(),
-            },
-          ])
-        }
-      />
-    </ScrollView>
-  );
+       {/* LOGOUT */}
+       <MenuItem
+         label="Logout"
+         icon="log-out-outline"
+         type="Ionicons"
+         color="#D9534F"
+         handleOnPress={() =>
+           Alert.alert("Logout", "Are you sure you want to logout?", [
+             { text: "Cancel", style: "cancel" },
+             { text: "OK", onPress: () => logout() },
+           ])
+         }
+       />
+     </ScrollView>
+   </SafeAreaView>
+ );
+
 };
 
 // ------------------ MENU COMPONENT ------------------

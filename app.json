@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Delivery_App",
+    "name": "Feather Delivery App",
     "slug": "Delivery_App",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,10 +20,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.nismafeather.Delivery_App"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a563b4d2-d05a-4a42-ad3f-d2f2f9901c8b"
+      }
     }
   }
 }

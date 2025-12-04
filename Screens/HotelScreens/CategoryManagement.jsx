@@ -87,7 +87,7 @@ const CategoryManagement = ({navigation}) => {
       <View style={styles.card}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={{ marginLeft: 12 }}>
-            <Text style={styles.title}>{item.name}</Text>
+            <Text style={styles.categoryTitle}>{item.name}</Text>
           </View>
         </View>
 
@@ -173,13 +173,13 @@ const CategoryManagement = ({navigation}) => {
       </TouchableOpacity> */}
 
       {/* Category List */}
-      <View style={{ padding: 15 }}>
+      <View style={{padding:15}}>
         <FlatList
           data={categories}
           keyExtractor={(item) => item._id}
           renderItem={renderCategory}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 40 }}
+          contentContainerStyle={{ paddingBottom: 130 }}
           ListEmptyComponent={() => (
             <Text style={styles.emptyText}>No categories found.</Text>
           )}
@@ -308,12 +308,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "white",
-    padding: 18,
-    borderRadius: 20,
+   padding:12,
+
     marginVertical: 8,
-    elevation: 3,
+
   },
-  title: {
+  categoryTitle: {
     fontSize: 15,
     fontFamily: "Poppins-SemiBold",
     color: "#333",
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   },
 
   confirmButton: {
-    backgroundColor: "#FF6B00",
+    backgroundColor: Color.DARK,
     paddingVertical: 10,
     borderRadius: 10,
     flex: 1,

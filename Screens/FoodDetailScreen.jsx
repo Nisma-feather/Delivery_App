@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, Octicons } from "@expo/vector-icons";
@@ -16,25 +17,25 @@ import { api } from "../api/apiConfig";
 import { useAuth } from "../context/AuthContext";
 
 const PRIMARY_COLOR = Color.DARK || "#EB3E3E";
+const { width, height } = Dimensions.get("window");
 
 const FoodDetailScreen = ({ navigation, route }) => {
   const { foodItemId } = route.params;
 
   const { auth } = useAuth();
-  const {  updateCartCount } = useAuth();
+  const { updateCartCount } = useAuth();
   const [food, setFood] = useState({});
-  const [favourite, setFavourite] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-   const {favourites,toggleFavourite} = useAuth();
+  const { favourites, toggleFavourite } = useAuth();
 
-   const isFav = favourites.some((food)=>food._id === foodItemId)
-   
+  const isFav = favourites.some((food) => food._id === foodItemId);
+
   // ✅ Fetch Food Details
   const fetchFoodDetails = async () => {
     try {
       const res = await api.get(`/foodItem/${foodItemId}`);
-      setFood(res.data?.foodItem);
+      setFood(res.data?.foodItem || {});
     } catch (e) {
       console.log("Error fetching food:", e.message);
     }
@@ -63,33 +64,28 @@ const FoodDetailScreen = ({ navigation, route }) => {
     try {
       const change = op === "+" ? 1 : -1;
       if (quantity === 1 && op === "-") {
-          const res = await api.delete(`/cart/removeItem/${foodItemId}`,
-              {
-                data: { userId: auth.userId } 
-              });
-              setQuantity(0);
-              setTotalPrice(0);
-              updateCartCount();
+        const res = await api.delete(`/cart/removeItem/${foodItemId}`, {
+          data: { userId: auth.userId },
+        });
+        setQuantity(0);
+        setTotalPrice(0);
+        updateCartCount();
+      } else {
+        const res = await api.post("/cart", {
+          FoodId: foodItemId,
+          userId: auth.userId,
+          quantity: change,
+        });
+
+        if (res.data && res.data.updatedItem) {
+          setQuantity(res.data.updatedItem.quantity);
+          setTotalPrice(res.data.updatedItem.totalPrice);
+        }
+
+        if (quantity === 0) {
+          updateCartCount();
+        }
       }
-      else{
-         const res = await api.post("/cart", {
-           FoodId: foodItemId,
-           userId: auth.userId,
-           quantity: change,
-         });
-
-         if (res.data && res.data.updatedItem) {
-           setQuantity(res.data.updatedItem.quantity);
-           setTotalPrice(res.data.updatedItem.totalPrice);
-         }
-
-         if (quantity === 0) {
-           updateCartCount();
-         }
-      }
-
-     
-
     } catch (e) {
       console.log("Error updating cart:", e.message);
     }
@@ -118,22 +114,30 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={styles.scrollContent}
       >
         {/* --- Header Image Section --- */}
         <View style={styles.imageContainer}>
-          <Image
-            source={require("../assets/biriyani.png")}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          {food?.image ? (
+            <Image
+              source={{ uri: food.image }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ) : (
+            <Image
+              source={require("../assets/biriyani.png")}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          )}
 
           <View style={styles.headerContainer}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <Feather name="arrow-left" size={24} color="#000" />
+              <Feather name="arrow-left" size={20} color="#000" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -143,7 +147,7 @@ const FoodDetailScreen = ({ navigation, route }) => {
               <Octicons
                 name={isFav ? "heart-fill" : "heart"}
                 color={isFav ? "red" : "#000"}
-                size={20}
+                size={18}
               />
             </TouchableOpacity>
           </View>
@@ -151,56 +155,40 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
         {/* --- Food Details --- */}
         <View style={styles.content}>
-          <Text style={styles.title}>{food.name}</Text>
+          <Text style={styles.title}>{food.name || "Food Item"}</Text>
 
           <View style={styles.priceQuantityRow}>
             <View>
               <Text style={styles.priceLabel}>Item Price</Text>
-              <Text style={styles.priceValue}>₹ {food.price}</Text>
+              <Text style={styles.priceValue}>
+                ₹ {food.price?.toFixed(2) || "0.00"}
+              </Text>
             </View>
 
             {quantity === 0 ? (
               <TouchableOpacity
-                style={{
-                  backgroundColor: Color.DARK,
-                  padding: 10,
-                  paddingVertical: 6,
-                  borderRadius: 5,
-                }}
+                style={styles.addToCartButton}
                 onPress={() => handleCartUpdate("+")}
               >
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontFamily: "Inter-Bold",
-                    fontSize: 15,
-                  }}
-                >
-                  Add to Cart
-                </Text>
+                <Text style={styles.addToCartText}>Add to Cart</Text>
               </TouchableOpacity>
             ) : (
               <View style={styles.quantityControl}>
                 <TouchableOpacity
-                  style={styles.quantityButton}
+                  style={[styles.quantityButton, styles.minusButton]}
                   onPress={() => handleCartUpdate("-")}
                   disabled={quantity === 0}
                 >
-                  <Text style={[styles.quantityButtonText, { color: "#333" }]}>
-                    -
-                  </Text>
+                  <Text style={styles.minusButtonText}>-</Text>
                 </TouchableOpacity>
 
                 <Text style={styles.quantityCount}>{quantity}</Text>
 
                 <TouchableOpacity
-                  style={[
-                    styles.quantityButton,
-                    { backgroundColor: PRIMARY_COLOR },
-                  ]}
+                  style={[styles.quantityButton, styles.plusButton]}
                   onPress={() => handleCartUpdate("+")}
                 >
-                  <Text style={styles.quantityButtonText}>+</Text>
+                  <Text style={styles.plusButtonText}>+</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -208,7 +196,9 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
           <View style={styles.descriptionSection}>
             <Text style={styles.descLabel}>Description</Text>
-            <Text style={styles.descText}>{food.description}</Text>
+            <Text style={styles.descText}>
+              {food.description || "No description available"}
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -217,21 +207,21 @@ const FoodDetailScreen = ({ navigation, route }) => {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.orderButton}
-          onPress={() =>
-            console.log("Order Now:", {
-              foodId: foodItemId,
-              quantity,
-              totalPrice,
-            })
-          }
+          onPress={() => {
+            if (quantity === 0) {
+              handleCartUpdate("+");
+            }
+            navigation.navigate("Cart", { screen: "Cart Screen" });
+          }}
         >
-          <Text style={styles.orderButtonText}>Order Now | ₹ {totalPrice}</Text>
+          <Text style={styles.orderButtonText}>
+            Order Now | ₹ {totalPrice?.toFixed(2) || "0.00"}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.cartButton}
-          onPress={() => navigation.navigate("Cart", { screen: "Cart Screen" })
-        }
+          onPress={() => navigation.navigate("Cart", { screen: "Cart Screen" })}
         >
           <Text style={styles.cartButtonText}>Go to Cart</Text>
         </TouchableOpacity>
@@ -247,17 +237,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   // --- Image Header Styles ---
   imageContainer: {
     position: "relative",
+    height: height * 0.35, // Reduced from fixed 300 to 35% of screen height
   },
   image: {
-    height: 250,
     width: "100%",
+    height: "100%",
   },
   headerContainer: {
     position: "absolute",
-    // Adjust top padding for a better look and safe area consistency
     top: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 50,
     left: 15,
     right: 15,
@@ -265,35 +258,34 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   backButton: {
-    height: 40,
-    width: 40,
+    height: 36,
+    width: 36,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.9)",
-    borderRadius: 20,
-    // Subtle shadow for lift
+    borderRadius: 18,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: 2,
       },
-      android: { elevation: 3 },
+      android: { elevation: 2 },
     }),
   },
 
   // --- Content Styles ---
   content: {
     padding: 16,
-    paddingTop: 10, // Reduced top padding
+    paddingTop: 12,
   },
   title: {
-    fontSize: 25,
-    fontFamily: "Inter-Bold",
-
-    marginBottom: 15,
+    fontSize: 17, // Reduced from 28
+    fontFamily: "Poppins-SemiBold",
+    marginBottom: 12,
     color: "#333",
+    lineHeight: 28,
   },
 
   // --- Price & Quantity Row ---
@@ -301,79 +293,99 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
+    marginBottom: 12,
   },
   priceLabel: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#888",
-    fontFamily: "Inter-Regular",
+    fontFamily: "Poppins-Regular",
   },
   priceValue: {
-    fontSize: 22,
-    fontWeight: "700",
+    fontSize: 20, // Reduced from 24
     color: PRIMARY_COLOR,
-    fontFamily: "Inter-Bold",
+    fontFamily: "Poppins-SemiBold",
     marginTop: 2,
+  },
+  addToCartButton: {
+    backgroundColor: Color.DARK,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  addToCartText: {
+    color: "#fff",
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 14,
   },
 
   // --- Quantity Control Styles ---
   quantityControl: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
-    backgroundColor: "#f5f5f5", // Light background for the control area
-    borderRadius: 15,
-    padding: 5,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 12,
+    padding: 4,
   },
   quantityButton: {
-    backgroundColor: "#fff", // White background for buttons
-    width: 40,
-    height: 40,
+    width: 36, // Reduced from 40
+    height: 36, // Reduced from 40
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 10,
-    // Add shadow to quantity buttons
+    borderRadius: 8,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: 2,
       },
-      android: { elevation: 3 },
+      android: { elevation: 2 },
     }),
   },
-  quantityButtonText: {
-    fontSize: 24,
+  minusButton: {
+    backgroundColor: "#fff",
+  },
+  plusButton: {
+    backgroundColor: PRIMARY_COLOR,
+  },
+  minusButtonText: {
+    fontSize: 20, // Reduced from 24
+    color: "#333",
+    fontFamily: "Poppins-SemiBold",
+    lineHeight: 20,
+  },
+  plusButtonText: {
+    fontSize: 20, // Reduced from 24
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "Poppins-SemiBold",
+    lineHeight: 20,
   },
   quantityCount: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 16, // Reduced from 18
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
-    minWidth: 20,
+    minWidth: 28,
     textAlign: "center",
   },
 
   // --- Description Styles ---
   descriptionSection: {
-    paddingVertical: 15,
+    paddingVertical: 8,
   },
   descLabel: {
-    fontSize: 16,
-    fontFamily: "Inter-Bold",
-    fontWeight: "600",
+    fontSize: 16, // Reduced from 18
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginBottom: 8,
   },
   descText: {
-    fontSize: 16,
+    fontSize: 14, // Reduced from 15
     color: "#555",
-    fontFamily: "Inter-Medium",
-    lineHeight: 24,
+    fontFamily: "Poppins-Regular",
+    lineHeight: 22,
   },
 
   // --- Sticky Footer Styles ---
@@ -386,64 +398,45 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 15,
-    paddingBottom: Platform.OS === "ios" ? 30 : 15, // Safe area padding
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    // Strong shadow to make it look floating
+    padding: 12,
+    paddingBottom: Platform.OS === "ios" ? 25 : 12,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: -5 },
+        shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 10,
+        shadowRadius: 8,
       },
-      android: { elevation: 15 },
+      android: { elevation: 10 },
     }),
   },
-  footerPriceBox: {
-    // Styling the total price to be prominent
-    paddingVertical: 8,
-  },
-  footerPriceLabel: {
-    fontSize: 14,
-    color: "#888",
-    fontFamily: "Inter-Regular",
-  },
-  footerPriceValue: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#333", // Dark text for total price
-    fontFamily: "Inter-Bold",
-    marginTop: 2,
-  },
   orderButton: {
-    flex: 1, // Takes up more space
+    flex: 1,
     backgroundColor: PRIMARY_COLOR,
-    paddingVertical: 12,
-    borderRadius: 13,
+    paddingVertical: 13,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 8,
+    marginRight: 8,
   },
   orderButtonText: {
     color: "#fff",
     fontSize: 15,
-
-    fontFamily: "Inter-Bold",
+    fontFamily: "Poppins-SemiBold",
   },
   cartButton: {
-    backgroundColor: "#333", // Dark color for the secondary button
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    borderRadius: 13,
+    backgroundColor: "#333",
+    paddingVertical: 13,
+    paddingHorizontal: 16,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
   },
   cartButtonText: {
     color: "white",
-    fontSize: 16,
-
-    fontFamily: "Inter-Bold",
+    fontSize: 15,
+    fontFamily: "Poppins-SemiBold",
   },
 });
