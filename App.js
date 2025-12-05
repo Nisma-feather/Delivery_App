@@ -1,8 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator,Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { useFonts } from "expo-font";
 import {
   Ionicons,
@@ -37,6 +39,10 @@ import Color from "./constants/Color";
 import HotelProfileScreen from "./Screens/HotelScreens/HotelProfileScreen";
 import EditHotelProfile from "./Screens/HotelScreens/EditHotelProfileScreen";
 import TermsAndConditionsScreen from "./Screens/HotelScreens/TermsAndConditionsScreen";
+import ForgotPasswordEmailScreen from "./Screens/ForgotPasswordEmailScreen";
+import ForgotOTPVerification from "./Screens/ForgotOTPVerification";
+import ResetPasswordScreen from "./Screens/ResetPasswordScreen";
+import EditProfileScreen from "./Screens/ProfileSection/EditProfileScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -80,112 +86,102 @@ const ProfileStack=()=>{
       <Stack.Screen name="Main Profile" component={MainProfileScreen} />
       <Stack.Screen name="Address" component={AddressScreen} />
       <Stack.Screen name="My Orders" component = {MyOrders}/>
+      <Stack.Screen name="Profile Edit" component={EditProfileScreen}/>
       <Stack.Screen name="Order Details" component={OrderDetailsScreen} />
       <Stack.Screen name="Track Order" component={OrderTrackScreen} />
     </Stack.Navigator>
   );
 }
 
-const UserTabs = () => 
-{
-const {cartLength} = useAuth();
+ const UserTabs = () => {
+  const { cartLength } = useAuth();
 
- return (
-   <Tab.Navigator
-     screenOptions={({ route }) => ({
-       headerShown: false,
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F8F8' }}>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarShowLabel: true,
+          tabBarItemStyle: {
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          // REMOVE position: 'absolute' and use flexbox approach
+          tabBarStyle: {
+            height: 60,
+            backgroundColor: "#ffffff",
+            elevation: 8,
+            borderTopWidth: 1,
+            borderTopColor: '#f0f0f0',
+            paddingBottom: 5,
+            paddingTop: 5,
+          },
+          tabBarActiveTintColor: "#ff5e00ff",
+          tabBarInactiveTintColor: "#8e8e8e",
+          tabBarLabelStyle: {
+            fontSize: 10,
+            fontWeight: "600",
+            textTransform: "uppercase",
+            marginBottom: 0,
+            fontFamily: "Inter-SemiBold",
+          },
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            const iconSize = 22;
 
-       // 1. SHOW THE LABEL
-       tabBarShowLabel: true,
-       tabBarItemStyle: {
-         justifyContent: "center",
-         alignItems: "center",
-       },
+            if (route.name === "HomeStack") {
+              iconName = focused ? "home" : "home-outline";
+            } else if (route.name === "Profile") {
+              iconName = focused ? "person" : "person-outline";
+            } else if (route.name === "Favourite") {
+              iconName = focused ? "heart" : "heart-outline";
+            } else if (route.name === "Cart") {
+              iconName = focused ? "cart" : "cart-outline";
+            }
 
-       // 2. STYLING THE TAB BAR CONTAINER
-       tabBarStyle: {
-         height: 80, // Increased height for label + icon
-         backgroundColor: "#ffffff",
-         elevation: 8, // Android shadow
-         borderTopWidth: 0,
-         paddingBottom: 5,
-         borderRadius: 50,
-         marginBottom: 10,
-       },
-
-       // 3. COLOR FOR ACTIVE/INACTIVE ICONS AND LABELS
-       tabBarActiveTintColor: "#ff5e00ff", // Primary color (e.g., orange)
-       tabBarInactiveTintColor: "#8e8e8e", // Grey color
-
-       // 4. STYLE THE LABEL TEXT (Set to UPPERCASE)
-       tabBarLabelStyle: {
-         fontSize: 10,
-         fontWeight: "600",
-         textTransform: "uppercase", // 🔥 Important: Set the text to CAPITALS
-         marginBottom: 3,
-         fontFamily: "Inter-SemiBold", // Assuming you want a custom font
-       },
-
-       // 5. ICON RENDERING
-       tabBarIcon: ({ focused, color, size }) => {
-         let iconName;
-         // Use a slightly smaller size since the label is now displayed
-         const iconSize = 22;
-
-         if (route.name === "HomeStack") {
-           iconName = focused ? "home" : "home-outline";
-         } else if (route.name === "Profile") {
-           iconName = focused ? "person" : "person-outline";
-         } else if (route.name === "Favourite") {
-           iconName = focused ? "heart" : "heart-outline";
-         } else if (route.name === "Cart") {
-           iconName = focused ? "cart" : "cart-outline";
-         }
-
-         return (
-           <Ionicons
-             name={iconName}
-             size={iconSize}
-             color={color} // Automatically uses active/inactive color
-           />
-         );
-       },
-     })}
-   >
-     {/* Setting individual tab options (like the label text) */}
-     <Tab.Screen
-       name="HomeStack"
-       component={HomeStack}
-       options={{ tabBarLabel: "Home" }} // Customize label here if needed
-     />
-     <Tab.Screen
-       name="Profile"
-       component={ProfileStack}
-       options={{ tabBarLabel: "Profile" }}
-     />
-     <Tab.Screen
-       name="Favourite"
-       component={FavouriteStack}
-       options={{ tabBarLabel: "Favourite" }}
-     />
-     <Tab.Screen
-       name="Cart"
-       component={CartStack}
-       options={{
-         tabBarLabel: "Cart",
-         tabBarBadge: cartLength > 0 ? cartLength : null,
-         tabBarBadgeStyle: {
-           backgroundColor: "#ff5e00ff",
-           color: "white",
-           fontSize: 10,
-           fontWeight: "bold",
-         },
-       }}
-     />
-   </Tab.Navigator>
- );
-}
-
+            return (
+              <Ionicons
+                name={iconName}
+                size={iconSize}
+                color={color}
+              />
+            );
+          },
+        })}
+      >
+        <Tab.Screen
+          name="HomeStack"
+          component={HomeStack}
+          options={{ tabBarLabel: "Home" }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileStack}
+          options={{ tabBarLabel: "Profile" }}
+        />
+        <Tab.Screen
+          name="Favourite"
+          component={FavouriteStack}
+          options={{ tabBarLabel: "Favourite" }}
+        />
+        <Tab.Screen
+          name="Cart"
+          component={CartStack}
+          options={{
+            tabBarLabel: "Cart",
+            tabBarBadge: cartLength > 0 ? cartLength : null,
+            tabBarBadgeStyle: {
+              backgroundColor: "#ff5e00ff",
+              color: "white",
+              fontSize: 10,
+              fontWeight: "bold",
+            },
+          }}
+        />
+      </Tab.Navigator>
+    </SafeAreaView>
+  );
+};
 
 function RootNavigator() {
   const { auth, loading } = useAuth();
@@ -211,6 +207,9 @@ function RootNavigator() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignUpScreen} />
         <Stack.Screen name="Email Verification" component={EmailOTPVerification} />
+         <Stack.Screen name="Forgot Email" component={ForgotPasswordEmailScreen}/>
+     <Stack.Screen name="ForgotOTPVerification" component={ForgotOTPVerification}/>
+     <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen}/>
       </>
     )}
   </Stack.Navigator>
@@ -357,7 +356,18 @@ export default function App() {
   if (!fontsLoaded) {
     return <Text>Loading fonts...</Text>;
   }
+  
 
+  const ForgotPasswordStack=()=>{
+    return(
+<Stack.Navigator>
+    
+     <Stack.Screen name="ForgotOTPVerification" component={ForgotOTPVerification}/>
+     <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen}/>
+   </Stack.Navigator>
+    )
+   
+  }
 
 
   return (
@@ -366,6 +376,8 @@ export default function App() {
         <RootNavigator />
         {/* <HotelNavigator/> */}
         {/* <MainRestaurantNavigator/> */}
+       
+     
       </NavigationContainer>
       <StatusBar style="auto" />
     </AuthProvider>

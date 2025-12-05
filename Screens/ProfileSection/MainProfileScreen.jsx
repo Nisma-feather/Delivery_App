@@ -1,283 +1,251 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Image, // Import Image for the user avatar
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  Feather,
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import Color from "../../constants/Color";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
+import { api } from "../../api/apiConfig";
+import { useFocusEffect } from "@react-navigation/native";
 
-// --- Configuration Data ---
-const userData = {
-  name: "Jenny Wilson",
-  editLabel: "Edit Account",
-  avatarUri: "https://i.pravatar.cc/150?img=1", // Placeholder avatar
+// Custom Component for Menu Items
+const MenuItem = ({ label, icon, color, onPress }) => {
+  return (
+    <TouchableOpacity style={styles.menuItem} onPress={onPress}>
+      <Ionicons name={icon} size={22} color={color || "#444"} />
+      <Text style={[styles.menuText, { color: color || "#000" }]}>{label}</Text>
+    </TouchableOpacity>
+  );
 };
 
-const settingsData = [
-  // Icon Name, Color, Label
-  {
-    icon: "lock-closed-outline",
-
-    label: "Change Password",
-    key: "password",
-  },
-  {
-    icon: "cart",
-    label: "My Orders",
-    key: "orders",
-    path: "My Orders",
-  },
-  {
-    icon: "notifications-outline",
-
-    label: "Notifications",
-    key: "notifications",
-  },
-  {
-    icon: "location-outline",
-    label: "Address",
-    key: "address",
-    path: "Address",
-  },
-
-  { icon: "help-circle-outline", label: "FAQ", key: "faq" },
-  {
-    icon: "chatbox-ellipses-outline",
-
-    label: "Contact us",
-    key: "contact",
-  },
-  {
-    icon: "document-text-outline",
-
-    label: "Terms & Conditions",
-    key: "terms",
-  },
-];
-
-// --- Custom Components ---
-
-// Component for the colorful setting row
-const ColorfulSettingRow = ({ iconName, iconColor, label, onPress }) => (
-  <TouchableOpacity style={newStyles.rowContainer} onPress={onPress}>
-    <View style={newStyles.rowLeft}>
-      {/* Icon Circle Container */}
-      <View
-        style={[newStyles.iconCircle, { backgroundColor: Color.DARK }]}
-      >
-        <Ionicons name={iconName} size={22} color="#fff" style={{fontWeight:"bold"}}/>
-      </View>
-      <Text style={newStyles.label}>{label}</Text>
-    </View>
-    <Feather name="chevron-right" size={20} color="#888" />
-  </TouchableOpacity>
-);
-
-// --- Main Component ---
-const MainProfileScreen = ({navigation}) => {
-  const {logout} = useAuth();
+// Main Component
+const MainProfileScreen = ({ navigation }) => {
+  const { logout, auth } = useAuth();
+  const [userData, setUserData] = useState({
+    userName: "",
+    email: "",
+    mobile: ""
+  });
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = () => {
-    console.log("Logging out...");
-    logout();
-    
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "OK", onPress: () => logout() },
+    ]);
   };
 
   const handleEditAccount = () => {
-    console.log("Navigating to Edit Account...");
- 
+    navigation.navigate("Profile Edit", { userData });
   };
 
+  const fetchUserData = async () => {
+    if (!auth?.userId) {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      const res = await api.get(`/user/${auth.userId}`);
+      if (res.data?.user) {
+        setUserData({
+          userName: res.data.user.userName || "User",
+          email: res.data.user.email || "",
+          mobile: res.data.user.mobile || ""
+        });
+      }
+    } catch (error) {
+      console.log("Error fetching user data:", error);
+      Alert.alert("Error", "Failed to load profile data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use useFocusEffect to refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log("Profile screen focused, fetching data...");
+      setLoading(true);
+      fetchUserData();
+
+      // Cleanup function (optional)
+      return () => {
+        console.log("Profile screen unfocused");
+      };
+    }, [auth?.userId]) // Dependency on userId
+  );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#F4A609" />
+        <Text style={styles.loadingText}>Loading profile...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView style={newStyles.container}>
-      {/* Background Gradient Effect (Simulated) */}
-      <View style={newStyles.gradientOverlay} />
-
-      {/* Header */}
-      <View style={newStyles.header}>
-        <Ionicons name="chevron-back" size={28} color="#333" />
-        <Text style={newStyles.headerTitle}>Settings</Text>
-        <View style={{ width: 28 }} />
-      </View>
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
       <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 30 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 40, 
-        }}
       >
-        {/* User Info Card */}
-        <TouchableOpacity
-          style={newStyles.userInfoCard}
-          onPress={handleEditAccount}
-        >
-          <Image
-            source={{ uri: userData.avatarUri }}
-            style={newStyles.avatar}
-          />
-          <View style={newStyles.userInfoText}>
-            <Text style={newStyles.userName}>{userData.name}</Text>
-            <Text style={newStyles.editLabel}>{userData.editLabel}</Text>
-          </View>
-        </TouchableOpacity>
+        {/* HEADER */}
+        <Text style={styles.title}>My Account</Text>
 
-        {/* Settings List */}
-        <View style={newStyles.settingsList}>
-          {settingsData.map((item) => (
-            <ColorfulSettingRow
-              key={item.key}
-              iconName={item.icon}
-              iconColor={item.color}
-              label={item.label}
-              onPress={() => {
-                if (item?.path) {
-                  navigation.navigate(item.path);
-                } else {
-                  console.log("Navigation");
-                }
-              }}
-            />
-          ))}
-
-          {/* Logout Row - styled slightly differently in the image */}
-          <TouchableOpacity style={newStyles.logoutRow} onPress={handleLogout}>
-            <View style={newStyles.rowLeft}>
-              {/* Logout Icon Circle Container (similar style to others) */}
-              <View
-                style={[newStyles.iconCircle, { backgroundColor: "#FF634715" }]}
-              >
-                <MaterialCommunityIcons
-                  name="logout"
-                  size={20}
-                  color="#FF6347"
-                />
-              </View>
-              <Text style={newStyles.label}>Logout</Text>
+        {/* PROFILE SECTION */}
+        <View style={styles.profileRow}>
+          <View style={styles.imageWrapper}>
+            <View style={styles.profileIconContainer}>
+              <Ionicons name="person" size={30} color="#666" />
             </View>
-            <Feather name="chevron-right" size={20} color="#888" />
-          </TouchableOpacity>
+          </View>
+
+          <View style={{ marginLeft: 12 }}>
+            <Text style={styles.userName}>{userData.userName}</Text>
+            <TouchableOpacity onPress={handleEditAccount}>
+              <Text style={styles.profileLink}>Edit Profile</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+
+        {/* DIVIDER */}
+        <View style={styles.divider} />
+
+        {/* MENU ITEMS */}
+        <MenuItem
+          label="Change Password"
+          icon="lock-closed-outline"
+          onPress={() => console.log("Change Password")}
+        />
+        
+        <MenuItem
+          label="My Orders"
+          icon="cart"
+          onPress={() => navigation.navigate("My Orders")}
+        />
+        
+        <MenuItem
+          label="Notifications"
+          icon="notifications-outline"
+          onPress={() => console.log("Notifications")}
+        />
+        
+        <MenuItem
+          label="Address"
+          icon="location-outline"
+          onPress={() => navigation.navigate("Address")}
+        />
+        
+        <MenuItem
+          label="FAQ"
+          icon="help-circle-outline"
+          onPress={() => console.log("FAQ")}
+        />
+        
+        <MenuItem
+          label="Contact us"
+          icon="chatbox-ellipses-outline"
+          onPress={() => console.log("Contact us")}
+        />
+        
+        <MenuItem
+          label="Terms & Conditions"
+          icon="document-text-outline"
+          onPress={() => console.log("Terms & Conditions")}
+        />
+
+        {/* DIVIDER */}
+        <View style={styles.divider} />
+
+        {/* LOGOUT */}
+        <MenuItem
+          label="Logout"
+          icon="log-out-outline"
+          color="#D9534F"
+          onPress={handleLogout}
+        />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-// ---------- Styles (newStyles to clearly differentiate from your original) ----------
-const newStyles = StyleSheet.create({
+// ---------- Styles ----------
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff", // White background
+    backgroundColor: "#F8F8F8",
+    padding: 20,
   },
-  // Simulate the light gradient background shown in the image edges
-  gradientOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#F7F7FD",
-    opacity: 0.8,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: "#333",
-  },
-  // --- User Info Card ---
-  userInfoCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    marginHorizontal: 16,
-    paddingVertical: 15,
-    borderRadius: 20,
-    elevation: 3, // Subtle shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    marginBottom: 20,
-    paddingHorizontal: 15,
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 15,
-  },
-  userInfoText: {
+  loadingContainer: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F8F8F8",
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: "#666",
+    fontFamily: "Poppins-Regular",
+  },
+  title: {
+    fontSize: 22,
+    fontFamily: "Poppins-Bold",
+    marginBottom: 20,
+    color: "#000",
+  },
+  profileRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  imageWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  profileIconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    backgroundColor: "#eee",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
   userName: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#333",
+    fontFamily: "Poppins-SemiBold",
+    color: "#000",
   },
-  editLabel: {
+  profileLink: {
+    marginTop: 4,
+    fontFamily: "Poppins-Medium",
     fontSize: 14,
-    color: "#4A69FF", // Blue color for the link
-    fontWeight: "500",
-    marginTop: 2,
+    color: "#F4A609",
   },
-  // --- Settings List ---
-  settingsList: {
-    backgroundColor: "#fff",
-    marginHorizontal: 16,
-    borderRadius: 20,
-    paddingHorizontal: 5,
-    paddingVertical: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
+  divider: {
+    height: 1,
+    backgroundColor: "#E2E2E2",
+    marginVertical: 20,
   },
-  rowContainer: {
+  menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    marginHorizontal: 10,
+    paddingVertical: 15,
   },
-  rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 15,
-  },
-  label: {
+  menuText: {
     fontSize: 16,
-    color: "#333",
-    fontWeight: "500",
-  },
-  logoutRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    marginHorizontal: 10,
-    marginTop: 5,
+    marginLeft: 14,
+    fontFamily: "Poppins-Medium",
   },
 });
 

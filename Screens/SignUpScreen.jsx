@@ -13,11 +13,115 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Color from "../constants/Color";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Fontisto, Octicons, Ionicons } from "@expo/vector-icons";
 import { api } from "../api/apiConfig";
+
+// --- Colors ---
+const MOCK_COLORS = {
+    background: "#FAF7F0", // Light beige/off-white background
+    primaryText: "#252525", // Dark text
+    secondaryText: "#666666", // Grey text
+    accent: "#FF8C00", // Dark Orange for links/main color
+    buttonStart: "#FFC35A", // Light Orange (top of gradient)
+    buttonEnd: "#FF8C00",   // Dark Orange (bottom of gradient)
+    inputBackground: "#FFFFFF",
+};
 
 const { width } = Dimensions.get("window");
 
+// --- Helper Component for Styled Inputs ---
+const PasswordInput = ({ 
+    label, 
+    value, 
+    onChangeText, 
+    secureTextEntry,
+    isPasswordVisible,
+    onTogglePassword,
+    error
+}) => {
+    return (
+        <View style={styles.inputSection}>
+            <Text style={styles.inputLabel}>{label}</Text>
+            <View style={[styles.inputContainer, error && { borderWidth: 1, borderColor: 'red' }]}>
+                {/* Lock Icon */}
+                <Octicons name="lock" color="#888" size={22} style={styles.inputIcon} />
+                
+                {/* TextInput */}
+                <TextInput
+                    style={styles.input}
+                    value={value}
+                    onChangeText={onChangeText}
+                    secureTextEntry={!isPasswordVisible}
+                    placeholder="••••••••"
+                    placeholderTextColor={MOCK_COLORS.secondaryText + 'AA'}
+                    autoCapitalize="none"
+                />
+                
+                {/* Password Visibility Toggle */}
+                <TouchableOpacity 
+                    style={styles.eyeButton} 
+                    onPress={onTogglePassword}
+                >
+                    <Ionicons name={isPasswordVisible ? "eye-outline" : "eye-off-outline"} color="#777" size={24} />
+                </TouchableOpacity>
+            </View>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+    );
+};
+
+const EmailInput = ({ label, value, onChangeText, error }) => {
+    return (
+        <View style={styles.inputSection}>
+            <Text style={styles.inputLabel}>{label}</Text>
+            <View style={[styles.inputContainer, error && { borderWidth: 1, borderColor: 'red' }]}>
+                <Fontisto name="email" color="#888" size={22} style={styles.inputIcon} />
+                <TextInput
+                    style={styles.input}
+                    value={value}
+                    onChangeText={onChangeText}
+                    placeholder="your email"
+                    placeholderTextColor={MOCK_COLORS.secondaryText + 'AA'}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
+            </View>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+    );
+};
+
+const NameInput = ({ label, value, onChangeText, error }) => {
+    return (
+        <View style={styles.inputSection}>
+            <Text style={styles.inputLabel}>{label}</Text>
+            <View style={[styles.inputContainer, error && { borderWidth: 1, borderColor: 'red' }]}>
+                <Ionicons name="person-outline" color="#888" size={22} style={styles.inputIcon} />
+                <TextInput
+                    style={styles.input}
+                    value={value}
+                    onChangeText={onChangeText}
+                    placeholder="your name"
+                    placeholderTextColor={MOCK_COLORS.secondaryText + 'AA'}
+                    autoCapitalize="words"
+                />
+            </View>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+    );
+};
+
+// --- Checkbox Component ---
+const Checkbox = ({ checked, onPress }) => (
+    <TouchableOpacity
+        onPress={onPress}
+        style={[styles.checkbox, checked && styles.checkboxChecked]}
+    >
+        {checked && <Text style={styles.checkboxCheckmark}>✓</Text>}
+    </TouchableOpacity>
+);
+
+// --- Main SignUp Screen Component ---
 const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
@@ -26,15 +130,7 @@ const SignUpScreen = ({ navigation }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
-
-  const Checkbox = ({ checked, onPress }) => (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.checkbox, checked && styles.checkboxChecked]}
-    >
-      {checked && <Text style={{ color: "white", fontSize: 10 }}>✓</Text>}
-    </TouchableOpacity>
-  );
+  const [loading,setLoading] =useState(false);
 
   // ✨ Validation logic
   const validate = () => {
@@ -67,354 +163,419 @@ const SignUpScreen = ({ navigation }) => {
     return Object.keys(newErrors).length === 0; // ✅ Returns true if no errors
   };
 
- const handleSignUp = async () => {
-   if (!validate()) return;
+  const handleSignUp = async () => {
+    if (!validate()) return;
 
-   try {
-     console.log("user data exists")
-     const res = await api.post("/user/exists-user", { email });
+    try {
+      setLoading(true)
+    
+      const res = await api.post("/user/exists-user", { email });
 
-     if (res.status === 200) {
-       console.log("✅ Email available, proceeding to verification...");
-       navigation.navigate("Email Verification", { email, password, userName });
-     }
-   } catch (error) {
-     if (error.response?.status === 409) {
-       Alert.alert("Email already exists","Login to continue",[{
-        text:"Ok",
-        onPress: ()=>navigation.navigate("Login")
-       }]);
-     } else {
-       console.error("Error checking email:", error);
-       Alert.alert("Error", "Unable to verify email. Please try again later.");
-     }
-   }
- };
+      if (res.status === 200) {
+        console.log("✅ Email available, proceeding to verification...");
+        navigation.navigate("Email Verification", { email, password, userName });
+      }
+    } catch (error) {
+      if (error.response?.status === 409) {
+        Alert.alert("Email already exists","Login to continue",[{
+          text:"Ok",
+          onPress: ()=>navigation.navigate("Login")
+        }]);
+      } else {
+        console.error("Error checking email:", error);
+        Alert.alert("Error", "Unable to verify email. Please try again later.");
+      }
+    }
+    finally{
+      setLoading(false)
+    }
+  };
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const handleSignIn = () => {
+    navigation.replace("Login");
+  };
 
   return (
     <View style={styles.fullScreenContainer}>
-      <View style={styles.topBackground} />
+      {/* Absolute positioned Top Right Design Blob (Orange/Yellow Gradient Simulation) */}
+      <View style={styles.topBlobContainer}>
+        <View style={[styles.topBlob, styles.topBlobMain]} />
+        <View style={[styles.topBlob, styles.topBlobAccent]} />
+      </View>
+
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
-          contentContainerStyle={styles.scrollStyle}
+          contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.formCard}>
-            {/* Email */}
-            <Text style={styles.label}>Email Address</Text>
-            <TextInput
-              style={[styles.input, errors.email && { borderColor: "red" }]}
-              placeholder="Enter your email address"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-            />
-            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-            {/* Username */}
-            <Text style={styles.label}>User Name</Text>
-            <TextInput
-              style={[styles.input, errors.userName && { borderColor: "red" }]}
-              placeholder="Enter your name"
-              value={userName}
-              onChangeText={setUserName}
-            />
-            {errors.userName && (
-              <Text style={styles.errorText}>{errors.userName}</Text>
-            )}
-
-            {/* Password */}
-            <Text style={styles.label}>Password</Text>
-            <View
-              style={[
-                styles.passwordContainer,
-                errors.password && { borderColor: "red" },
-              ]}
-            >
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Enter your password"
-                secureTextEntry={!isPasswordVisible}
-                value={password}
-                onChangeText={setPassword}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-              >
-                <MaterialCommunityIcons
-                  name={isPasswordVisible ? "eye" : "eye-off"}
-                  color="#777"
-                  size={24}
-                />
-              </TouchableOpacity>
-            </View>
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
-
-            {/* Confirm Password */}
-            <Text style={styles.label}>Confirm Password</Text>
-            <View
-              style={[
-                styles.passwordContainer,
-                errors.confirmPassword && { borderColor: "red" },
-              ]}
-            >
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Confirm your password"
-                secureTextEntry={!isPasswordVisible}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-              >
-                <MaterialCommunityIcons
-                  name={isPasswordVisible ? "eye" : "eye-off"}
-                  color="#777"
-                  size={24}
-                />
-              </TouchableOpacity>
-            </View>
-            {errors.confirmPassword && (
-              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-            )}
-
-            {/* Privacy Policy */}
-            <View style={styles.bottomRow}>
-              <View style={styles.rememberMeContainer}>
-                <Checkbox
-                  checked={rememberMe}
-                  onPress={() => setRememberMe(!rememberMe)}
-                />
-                <Text style={styles.rememberMeText}>
-                  I read and agree{" "}
-                  <Text style={{ color: Color.DARK, fontFamily: "Inter-Bold" }}>
-                    Privacy Policy
-                  </Text>
-                </Text>
-              </View>
-            </View>
-            {errors.policy && <Text style={styles.errorText}>{errors.policy}</Text>}
-
-            {/* Sign Up Button */}
-            <TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
-              <Text style={styles.loginButtonText}>Sign Up</Text>
-            </TouchableOpacity>
-
-            {/* Social Signup */}
-            <View style={styles.separatorContainer}>
-              <View style={styles.line} />
-              <Text style={styles.separatorText}>Or Signup with</Text>
-              <View style={styles.line} />
-            </View>
-
-            <View style={styles.socialContainer}>
-              <TouchableOpacity style={styles.socialIcon}>
-                <Image
-                  source={require("../assets/google.png")}
-                  style={{ width: 25, height: 25 }}
-                />
-                <Text style={{ fontFamily: "Inter-Regular", color: "#444" }}>
-                  Sign Up with Google
-                </Text>
-              </TouchableOpacity>
-            </View>
+          {/* Header Section: Sign Up + Subtitle */}
+          <View style={styles.headerContainer}>
+            <Text style={styles.title}>Sign Up</Text>
+            <Text style={styles.subtitle}>Create your account to continue.</Text>
           </View>
 
-          {/* Sign In link */}
+          {/* Email Input */}
+          <EmailInput
+            label="EMAIL"
+            value={email}
+            onChangeText={setEmail}
+            error={errors.email}
+          />
+          
+          {/* Username Input */}
+          <NameInput
+            label="USER NAME"
+            value={userName}
+            onChangeText={setUserName}
+            error={errors.userName}
+          />
+          
+          {/* Password Input */}
+          <PasswordInput
+            label="PASSWORD"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!isPasswordVisible}
+            isPasswordVisible={isPasswordVisible}
+            onTogglePassword={togglePasswordVisibility}
+            error={errors.password}
+          />
+
+          {/* Confirm Password Input */}
+          <PasswordInput
+            label="CONFIRM PASSWORD"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!isPasswordVisible}
+            isPasswordVisible={isPasswordVisible}
+            onTogglePassword={togglePasswordVisibility}
+            error={errors.confirmPassword}
+          />
+
+          {/* Privacy Policy Checkbox */}
+          <View style={styles.rememberMeContainer}>
+            <Checkbox
+              checked={rememberMe}
+              onPress={() => setRememberMe(!rememberMe)}
+            />
+            <Text style={styles.rememberMeText}>
+              I read and agree{" "}
+              <Text style={styles.privacyPolicyText}>Privacy Policy</Text>
+            </Text>
+          </View>
+          {errors.policy && <Text style={styles.errorText}>{errors.policy}</Text>}
+
+          {/* Sign Up Button */}
+          <TouchableOpacity 
+            style={styles.loginButton} 
+            onPress={handleSignUp}
+            activeOpacity={0.8}
+          >
+            {
+              loading ? <Text style={styles.loginButtonText}>Loading...</Text>
+              : <>
+               <Text style={styles.loginButtonText}>SIGN UP</Text>
+            <Text style={styles.loginButtonArrow}>→</Text>
+              </>
+            }
+           
+          </TouchableOpacity>
+
+          {/* Or Signup with Separator */}
+         
+          {/* Social Signup */}
+        
+
+          {/* Already have an account? Sign In */}
           <View style={styles.signUpContainer}>
             <Text style={styles.signUpText}>Already have an account?</Text>
-            <TouchableOpacity onPress={() => navigation.replace("Login")}>
+            <TouchableOpacity onPress={handleSignIn}>
               <Text style={styles.signInLink}>Sign In</Text>
             </TouchableOpacity>
           </View>
+
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+    fullScreenContainer: {
+        flex: 1,
+        backgroundColor: MOCK_COLORS.background,
+    },
+    safeArea: {
+        flex: 1,
+    },
+    scrollContent: {
+        paddingHorizontal: width * 0.1, 
+        paddingTop: width * 0.15,
+        paddingBottom: 40,
+    },
 
-export const styles = StyleSheet.create({
-  fullScreenContainer: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  topBackground: {
-    height: "25%",
-    backgroundColor: Color.DARK,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  scrollStyle: {
-    paddingHorizontal: 25,
-    zIndex: 1,
-    alignItems: "center",
-  },
-  logoContainer: {
-    paddingVertical: 30,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  logo: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-  },
-  formCard: {
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontFamily: "Inter-Bold",
-    color: "#333",
-    marginBottom: 8,
-    marginTop: 15,
-  },
-  input: {
-    height: 50,
-    borderColor: "#eee",
-    borderWidth: 1,
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    backgroundColor: "white",
-    fontFamily: "Inter-Regular",
-    fontSize: 15,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 50,
-    borderColor: "#eee",
-    borderWidth: 1,
-    borderRadius: 25,
-    backgroundColor: "white",
-  },
-  passwordInput: {
-    flex: 1,
-    paddingHorizontal: 15,
-    fontSize: 16,
-  },
-  eyeIcon: {
-    padding: 10,
-    position: "absolute",
-    right: 10,
-  },
-  bottomRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 15,
-  },
-  rememberMeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    marginRight: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkboxChecked: {
-    backgroundColor: Color.DARK,
-    borderColor: Color.DARK,
-  },
-  rememberMeText: {
-    fontSize: 14,
-    color: "#666",
-    fontFamily: "Inter-Regular",
-  },
-  loginButton: {
-    backgroundColor: Color.DARK,
-    padding: 12,
-    borderRadius: 30,
-    marginTop: 30,
-    alignItems: "center",
-  },
-  loginButtonText: {
-    color: "white",
-    fontSize: 17,
-    fontFamily: "Inter-Bold",
-  },
-  separatorContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 25,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#ddd",
-  },
-  separatorText: {
-    width: 120,
-    textAlign: "center",
-    color: "#999",
-    fontSize: 14,
-    fontFamily: "Inter-Regular",
-  },
-  socialContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  socialIcon: {
-    width: "100%",
-    height: 50,
-    gap: 10,
-    borderRadius: 25,
-    flexDirection: "row",
-    backgroundColor: "#f5f5f5",
-    marginHorizontal: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-      },
-      android: {
-        elevation: 1,
-      },
-    }),
-  },
-  signUpContainer: {
-    flexDirection: "row",
-    marginTop: 20,
-    paddingBottom: 20,
-    alignSelf: "center",
-  },
-  signUpText: {
-    color: "#555",
-    fontFamily: "Inter-Medium",
-  },
-  signInLink: {
-    color: Color.DARK,
-    fontFamily: "Inter-Bold",
-    fontSize: 15,
-    marginLeft: 5,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 13,
-    marginTop: 4,
-    fontFamily: "Inter-Regular",
-  },
+    // --- Top Design Blob Styles ---
+    topBlobContainer: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        width: width,
+        height: width * 0.8,
+        overflow: 'hidden',
+    },
+    topBlob: {
+        position: 'absolute',
+        borderRadius: width * 0.4, 
+    },
+    topBlobMain: {
+        top: -width * 0.4,
+        right: -width * 0.4,
+        width: width * 0.8,
+        height: width * 0.8,
+        backgroundColor: MOCK_COLORS.buttonEnd,
+        transform: [{ rotate: '20deg' }], 
+    },
+    topBlobAccent: {
+        top: -width * 0.25,
+        right: -width * 0.35,
+        width: width * 0.7,
+        height: width * 0.7,
+        backgroundColor: MOCK_COLORS.buttonStart,
+        opacity: 0.7,
+        transform: [{ rotate: '5deg' }], 
+    },
+
+    // --- Header Styles ---
+    headerContainer: {
+        marginBottom: 40,
+        marginTop: 10,
+    },
+    title: {
+        fontSize: 20,
+        fontFamily: 'Poppins-Bold',
+        color: MOCK_COLORS.primaryText,
+        letterSpacing: 0.5,
+    },
+    subtitle: {
+        fontSize: 15,
+        fontFamily: 'Poppins-Regular',
+        color: MOCK_COLORS.secondaryText,
+        marginTop: 8,
+        letterSpacing: 0.3,
+    },
+
+    // --- Input Styles ---
+    inputSection: {
+        marginBottom: 20,
+        width: '100%',
+    },
+    inputLabel: {
+        fontSize: 13,
+        fontFamily: 'Poppins-SemiBold',
+        color: MOCK_COLORS.secondaryText,
+        marginBottom: 10,
+        marginLeft: 12,
+        letterSpacing: 0.5,
+        textTransform: 'uppercase',
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: MOCK_COLORS.inputBackground,
+        borderRadius: 16,
+        height: 48,
+        paddingHorizontal: 18,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.08,
+                shadowRadius: 6,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
+    },
+    inputIcon: {
+        marginRight: 14,
+    },
+    input: {
+        flex: 1,
+        height: '100%',
+        fontSize: 16,
+        fontFamily: 'Poppins-Medium',
+        color: MOCK_COLORS.primaryText,
+        paddingVertical: 0,
+        letterSpacing: 0.3,
+    },
+    
+    // Eye Icon Styles
+    eyeButton: {
+        paddingLeft: 12,
+        paddingRight: 4,
+    },
+    
+    // Error Text Styles
+    errorText: {
+        color: 'red',
+        fontSize: 13,
+        fontFamily: 'Poppins-Regular',
+        marginTop: 5,
+        marginLeft: 12,
+    },
+
+    // --- Remember Me / Privacy Policy Styles ---
+    rememberMeContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 8,
+        marginBottom: 20,
+        marginLeft: 2,
+    },
+    checkbox: {
+        width: 22,
+        height: 22,
+        borderWidth: 2,
+        borderColor: MOCK_COLORS.secondaryText,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    checkboxChecked: {
+        backgroundColor: MOCK_COLORS.accent,
+        borderColor: MOCK_COLORS.accent,
+    },
+    checkboxCheckmark: {
+        color: "#FFFFFF",
+        fontSize: 14,
+        fontFamily: 'Poppins-Bold',
+    },
+    rememberMeText: {
+        fontSize: 15,
+        fontFamily: 'Poppins-Medium',
+        color: MOCK_COLORS.secondaryText,
+        letterSpacing: 0.2,
+        flex: 1,
+    },
+    privacyPolicyText: {
+        color: MOCK_COLORS.accent,
+        fontFamily: 'Poppins-SemiBold',
+    },
+
+    // --- Sign Up Button Styles ---
+    loginButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 25,
+        height: 45,
+        borderRadius: 31,
+        width: '65%',
+        alignSelf: 'flex-end',
+        backgroundColor: MOCK_COLORS.buttonStart,
+        ...Platform.select({
+            ios: {
+                shadowColor: MOCK_COLORS.buttonEnd,
+                shadowOffset: { width: 0, height: 12 },
+                shadowOpacity: 0.4,
+                shadowRadius: 18,
+            },
+            android: {
+                elevation: 18,
+            },
+        }),
+    },
+    loginButtonText: {
+        color: MOCK_COLORS.inputBackground,
+        fontSize: 16,
+        fontFamily: 'Poppins-Bold',
+        marginRight: 12,
+        letterSpacing: 0.8,
+    },
+    loginButtonArrow: {
+        color: MOCK_COLORS.inputBackground,
+        fontSize: 20,
+        fontFamily: 'Poppins-Bold',
+        marginTop: 2,
+    },
+
+    // --- Separator Styles ---
+    separatorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 30,
+    },
+    line: {
+        flex: 1,
+        height: 1,
+        backgroundColor: MOCK_COLORS.secondaryText + '40',
+    },
+    separatorText: {
+        marginHorizontal: 15,
+        color: MOCK_COLORS.secondaryText,
+        fontSize: 14,
+        fontFamily: 'Poppins-Regular',
+    },
+
+    // --- Social Login Styles ---
+    socialContainer: {
+        alignItems: 'center',
+        marginBottom: 30,
+    },
+    socialIcon: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: MOCK_COLORS.inputBackground,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 25,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
+    },
+    socialIconText: {
+        fontSize: 16,
+        fontFamily: 'Poppins-Regular',
+        color: MOCK_COLORS.primaryText,
+        marginLeft: 10,
+    },
+
+    // --- Footer Styles ---
+    signUpContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 30,
+        paddingVertical: 10,
+    },
+    signUpText: {
+        fontSize: 15,
+        fontFamily: 'Poppins-Regular',
+        color: MOCK_COLORS.secondaryText,
+        marginRight: 8,
+        letterSpacing: 0.3,
+    },
+    signInLink: {
+        fontSize: 15,
+        fontFamily: 'Poppins-SemiBold',
+        color: MOCK_COLORS.accent,
+        letterSpacing: 0.3,
+    },
 });
 
 export default SignUpScreen;

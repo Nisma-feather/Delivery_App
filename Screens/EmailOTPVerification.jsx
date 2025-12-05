@@ -180,7 +180,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
   },
-  title: { fontSize: 20, fontFamily: "Inter-Bold", color: "#222" },
+  title: { 
+    fontSize: 20, 
+    fontFamily: "Poppins-SemiBold", 
+    color: "#222" 
+  },
   subtitle: {
     fontSize: 14,
     color: "#666",
@@ -188,6 +192,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 8,
     lineHeight: 20,
+    fontFamily: "Poppins-Regular"
   },
   otpContainer: {
     flexDirection: "row",
@@ -204,7 +209,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     textAlign: "center",
     fontSize: 22,
-    fontWeight: "600",
+    fontFamily: "Poppins-Medium",
     color: "#222",
   },
   verifyButton: {
@@ -215,16 +220,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 50,
   },
-  verifyText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  verifyText: { 
+    color: "#fff", 
+    fontSize: 16, 
+    fontFamily: "Poppins-SemiBold" 
+  },
   resendContainer: {
     flexDirection: "row",
     marginTop: 25,
     alignItems: "center",
   },
-  resendText: { color: "#666", fontFamily: "Inter-Medium" },
-  resendLink: { color: Color.DARK, fontFamily: "Inter-Medium", marginLeft: 5 },
-  timerText: { color: "#444", fontSize: 14 },
-  timerHighlight: { color: Color.DARK, fontWeight: "bold" },
+  resendText: { 
+    color: "#666", 
+    fontFamily: "Poppins-Medium" 
+  },
+  resendLink: { 
+    color: Color.DARK, 
+    fontFamily: "Poppins-SemiBold",
+    marginLeft: 5 
+  },
+  timerText: { 
+    color: "#444", 
+    fontSize: 14,
+    fontFamily: "Poppins-Medium"
+  },
+  timerHighlight: { 
+    color: Color.DARK, 
+    fontFamily: "Poppins-Bold" 
+  },
 });
+
 
 export default EmailOTPVerification;

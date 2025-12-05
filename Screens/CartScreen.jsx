@@ -224,100 +224,107 @@ const updateCartItem = (updatedItem) => {
 };
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </Pressable>
-        <Text style={styles.headerTitle}>My Cart</Text>
-        <View style={{ width: 24 }} />
+  {/* Header */}
+  <View style={styles.header}>
+    <Pressable onPress={() => navigation.goBack()}>
+      <Ionicons name="arrow-back" size={24} color="#333" />
+    </Pressable>
+    <Text style={styles.headerTitle}>My Cart</Text>
+    <View style={{ width: 24 }} />
+  </View>
+
+  {cart.length === 0 && !loading ? (
+    // Show "Cart is Empty" message
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyText}>Cart is Empty</Text>
+    </View>
+  ) : (
+    <FlatList
+      data={cart}
+      keyExtractor={(item) => item._id}
+      renderItem={({ item }) => (
+        <CartCard
+          item={item}
+          onhandleSelect={() => handleAddToCheckout(item?.foodItem?._id)}
+          onDelete={() => handleCartDelete(item.foodItem._id)}
+          checked={selectedItems.includes(item.foodItem._id)}
+          updateItem={updateCartItem}
+        />
+      )}
+      contentContainerStyle={styles.listContent}
+    />
+  )}
+
+  {/* Footer */}
+  {cart.length > 0 && (
+    <View style={styles.footer}>
+      <View
+        style={{
+          backgroundColor: "#f8f8f8",
+          borderRadius: 10,
+          paddingHorizontal: 15,
+          paddingVertical: 12,
+          marginBottom: 15,
+        }}
+      >
+        <Text style={{ color: "#999" }}>Enter your promo code</Text>
       </View>
 
-      <FlatList
-        data={cart}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <CartCard
-            item={item}
-            onhandleSelect={() => handleAddToCheckout(item?.foodItem?._id)}
-            onDelete={() => handleCartDelete(item.foodItem._id)} // Fixed: Now properly passed
-            checked={selectedItems.includes(item.foodItem._id)}
-             updateItem={updateCartItem} 
-          />
-        )}
-        contentContainerStyle={styles.listContent}
+      <View style={styles.totalContainer}>
+        <Text style={[styles.totalText, { color: "#444" }]}>Subtotal</Text>
+        <Text style={[styles.totalPriceText, { color: "#444" }]}>
+          ₹{totalAmount.toFixed(2)}
+        </Text>
+      </View>
+
+      <View style={styles.totalContainer}>
+        <Text style={[styles.totalText, { color: "#444" }]}>Shipping</Text>
+        <Text style={[styles.totalPriceText, { color: "#444" }]}>₹40.00</Text>
+      </View>
+
+      <View
+        style={{
+          borderBottomColor: "#ccc",
+          borderStyle: "dashed",
+          borderBottomWidth: 1,
+          marginVertical: 8,
+        }}
       />
 
-      {/* Checkout/Total Footer */}
-      <View style={styles.footer}>
-        <View
-          style={{
-            backgroundColor: "#f8f8f8",
-            borderRadius: 10,
-            paddingHorizontal: 15,
-            paddingVertical: 12,
-            marginBottom: 15,
-          }}
-        >
-          <Text style={{ color: "#999" }}>Enter your promo code</Text>
-        </View>
-
-        <View style={styles.totalContainer}>
-          <Text style={[styles.totalText, { color: "#444" }]}>Subtotal</Text>
-          <Text style={[styles.totalPriceText, { color: "#444" }]}>
-            ₹{totalAmount.toFixed(2)} {/* Fixed: Uncommented */}
-          </Text>
-        </View>
-
-        <View style={styles.totalContainer}>
-          <Text style={[styles.totalText, { color: "#444" }]}>Shipping</Text>
-          <Text style={[styles.totalPriceText, { color: "#444" }]}>₹40.00</Text>
-        </View>
-
-        <View
-          style={{
-            borderBottomColor: "#ccc",
-            borderStyle: "dashed",
-            borderBottomWidth: 1,
-            marginVertical: 8,
-          }}
-        />
-
-        <View style={styles.totalContainer}>
-          <Text
-            style={[
-              styles.totalText,
-              { fontFamily: "Inter-Bold", color: "#000" },
-            ]}
-          >
-            Total amount
-          </Text>
-          <Text style={[styles.totalPriceText, { fontSize: 19 }]}>
-            ₹{(totalAmount + 40).toFixed(2)} {/* Fixed: Uncommented */}
-          </Text>
-        </View>
-
-        <TouchableOpacity
+      <View style={styles.totalContainer}>
+        <Text
           style={[
-            styles.checkoutButton,
-            {
-              backgroundColor: selectedItems.length === 0 ? "#ccc" : Color.DARK,
-              marginTop: 10,
-            },
+            styles.totalText,
+            { fontFamily: "Inter-Bold", color: "#000" },
           ]}
-          disabled={selectedItems.length === 0}
-          onPress={() => {
-            navigation.navigate("CheckoutScreen",{selectedItems});
-
-          }}
         >
-          <Text style={[styles.checkoutButtonText, { fontSize: 17 }]}>
-            CHECKOUT
-          </Text>
-        </TouchableOpacity>
+          Total amount
+        </Text>
+        <Text style={[styles.totalPriceText, { fontSize: 19 }]}>
+          ₹{(totalAmount + 40).toFixed(2)}
+        </Text>
       </View>
-    </SafeAreaView>
-  );
+
+      <TouchableOpacity
+        style={[
+          styles.checkoutButton,
+          {
+            backgroundColor: selectedItems.length === 0 ? "#ccc" : Color.DARK,
+            marginTop: 10,
+          },
+        ]}
+        disabled={selectedItems.length === 0}
+        onPress={() => navigation.navigate("CheckoutScreen", { selectedItems })}
+      >
+        <Text style={[styles.checkoutButtonText, { fontSize: 17 }]}>
+          CHECKOUT
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )}
+</SafeAreaView>
+
+  )
 };
 
 const styles = StyleSheet.create({
@@ -388,6 +395,18 @@ const styles = StyleSheet.create({
     padding: 5,
     width: 110,
   },
+  emptyContainer: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  padding: 20,
+},
+emptyText: {
+  fontSize: 20,
+  color: "#888",
+  fontFamily: "Inter-Bold",
+},
+
   quantityButton: {
     backgroundColor: "#fff",
     width: 25,

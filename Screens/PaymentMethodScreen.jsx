@@ -25,7 +25,7 @@ const mockPayments = [
 
 const PaymentMethodScreen = ({route,navigation}) => {
   // Set default selection to Online Payment
-  const {auth} = useAuth();
+  const {auth, updateCartCount} = useAuth();
   const [selectedMethod, setSelectedMethod] = useState("COD");
   const { deliveryAddress, checkoutItems, contactNo } = route?.params;
   const [loading,setLoading] = useState(false)
@@ -82,7 +82,7 @@ const PaymentMethodScreen = ({route,navigation}) => {
         paymentMethod: selectedMethod
         
       })
-      
+          updateCartCount()
           navigation.navigate("Order Successful");
       
       
