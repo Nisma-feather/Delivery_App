@@ -27,7 +27,7 @@ const CartCard = ({
 }) => {
   console.log(item);
   const { auth } = useAuth();
- 
+ console.log("Item Image",item?.foodItem.image)
 
   const handleCartUpdate = async (op) => {
     try {

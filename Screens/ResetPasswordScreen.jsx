@@ -16,7 +16,7 @@ const ResetPasswordScreen = ({ navigation, route }) => {
     try {
       await api.post("/auth/forgot/reset-password", { email, password });
       Alert.alert("Success", "Password reset! Please login.");
-      navigation.navigate("LoginScreen");
+      navigation.navigate("Login");
     } catch (err) {
       Alert.alert("Error", err.response?.data?.message || "Failed to reset password");
     }

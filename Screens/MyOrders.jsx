@@ -14,11 +14,15 @@ import Color from "../constants/Color";
 
 
 const OrderItem = ({ item, navigation }) => {
+  console.log(item)
   const foodNames = item.items
     .slice(0, 2)
     .map((food) => food.foodItemId?.name)
     .join(", ");
-  console.log("Item",item)
+  console.log("Item",item);
+  const image =
+    item.items[0].foodItemId?.image || item.items[1]?.foodItemId?.image;
+  console.log(image)
   const moreCount =
     item.items.length > 2 ? ` +${item.items.length - 2} more` : "";
 
