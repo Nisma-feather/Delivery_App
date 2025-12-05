@@ -11,44 +11,7 @@ import {
 } from "react-native";
 
 // --- Dummy Data (Simulating data that might be passed via navigation or fetched) ---
-const DUMMY_ORDER_DETAILS = {
-  orderId: "ORD-20251122-87532",
-  date: "22 Nov, 2025 at 11:15 AM",
-  status: "Preparing", // or 'Delivered', 'Cancelled', etc.
-  items: [
-    {
-      _id: "i1",
-      quantity: 1,
-      totalPrice: 12.6,
-      foodItem: {
-        name: "Sweet Lemon Indonesian Tea",
-        imageUrl: "https://picsum.photos/seed/tea_detail/100/100", // Placeholder
-      },
-    },
-    {
-      _id: "i2",
-      quantity: 2,
-      totalPrice: 25.2, // 2 * 12.6
-      foodItem: {
-        name: "Creamy Mocha Ome Coffee",
-        imageUrl: "https://picsum.photos/seed/mocha_detail/100/100", // Placeholder
-      },
-    },
-    {
-      _id: "i3",
-      quantity: 1,
-      totalPrice: 12.6,
-      foodItem: {
-        name: "Arabica Latte Ombe Coffee (Iced)",
-        imageUrl: "https://picsum.photos/seed/latte_detail/100/100", // Placeholder
-      },
-    },
-  ],
-  subtotal: 50.4, // 12.6 + 25.2 + 12.6
-  deliveryFee: 5.0,
-  tax: 2.5,
-  totalAmount: 57.9,
-};
+
 // ----------------------------------------------------------------------------------
 
 // ====================================================================
@@ -183,13 +146,9 @@ const OrderDetailsScreen = ({ route, navigation }) => {
 // ====================================================================
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5", // Light grey background
-  },
-  scrollContent: {
-    padding: 15,
-  },
+  container: { flex: 1, backgroundColor: "#f5f5f5" },
+  scrollContent: { padding: 15 },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -202,28 +161,21 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontFamily:"Inter-Bold",
+    fontFamily: "Poppins-Bold",
     color: "#000",
   },
-  iconButton: {
-    padding: 5,
-  },
-  iconText: {
-    fontSize: 24,
-    color: "#000",
-  },
-  placeholderIcon: {
-    width: 24, // Matches icon size for centering the title
-  },
+  iconButton: { padding: 5 },
+  iconText: { fontSize: 24, color: "#000" },
+
   sectionTitle: {
     fontSize: 16,
-    fontFamily:"Poppins-Bold",
+    fontFamily: "Poppins-Bold",
     color: "#333",
     marginBottom: 10,
     marginTop: 10,
   },
 
-  // --- Order Info Card Styles ---
+  // --- Order Info Card ---
   infoCard: {
     backgroundColor: "#fff",
     borderRadius: 8,
@@ -237,31 +189,31 @@ const styles = StyleSheet.create({
   },
   orderIdText: {
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "Poppins-SemiBold",
     color: "#000",
     marginBottom: 5,
   },
   orderDateText: {
     fontSize: 14,
+    fontFamily: "Poppins-Regular",
     color: "#666",
     marginBottom: 10,
   },
   statusBadge: {
     alignSelf: "flex-start",
-    backgroundColor: "#C8E6C9", // Light green
+    backgroundColor: "#C8E6C9",
     borderRadius: 15,
     paddingHorizontal: 12,
-
     paddingVertical: 8,
   },
   statusText: {
-    color: "#2E7D32", // Darker green
-    fontFamily: "Inter-SemiBold",
+    color: "#2E7D32",
+    fontFamily: "Poppins-SemiBold",
     fontSize: 13,
   },
 });
 
-// --- Items Chosen Styles ---
+// --- Items Chosen ---
 const itemsStyles = StyleSheet.create({
   itemsContainer: {
     backgroundColor: "#fff",
@@ -286,29 +238,28 @@ const itemsStyles = StyleSheet.create({
     height: 50,
     borderRadius: 6,
     marginRight: 10,
-    backgroundColor: "#ccc", // Fallback color
+    backgroundColor: "#ccc",
   },
-  infoContainer: {
-    flex: 1,
-  },
+  infoContainer: { flex: 1 },
   itemName: {
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "Poppins-SemiBold",
     color: "#000",
   },
   itemQuantity: {
     fontSize: 13,
+    fontFamily: "Poppins-Regular",
     color: "#666",
     marginTop: 2,
   },
   itemPrice: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#1E8449", // Green color for price
+    fontFamily: "Poppins-Bold",
+    color: "#1E8449",
   },
 });
 
-// --- Price Breakdown Styles ---
+// --- Price Breakdown ---
 const priceStyles = StyleSheet.create({
   priceContainer: {
     backgroundColor: "#fff",
@@ -327,31 +278,30 @@ const priceStyles = StyleSheet.create({
   },
   priceLabel: {
     fontSize: 15,
+    fontFamily: "Poppins-Regular",
     color: "#666",
   },
   priceValue: {
     fontSize: 15,
+    fontFamily: "Poppins-Medium",
     color: "#333",
-    fontWeight: "600",
   },
   separator: {
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     marginVertical: 10,
   },
-  totalRow: {
-    paddingVertical: 10,
-  },
   totalLabel: {
-    fontSize: 17,
-    fontWeight: "bold",
+    fontSize: 15,
+    fontFamily: "Poppins-Bold",
     color: "#000",
   },
   totalValue: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: "#1E8449", // Highlighted green for total
+    fontSize: 15,
+    fontFamily: "Poppins-Bold",
+    color: "#1E8449",
   },
 });
+
 
 export default OrderDetailsScreen;

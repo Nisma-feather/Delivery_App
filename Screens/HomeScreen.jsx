@@ -68,7 +68,7 @@ export const FoodCard = ({ item, handlePress, isFav, onToggleFav }) => (
         </Text>
 
         <View style={styles.cardRating}>
-          <Ionicons name="star" size={14} color="#FFD700" />
+          <Ionicons name="star" size={14} color={Color.DARK} />
           <Text style={styles.cardRatingText}>{item.rating || "4.5"}</Text>
         </View>
       </View>
@@ -191,7 +191,7 @@ const HomeScreen = ({ navigation }) => {
     if (loading) {
       return (
         <View style={styles.fullScreenLoading}>
-          <ActivityIndicator size="large" color={Color.primary || "#FF6A00"} />
+          <ActivityIndicator size="large" color={Color.DARK} />
           <Text style={styles.loadingText}>Loading food items...</Text>
         </View>
       );
@@ -386,8 +386,8 @@ const styles = StyleSheet.create({
     borderColor: "#EEE",
   },
   activeCategoryPill: {
-    backgroundColor: Color.DARK || "#FF6A00",
-    borderColor: Color.DARK || "#FF6A00",
+    backgroundColor: Color.DARK,
+    borderColor: Color.DARK ,
   },
   categoryText: {
     fontSize: 13,
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
   },
 
   cardTitle: {
-    fontSize: 15,
+    fontSize: 13,
     color: "#000",
     fontFamily: "Poppins-SemiBold",
   },
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   },
 
   cardPrice: {
-    fontSize: 16,
+    fontSize: 13,
     color: "#000",
     fontFamily: "Poppins-Bold",
   },

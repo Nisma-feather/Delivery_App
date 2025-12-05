@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../api/apiConfig';
+import Color from '../../constants/Color';
 
 const EditProfileScreen = ({ navigation, route }) => {
   const { auth } = useAuth();
@@ -187,7 +188,7 @@ const EditProfileScreen = ({ navigation, route }) => {
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#F4A609" />
+        <ActivityIndicator size="large" color={Color.DARK} />
         <Text style={styles.loadingText}>Loading profile...</Text>
       </SafeAreaView>
     );
@@ -385,14 +386,14 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   updateButton: {
-    backgroundColor: '#F4A609',
+    backgroundColor: Color.DARK,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
     paddingVertical: 15,
     marginBottom: 20,
-    shadowColor: '#F4A609',
+    shadowColor: Color.DARK,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "Feather Delivery App",
+    "name": "Feather Delivery",
     "slug": "Delivery_App",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/newIcon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/newIcon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/newAdaptiveIcon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,

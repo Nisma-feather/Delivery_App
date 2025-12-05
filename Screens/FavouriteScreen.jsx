@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { FoodCard } from "./HomeScreen";
+import Color from "../constants/Color";
 
 const FavouriteScreen = ({ navigation }) => {
   const { favourites, toggleFavourite } = useAuth();
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   browseButton: {
-    backgroundColor: "#FF6A00",
+    backgroundColor: Color.DARK,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,

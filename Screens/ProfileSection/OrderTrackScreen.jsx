@@ -42,9 +42,9 @@ const TrackingMapArea = ({ orderStatus }) => {
         </View>
       </View>
 
-      <View style={mapStyles.mapPlaceholder}>
+      {/* <View style={mapStyles.mapPlaceholder}>
         <Text style={mapStyles.mapText}>[Map Component Placeholder]</Text>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     height: 60,
   },
-
   backButton: {
     padding: 5,
     marginRight: 15,
@@ -218,10 +217,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
   },
-
   orderIdText: {
-    fontSize: 20,
-    fontWeight: "600",
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
     color: IMAGE_DARK,
   },
 
@@ -229,54 +227,45 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 15,
   },
-
   trackingHeader: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
     color: "#333",
     marginBottom: 10,
   },
 });
 
 const mapStyles = StyleSheet.create({
-  mapContainer: {
-    width: "100%",
-    height: 300,
-    backgroundColor: "#f5f5f5",
-  },
+  mapContainer: { width: "100%", height: 80, backgroundColor: "#f5f5f5" },
   mapHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 15,
+    paddingHorizontal: 14,
     paddingTop: 10,
     position: "absolute",
     width: "100%",
     zIndex: 10,
   },
-  orderIdNumber: { fontSize: 16, fontWeight: "500" },
+  orderIdNumber: { fontSize: 15, fontFamily: "Poppins-Medium" },
   statusBadge: {
     paddingVertical: 5,
     paddingHorizontal: 10,
     backgroundColor: Color.DARK,
     borderRadius: 20,
   },
-  statusBadgeText: { color: "#fff", fontWeight: "bold" },
+  statusBadgeText: { color: "#fff", fontFamily: "Poppins-Bold" },
   mapPlaceholder: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  mapText: { color: "#555" },
+  mapText: { color: "#555", fontFamily: "Poppins-Regular" },
 });
 
 const timelineStyles = StyleSheet.create({
   timelineContainer: {},
   timelineItem: { flexDirection: "row", marginBottom: 30 },
-  timelineConnector: {
-    width: 30,
-    alignItems: "center",
-    marginRight: 15,
-  },
+  timelineConnector: { width: 30, alignItems: "center", marginRight: 15 },
   timelineDot: {
     width: 35,
     height: 35,
@@ -294,11 +283,13 @@ const timelineStyles = StyleSheet.create({
     top: 35,
     bottom: -30,
   },
-  timelineLineActive: {
-    backgroundColor: Color.DARK,
-  },
+  timelineLineActive: { backgroundColor: Color.DARK },
   timelineContent: { flex: 1 },
-  statusTitle: { fontSize: 17, fontWeight: "700", color: "#666" },
-  statusTitleActive: { color: "#000" },
-  statusDateText: { fontSize: 13, color: "#999" },
+  statusTitle: { fontSize: 15, fontFamily: "Poppins-SemiBold", color: "#666" },
+  statusTitleActive: { color: "#000", fontFamily: "Poppins-Bold" },
+  statusDateText: {
+    fontSize: 13,
+    fontFamily: "Poppins-Regular",
+    color: "#999",
+  },
 });

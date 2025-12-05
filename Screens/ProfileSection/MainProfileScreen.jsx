@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { api } from "../../api/apiConfig";
 import { useFocusEffect } from "@react-navigation/native";
+import Color from "../../constants/Color";
 
 // Custom Component for Menu Items
 const MenuItem = ({ label, icon, color, onPress }) => {
@@ -85,7 +86,7 @@ const MainProfileScreen = ({ navigation }) => {
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#F4A609" />
+        <ActivityIndicator size="large" color={Color.DARK} />
         <Text style={styles.loadingText}>Loading profile...</Text>
       </SafeAreaView>
     );
@@ -121,46 +122,46 @@ const MainProfileScreen = ({ navigation }) => {
         <View style={styles.divider} />
 
         {/* MENU ITEMS */}
-        <MenuItem
+        {/* <MenuItem
           label="Change Password"
           icon="lock-closed-outline"
           onPress={() => console.log("Change Password")}
-        />
-        
+        /> */}
+
         <MenuItem
           label="My Orders"
           icon="cart"
           onPress={() => navigation.navigate("My Orders")}
         />
-        
-        <MenuItem
+
+        {/* <MenuItem
           label="Notifications"
           icon="notifications-outline"
           onPress={() => console.log("Notifications")}
-        />
-        
+        /> */}
+
         <MenuItem
           label="Address"
           icon="location-outline"
           onPress={() => navigation.navigate("Address")}
         />
-        
-        <MenuItem
+
+        {/* <MenuItem
           label="FAQ"
           icon="help-circle-outline"
           onPress={() => console.log("FAQ")}
         />
-        
-        <MenuItem
+         */}
+        {/* <MenuItem
           label="Contact us"
           icon="chatbox-ellipses-outline"
           onPress={() => console.log("Contact us")}
-        />
-        
+        /> */}
+
         <MenuItem
           label="Terms & Conditions"
           icon="document-text-outline"
-          onPress={() => console.log("Terms & Conditions")}
+          onPress={() => navigation.navigate("Terms")}
         />
 
         {/* DIVIDER */}
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: "Poppins-Medium",
     fontSize: 14,
-    color: "#F4A609",
+    color: Color.DARK,
   },
   divider: {
     height: 1,

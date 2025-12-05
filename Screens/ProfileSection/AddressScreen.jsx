@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
 
   addBtn: {
-    backgroundColor: "#ff6f00",
+    backgroundColor: Color.DARK,
     padding: 14,
     borderRadius: 30,
     flexDirection: "row",
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
 
   saveBtn: {
-    backgroundColor: "#ff6f00",
+    backgroundColor: Color.DARK,
     padding: 15,
     borderRadius: 10,
     marginTop: 10,

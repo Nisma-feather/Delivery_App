@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { api } from "../api/apiConfig";
@@ -83,7 +83,18 @@ const PaymentMethodScreen = ({route,navigation}) => {
         
       })
           updateCartCount()
-          navigation.navigate("Order Successful");
+        Alert.alert(
+          "Order Successful",
+          "Order placed successfully. For more details track your order.",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.replace("CartScreen"),
+            },
+          ],
+          { cancelable: false }
+        );
+
       
       
       
@@ -140,6 +151,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+
   header: {
     padding: 20,
     backgroundColor: "#fff",
@@ -149,10 +161,11 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
     textAlign: "center",
     color: "#333",
   },
+
   content: {
     flex: 1,
     paddingHorizontal: 20,
@@ -160,7 +173,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginBottom: 10,
   },
@@ -190,11 +203,12 @@ const styles = StyleSheet.create({
   },
   cardType: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
   },
   cardDescription: {
-    fontSize: 12,
+    fontSize: 13,
+    fontFamily: "Poppins-Regular",
     color: "#6e6e6e",
     marginTop: 2,
   },
@@ -225,8 +239,9 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
 });
+
 
 export default PaymentMethodScreen;

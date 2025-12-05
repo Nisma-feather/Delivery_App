@@ -13,6 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "../api/apiConfig";
 import { useAuth } from "../context/AuthContext";
+import Color from "../constants/Color";
 
 const EditAddressScreen = ({ navigation,route }) => {
   const { auth } = useAuth();
@@ -149,7 +150,7 @@ const EditAddressScreen = ({ navigation,route }) => {
       <Text style={styles.header}>My Addresses</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#ff6f00" />
+        <ActivityIndicator size="large" color={Color.DARK} />
       ) : (
         <FlatList
           data={addresses}
@@ -165,7 +166,7 @@ const EditAddressScreen = ({ navigation,route }) => {
                   selectedAddress === item._id ? "checkbox" : "square-outline"
                 }
                 size={26}
-                color={selectedAddress === item._id ? "#ff6f00" : "#555"}
+                color={selectedAddress === item._id ? Color.DARK : "#555"}
               />
 
               <View style={{ marginLeft: 15, flex: 1 }}>
@@ -328,7 +329,7 @@ const styles = StyleSheet.create({
   },
 
   addBtn: {
-    backgroundColor: "#ff6f00",
+    backgroundColor: Color.DARK,
     padding: 14,
     borderRadius: 30,
     flexDirection: "row",
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
   errorText: { color: "red", marginBottom: 10 },
 
   saveBtn: {
-    backgroundColor: "#ff6f00",
+    backgroundColor: Color.DARK,
     padding: 15,
     borderRadius: 10,
     marginTop: 10,

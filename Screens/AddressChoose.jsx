@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -209,13 +210,22 @@ const AddressChoose = ({ navigation, route }) => {
         {/* FIXED BUTTON */}
         <TouchableOpacity
           style={styles.payNowButton}
-          onPress={() =>
+          onPress={() => {
+            if (!address) {
+              Alert.alert("Please choose a delivery address");
+              return;
+            }
+            if (!phone || phone.length < 10) {
+              Alert.alert("Please enter a valid contact number");
+              return;
+            }
+
             navigation.navigate("Payment Method", {
               deliveryAddress: address,
               checkoutItems,
               contactNo: phone,
-            })
-          }
+            });
+          }}
         >
           <Text style={styles.payNowText}>Pay Now</Text>
         </TouchableOpacity>

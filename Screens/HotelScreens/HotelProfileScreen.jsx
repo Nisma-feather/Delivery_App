@@ -15,6 +15,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { api } from "../../api/apiConfig";
 import { useAuth } from "../../context/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Color from "../../constants/Color";
 
 const HotelProfileScreen = ({navigation}) => {
   const [loading,setLoading] = useState(false);
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: "Poppins-Medium",
     fontSize: 14,
-    color: "#F4A609",
+    color: Color.DARK,
   },
 
   divider: {

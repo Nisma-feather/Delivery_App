@@ -67,7 +67,7 @@ const MenuItem = ({ item, handleOnPress }) => {
         <Text
           style={[
             styles.stockText,
-            { color: available ? "#FFB300" : "#888" },
+            { color: available ? Color.DARK : "#888" },
           ]}
         >
           {available ? "Available" : "Not Available"}
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
   },
   activeTabUnderline: {
     height: 3,
-    backgroundColor: "#FFB300",
+    backgroundColor: Color.DARK,
     position: "absolute",
     bottom: 0,
     left: 15,
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     right: 20,
     bottom: 20,
-    backgroundColor: "#FFB300",
+    backgroundColor: Color.DARK,
     borderRadius: 30,
     elevation: 4,
     shadowColor: "#000",

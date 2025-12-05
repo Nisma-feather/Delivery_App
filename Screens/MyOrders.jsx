@@ -98,13 +98,9 @@ const MyOrders = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.iconText}>←</Text>
-        </TouchableOpacity>
+       
         <Text style={styles.headerTitle}>My Orders</Text>
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.iconText}>🏠</Text>
-        </TouchableOpacity>
+       
       </View>
 
       {/* Tabs */}
@@ -159,10 +155,7 @@ const MyOrders = ({ navigation }) => {
 
 // Styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
 
   header: {
     flexDirection: "row",
@@ -174,15 +167,11 @@ const styles = StyleSheet.create({
     borderBottomColor: "#f0f0f0",
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 19,
+    fontFamily: "Poppins-Bold",
   },
-  iconButton: {
-    padding: 5,
-  },
-  iconText: {
-    fontSize: 24,
-  },
+  iconButton: { padding: 5 },
+  iconText: { fontSize: 24 },
 
   tabContainer: {
     flexDirection: "row",
@@ -192,27 +181,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E0E0E0",
   },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  tabText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-  },
-  activeTab: {
-    backgroundColor: Color.DARK,
-    borderRadius: 30,
-  },
-  activeTabText: {
-    color: "#fff",
-  },
+  tabButton: { flex: 1, paddingVertical: 7, alignItems: "center" },
+  tabText: { fontSize: 15, fontFamily: "Poppins-Medium", color: "#000" },
+  activeTab: { backgroundColor: Color.DARK, borderRadius: 30 },
+  activeTabText: { color: "#fff", fontFamily: "Poppins-SemiBold" },
 
-  listContent: {
-    paddingHorizontal: 15,
-  },
+  listContent: { paddingHorizontal: 15 },
 
   orderItemContainer: {
     flexDirection: "row",
@@ -223,28 +197,17 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
     alignItems: "center",
   },
-  orderImage: {
-    width: 70,
-    height: 70,
-    marginRight: 15,
-    borderRadius: 10,
-  },
-  orderDetailContainer: {
-    flex: 1,
-  },
-  orderName: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  orderImage: { width: 70, height: 70, marginRight: 15, borderRadius: 10 },
+  orderDetailContainer: { flex: 1 },
+
+  orderName: { fontSize: 13, fontFamily: "Poppins-SemiBold" },
   orderDescription: {
+    fontSize: 13,
+    fontFamily: "Poppins-Regular",
     color: "#777",
     marginTop: 2,
   },
-  orderPrice: {
-    marginTop: 5,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  orderPrice: { marginTop: 5, fontSize: 13, fontFamily: "Poppins-Bold" },
 
   trackButton: {
     backgroundColor: Color.DARK,
@@ -252,14 +215,11 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 20,
   },
-  trackButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
+  trackButtonText: { color: "#fff", fontFamily: "Poppins-SemiBold" },
+
   viewDetailsButton: {
     marginTop: 6,
     borderWidth: 1,
-
     borderColor: Color.DARK,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -272,5 +232,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+ 
 
 export default MyOrders;

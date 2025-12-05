@@ -14,6 +14,7 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { api } from "../../api/apiConfig";
+import Color from "../../constants/Color";
 
 const EditHotelProfile = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState(null);
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     fontFamily: "Poppins-Regular",
   },
-  saveBtn: { backgroundColor: "#F6A725", padding: 18, alignItems: "center" },
+  saveBtn: { backgroundColor: Color.DARK, padding: 18, alignItems: "center" },
   saveText: { fontSize: 16, fontFamily: "Poppins-Bold", color: "#000" },
   error: { color: "red", fontSize: 12, marginTop: 3, marginBottom: -5 },
 });

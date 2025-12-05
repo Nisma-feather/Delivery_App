@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { api } from "../api/apiConfig";
+import Color from '../constants/Color';
 
 const ForgotPasswordEmailScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     marginBottom:20 
   },
   button:{ 
-    backgroundColor:"#f9a825",
+    backgroundColor:Color.DARK,
     paddingVertical:10,
     borderRadius:25,
     alignItems:"center",
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
   },
   backLogin:{ 
     textAlign:"center",
-    color:"#f9a825",
+    color:Color.DARK,
     fontFamily:"Poppins-Medium",
     marginTop:20 
   },

@@ -21,13 +21,13 @@ import {Fontisto,Octicons,Ionicons} from '@expo/vector-icons';
 
 // --- Colors ---
 const MOCK_COLORS = {
-    background: "#FAF7F0", // Light beige/off-white background
-    primaryText: "#252525", // Dark text
-    secondaryText: "#666666", // Grey text
-    accent: "#FF8C00", // Dark Orange for links/main color
-    buttonStart: "#FFC35A", // Light Orange (top of gradient)
-    buttonEnd: "#FF8C00",   // Dark Orange (bottom of gradient)
-    inputBackground: "#FFFFFF",
+  background: "#f8fbfdff", // Light beige/off-white background
+  primaryText: "#252525", // Dark text
+  secondaryText: "#666666", // Grey text
+  accent: "#48b1c5", // Dark Orange for links/main color
+  buttonStart: "#48b1c5", // Light Orange (top of gradient)
+  buttonEnd: "#48b1c5", // Dark Orange (bottom of gradient)
+  inputBackground: "#FFFFFF",
 };
 
 const { width } = Dimensions.get("window");

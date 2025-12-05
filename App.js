@@ -89,6 +89,7 @@ const ProfileStack=()=>{
       <Stack.Screen name="Profile Edit" component={EditProfileScreen}/>
       <Stack.Screen name="Order Details" component={OrderDetailsScreen} />
       <Stack.Screen name="Track Order" component={OrderTrackScreen} />
+      <Stack.Screen name="Terms" component={TermsAndConditionsScreen}/>
     </Stack.Navigator>
   );
 }
@@ -108,7 +109,7 @@ const ProfileStack=()=>{
           },
           // REMOVE position: 'absolute' and use flexbox approach
           tabBarStyle: {
-            height: 60,
+            height: 70,
             backgroundColor: "#ffffff",
             elevation: 8,
             borderTopWidth: 1,
@@ -116,7 +117,7 @@ const ProfileStack=()=>{
             paddingBottom: 5,
             paddingTop: 5,
           },
-          tabBarActiveTintColor: "#ff5e00ff",
+          tabBarActiveTintColor: Color.DARK,
           tabBarInactiveTintColor: "#8e8e8e",
           tabBarLabelStyle: {
             fontSize: 10,
@@ -171,10 +172,10 @@ const ProfileStack=()=>{
             tabBarLabel: "Cart",
             tabBarBadge: cartLength > 0 ? cartLength : null,
             tabBarBadgeStyle: {
-              backgroundColor: "#ff5e00ff",
+              backgroundColor: Color.DARK,
               color: "white",
               fontSize: 10,
-              fontWeight: "bold",
+              fontWeight: Color.DARK,
             },
           }}
         />
@@ -190,7 +191,7 @@ function RootNavigator() {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#ff6600" />
+        <ActivityIndicator size="large" color={Color.DARK}/>
         <Text style={{ marginTop: 10 }}>Loading...</Text>
       </View>
     );

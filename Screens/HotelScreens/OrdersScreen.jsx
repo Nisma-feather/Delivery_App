@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { api } from "../../api/apiConfig";
+import Color from "../../constants/Color";
 
 const OrdersScreen = ({navigation}) => {
   const [search, setSearch] = useState("");
@@ -142,7 +143,7 @@ const OrdersScreen = ({navigation}) => {
   if (loading) {
     return (
       <SafeAreaView style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color="#f5a623" />
+        <ActivityIndicator size="large" color={Color.DARK} />
         <Text style={styles.loadingText}>Loading orders...</Text>
       </SafeAreaView>
     );

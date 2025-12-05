@@ -16,7 +16,7 @@ import Color from "../constants/Color";
 import { api } from "../api/apiConfig";
 import { useAuth } from "../context/AuthContext";
 
-const PRIMARY_COLOR = Color.DARK || "#EB3E3E";
+const PRIMARY_COLOR = Color.DARK ;
 const { width, height } = Dimensions.get("window");
 
 const FoodDetailScreen = ({ navigation, route }) => {
