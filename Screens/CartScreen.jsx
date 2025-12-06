@@ -25,9 +25,9 @@ const CartCard = ({
   updateItem
 
 }) => {
-  console.log(item);
+
   const { auth } = useAuth();
- console.log("Item Image",item?.foodItem.image)
+
 
   const handleCartUpdate = async (op) => {
     try {
@@ -68,7 +68,7 @@ const CartCard = ({
       {/* Food Image */}
       <View style={{ width: 80, height: 75, borderRadius: 10 }}>
         <Image
-          source={require("../assets/biriyani.png")}
+          source={{uri: item?.foodItem?.image}}
           style={{ width: "100%", height: "100%", borderRadius: 15 }}
         />
       </View>
@@ -78,7 +78,7 @@ const CartCard = ({
         <Text style={styles.foodName}>{item.foodItem.name}</Text>
         <Text style={styles.priceLabel}>
           Price:{" "}
-          <Text style={styles.priceValue}>${item.totalPrice.toFixed(2)}</Text>
+          <Text style={styles.priceValue}> ₹ {item.foodItem?.price.toFixed(2)}</Text>
         </Text>
 
         {/* Quantity Control */}
@@ -121,7 +121,7 @@ const CartCard = ({
         </TouchableOpacity>
         <View style={{ flexDirection: "row" }}>
           <Text> ₹</Text>
-          <Text style={[styles.itemTotalPrice, { fontSize: 18 }]}>
+          <Text style={[styles.itemTotalPrice, { fontSize: 16 }]}>
             {item.totalPrice}
           </Text>
         </View>
@@ -295,12 +295,12 @@ const updateCartItem = (updatedItem) => {
         <Text
           style={[
             styles.totalText,
-            { fontFamily: "Inter-Bold", color: "#000" },
+            { fontFamily: "Poppins-Bold", color: "#000",fontSize:15},
           ]}
         >
           Total amount
         </Text>
-        <Text style={[styles.totalPriceText, { fontSize: 19 }]}>
+        <Text style={[styles.totalPriceText, { fontSize: 17 }]}>
           ₹{(totalAmount + 40).toFixed(2)}
         </Text>
       </View>
@@ -316,7 +316,7 @@ const updateCartItem = (updatedItem) => {
         disabled={selectedItems.length === 0}
         onPress={() => navigation.navigate("CheckoutScreen", { selectedItems })}
       >
-        <Text style={[styles.checkoutButtonText, { fontSize: 17 }]}>
+        <Text style={[styles.checkoutButtonText, { fontSize: 15 }]}>
           CHECKOUT
         </Text>
       </TouchableOpacity>
@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flex: 1,
   },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -341,79 +342,90 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
+
   headerTitle: {
-    fontSize: 20,
-    fontFamily: "Inter-Bold",
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
     color: "#333",
   },
+
   listContent: {
     padding: 10,
   },
+
   foodCard: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: 12,
     backgroundColor: "#fff",
     borderRadius: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#e7dfdfff",
   },
+
   checkboxContainer: {
-    height: 20,
-    width: 20,
+    height: 18,
+    width: 18,
     borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 15,
   },
+
   detailsContainer: {
     flex: 1,
     paddingHorizontal: 15,
   },
+
   foodName: {
-    fontSize: 16,
-    fontFamily: "Inter-Bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  priceLabel: {
     fontSize: 14,
-    color: "#888",
-    fontFamily: "Inter-Regular",
-    marginBottom: 10,
+    fontFamily: "Poppins-SemiBold",
+    color: "#333",
+    marginBottom: 4,
   },
+
+  priceLabel: {
+    fontSize: 12,
+    color: "#888",
+    fontFamily: "Poppins-Regular",
+    marginBottom: 8,
+  },
+
   priceValue: {
-    fontWeight: "600",
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
   },
+
   quantityControl: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
+    gap: 12,
     backgroundColor: "#f5f5f5",
     borderRadius: 15,
     padding: 5,
-    width: 110,
+    width: 100,
   },
+
   emptyContainer: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  padding: 20,
-},
-emptyText: {
-  fontSize: 20,
-  color: "#888",
-  fontFamily: "Inter-Bold",
-},
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+
+  emptyText: {
+    fontSize: 16,
+    color: "#888",
+    fontFamily: "Poppins-SemiBold",
+  },
 
   quantityButton: {
     backgroundColor: "#fff",
-    width: 25,
-    height: 25,
+    width: 22,
+    height: 22,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 12,
+    borderRadius: 11,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -424,68 +436,80 @@ emptyText: {
       android: { elevation: 3 },
     }),
   },
+
   quantityButtonText: {
-    fontSize: 15,
+    fontSize: 12,
     color: "#fff",
-    fontFamily: "Inter-Bold",
+    fontFamily: "Poppins-Bold",
   },
+
   quantityCount: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
     minWidth: 20,
     textAlign: "center",
   },
+
   itemTotalPriceContainer: {
     alignSelf: "flex-end",
     marginLeft: "auto",
     paddingRight: 10,
   },
+
   deleteButton: {
-    // Added missing style
-    marginBottom: 8,
+    marginBottom: 6,
     alignSelf: "flex-end",
   },
+
   itemTotalPrice: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#333",
-    fontFamily: "Inter-Bold",
+    fontFamily: "Poppins-SemiBold",
   },
+
   footer: {
     padding: 15,
     borderTopWidth: 1,
     borderTopColor: "#f0f0f0",
     backgroundColor: "#fff",
   },
+
   totalContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
+    marginBottom: 8,
   },
+
   totalText: {
-    fontSize: 15,
-    fontFamily: "Inter-Regular",
+    fontSize: 14,
+    fontFamily: "Poppins-Regular",
     color: "#888",
   },
+
   totalPriceText: {
-    fontSize: 17,
-    fontFamily: "Inter-Bold",
+    fontSize: 15,
+    fontFamily: "Poppins-Bold",
     color: Color.DARK,
   },
+
   checkoutButton: {
     backgroundColor: Color.DARK,
-    padding: 15,
+    padding: 10,
     borderRadius: 10,
     alignItems: "center",
   },
+
   checkoutButtonDisabled: {
     backgroundColor: "#ccc",
   },
+
   checkoutButtonText: {
     color: "#fff",
-    fontSize: 17,
-    fontFamily: "Inter-Bold",
+    fontSize: 15,
+    fontFamily: "Poppins-Bold",
   },
 });
+
 
 export default CartScreen;

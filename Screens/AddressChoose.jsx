@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  Alert
+  Alert,
+  Image
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -22,7 +23,7 @@ const ItemsChosen = ({ items }) => {
       {items.map((item) => (
         <View key={item._id} style={itemsStyles.itemRow}>
           <View style={itemsStyles.imagePlaceholder}>
-            <Text style={itemsStyles.imageText}>Img</Text>
+            <Image source={{uri:item?.foodItem?.image}} style={{height:"100%",width:"100%",borderRadius:10}} resizeMode="cover"/>
           </View>
 
           <View style={itemsStyles.infoContainer}>
@@ -239,75 +240,114 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#f5f5f5" },
   container: { flex: 1, paddingHorizontal: 20 },
 
-  sectionTitle: { fontSize: 17, fontWeight: "700", marginBottom: 10 },
+  sectionTitle: {
+    fontSize: 15,
+    fontFamily: "Poppins-SemiBold",
+    marginBottom: 8,
+  },
 
   whiteBox: {
     backgroundColor: "#fff",
-    padding: 15,
+    padding: 14,
     borderRadius: 12,
     elevation: 3,
-    marginBottom: 25,
+    marginBottom: 22,
   },
 
   addressCard: {
     flexDirection: "row",
     backgroundColor: "#f9f9f9",
-    padding: 15,
+    padding: 14,
     borderRadius: 12,
     alignItems: "center",
   },
 
-  addressTextContainer: { flex: 1, marginLeft: 15 },
-  addrText: { fontSize: 14, fontWeight: "600" },
-  addrSub: { fontSize: 12, color: "#666" },
+  addressTextContainer: { flex: 1, marginLeft: 12 },
+
+  addrText: {
+    fontSize: 13,
+    fontFamily: "Poppins-Medium",
+  },
+
+  addrSub: {
+    fontSize: 11,
+    color: "#666",
+    fontFamily: "Poppins-Regular",
+  },
 
   phoneCard: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f9f9f9",
-    padding: 15,
+    padding: 14,
     borderRadius: 12,
   },
 
   phoneText: {
     flex: 1,
-    marginLeft: 15,
-    fontSize: 16,
-    fontWeight: "600",
+    marginLeft: 12,
+    fontSize: 14,
+    fontFamily: "Poppins-Medium",
   },
 
   phoneInput: {
     flex: 1,
-    marginLeft: 15,
-    fontSize: 16,
+    marginLeft: 12,
+    fontSize: 14,
     borderBottomWidth: 1,
     borderColor: "#ccc",
     paddingBottom: 2,
+    fontFamily: "Poppins-Regular",
   },
 
   changeText: {
     color: "#007bff",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
   },
 
   summarySection: {
     backgroundColor: "#fff",
-    padding: 15,
+    padding: 14,
     borderRadius: 12,
     elevation: 3,
-    marginBottom: 120,
+    marginBottom: 110,
   },
 
-  detailRow: { flexDirection: "row", justifyContent: "space-between" },
-  detailLabel: { fontSize: 14, color: "#777" },
-  detailValue: { fontSize: 14, fontWeight: "500" },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
 
-  divider: { height: 1, backgroundColor: "#eee", marginVertical: 10 },
+  detailLabel: {
+    fontSize: 12,
+    color: "#777",
+    fontFamily: "Poppins-Regular",
+  },
+
+  detailValue: {
+    fontSize: 12,
+    fontFamily: "Poppins-Medium",
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: "#eee",
+    marginVertical: 10,
+  },
 
   totalRow: { marginTop: 10 },
-  totalLabel: { fontSize: 16, fontWeight: "bold" },
-  totalValue: { fontSize: 20, fontWeight: "bold", color: "black" },
+
+  totalLabel: {
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
+  },
+
+  totalValue: {
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
+  },
 
   payNowButton: {
     position: "absolute",
@@ -315,41 +355,67 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     backgroundColor: "black",
-    paddingVertical: 16,
+    paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
   },
-  payNowText: { color: "white", fontSize: 18, fontWeight: "bold" },
+
+  payNowText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "Poppins-Bold",
+  },
 });
 
-// Items styles
+// ITEMS STYLES
 const itemsStyles = StyleSheet.create({
   itemsContainer: {
     backgroundColor: "#fff",
-    padding: 15,
+    padding: 14,
     borderRadius: 12,
     elevation: 3,
-    marginBottom: 25,
+    marginBottom: 22,
   },
+
   itemRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 12,
   },
+
   imagePlaceholder: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
     backgroundColor: "#eee",
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 10,
   },
-  imageText: { fontSize: 10, color: "#999" },
+
+  imageText: {
+    fontSize: 9,
+    color: "#999",
+    fontFamily: "Poppins-Regular",
+  },
+
   infoContainer: { flex: 1 },
-  itemName: { fontSize: 14, fontWeight: "600" },
-  itemQuantity: { fontSize: 12, color: "#777" },
-  itemPrice: { fontSize: 14, fontWeight: "bold" },
+
+  itemName: {
+    fontSize: 13,
+    fontFamily: "Poppins-Medium",
+  },
+
+  itemQuantity: {
+    fontSize: 11,
+    color: "#777",
+    fontFamily: "Poppins-Regular",
+  },
+
+  itemPrice: {
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
+  },
 });
 
 export default AddressChoose;

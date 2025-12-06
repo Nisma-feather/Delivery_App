@@ -298,9 +298,17 @@ export default EditAddressScreen;
 // -----------------------------------------------------------
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingHorizontal: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+  },
 
-  header: { fontSize: 24, fontWeight: "bold", marginVertical: 20 },
+  header: {
+    fontSize: 20,
+    fontFamily: "Poppins-Bold",
+    marginVertical: 20,
+  },
 
   addressCard: {
     flexDirection: "row",
@@ -311,26 +319,48 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  addrText: { fontSize: 15, fontWeight: "bold" },
-  addrSub: { fontSize: 14, color: "#555" },
+  addrText: {
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
+    lineHeight: 18,
+  },
+
+  addrSub: {
+    fontSize: 12,
+    color: "#555",
+    fontFamily: "Poppins-Regular",
+    marginTop: 2,
+  },
 
   editBtn: {
     backgroundColor: "#000",
-    paddingHorizontal: 20,
-    paddingVertical: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
     borderRadius: 6,
+  },
+  editBtnText: {
+    color: "#fff",
+    fontSize: 12,
+    fontFamily: "Poppins-Medium",
   },
 
   deleteBtn: {
     backgroundColor: "#fff",
-    paddingHorizontal: 20,
-    paddingVertical: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  deleteBtnText: {
+    color: "#666",
+    fontSize: 12,
+    fontFamily: "Poppins-Medium",
   },
 
   addBtn: {
     backgroundColor: Color.DARK,
-    padding: 14,
+    padding: 10,
     borderRadius: 30,
     flexDirection: "row",
     justifyContent: "center",
@@ -339,9 +369,9 @@ const styles = StyleSheet.create({
   },
   addBtnText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
     marginLeft: 8,
-    fontWeight: "bold",
   },
 
   continueBtn: {
@@ -349,14 +379,15 @@ const styles = StyleSheet.create({
     bottom: 80,
     left: 20,
     right: 20,
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
+    backgroundColor: Color.DARK,
   },
   continueText: {
     color: "#fff",
-    fontSize: 17,
-    fontWeight: "600",
+    fontSize: 15,
+    fontFamily: "Poppins-SemiBold",
   },
 
   modalContainer: {
@@ -370,9 +401,14 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
+    maxHeight: "90%",
   },
 
-  modalHeader: { fontSize: 20, fontWeight: "bold", marginBottom: 15 },
+  modalHeader: {
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
+    marginBottom: 15,
+  },
 
   input: {
     borderWidth: 1,
@@ -380,28 +416,77 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
+    fontSize: 14,
+    fontFamily: "Poppins-Regular",
   },
 
-  errorText: { color: "red", marginBottom: 10 },
+  inputLabel: {
+    fontSize: 13,
+    fontFamily: "Poppins-Medium",
+    marginBottom: 6,
+    color: "#333",
+  },
+
+  errorText: {
+    color: "red",
+    marginBottom: 10,
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
+  },
 
   saveBtn: {
     backgroundColor: Color.DARK,
-    padding: 15,
+    padding: 10,
     borderRadius: 10,
     marginTop: 10,
   },
-
   saveBtnText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
     textAlign: "center",
-    fontWeight: "bold",
   },
 
-  cancelBtn: { marginTop: 10 },
+  cancelBtn: {
+    marginTop: 10,
+  },
   cancelBtnText: {
     textAlign: "center",
-    fontSize: 15,
+    fontSize: 13,
+    fontFamily: "Poppins-Medium",
     color: "red",
+  },
+
+  // Additional styles for better UI
+  addressContainer: {
+    flex: 1,
+    marginLeft: 12,
+  },
+
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 8,
+  },
+
+  modalScrollView: {
+    maxHeight: 400,
+  },
+
+  // Optional: Add some helper text styles
+  helperText: {
+    fontSize: 11,
+    color: "#777",
+    fontFamily: "Poppins-Regular",
+    marginTop: 4,
+  },
+
+  // Optional: Add selected address indicator
+  selectedIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Color.DARK,
+    marginRight: 8,
   },
 });
