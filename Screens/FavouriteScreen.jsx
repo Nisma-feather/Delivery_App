@@ -33,14 +33,12 @@ const FavouriteScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       {/* Header */}
       <View style={styles.header}>
-       
         <Text style={styles.headerTitle}>My Favourites</Text>
-      
       </View>
 
       {/* Favourites List */}
@@ -66,7 +64,7 @@ const FavouriteScreen = ({ navigation }) => {
         )}
         keyExtractor={(item) => item._id}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -74,6 +72,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    paddingBottom:5
+  
+    
   },
   header: {
     flexDirection: "row",

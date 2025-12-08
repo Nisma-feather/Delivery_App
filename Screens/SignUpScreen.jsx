@@ -173,7 +173,7 @@ const SignUpScreen = ({ navigation }) => {
 
       if (res.status === 200) {
         console.log("✅ Email available, proceeding to verification...");
-        navigation.navigate("Email Verification", { email, password, userName });
+        navigation.replace("Email Verification", { email, password, userName });
       }
     } catch (error) {
       if (error.response?.status === 409) {

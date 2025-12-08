@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef} from "react";
 import {
   View,
   Text,
@@ -43,6 +43,7 @@ const ItemsChosen = ({ items }) => {
 // ================= MAIN SCREEN =================
 const AddressChoose = ({ navigation, route }) => {
   const { selectedItems } = route?.params;
+  const focusRef= useRef(null);
   const { auth } = useAuth();
 
   const [address, setAddress] = useState(null);
@@ -97,8 +98,19 @@ const AddressChoose = ({ navigation, route }) => {
     }
   };
 
+  const getPhoneNumber=async()=>{
+    try{
+      const res = await api.get(`/user/${auth.userId}`);
+      setPhone(res.data?.user?.mobile)
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
   useEffect(() => {
     fetchChoosedAddress();
+    getPhoneNumber();
   }, []);
 
   return (
@@ -152,6 +164,7 @@ const AddressChoose = ({ navigation, route }) => {
               {isEditingPhone ? (
                 <TextInput
                   style={styles.phoneInput}
+                  ref={focusRef}
                   value={phone}
                   keyboardType="number-pad"
                   maxLength={10}
@@ -163,8 +176,14 @@ const AddressChoose = ({ navigation, route }) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  if (isEditingPhone) updatePhone();
-                  else setIsEditingPhone(true);
+                  if (isEditingPhone) {
+                    updatePhone();
+                  } else {
+                    setIsEditingPhone(true);
+                    setTimeout(() => {
+                      focusRef.current?.focus(); // focus after state update
+                    }, 100);
+                  }
                 }}
               >
                 <Text style={styles.changeText}>

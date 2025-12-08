@@ -5,7 +5,7 @@ import Color from "../constants/Color";
 
 const ForgotOTPVerification = ({ navigation, route }) => {
   const { email } = route.params;
-
+  const [verifying,setVerifying] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", ""]);
   const inputRefs = useRef([]);
 
@@ -16,12 +16,15 @@ const ForgotOTPVerification = ({ navigation, route }) => {
     }
 
     try {
+      setVerifying(true)
       const res = await api.post("/auth/forgot/verify-otp", { email, otp: code });
       Alert.alert("Verified", "OTP Verified Successfully!");
-      navigation.navigate("ResetPasswordScreen", { email });
+      setVerifying(false)
+      navigation.replace("ResetPasswordScreen", { email });
 
     } catch (err) {
       Alert.alert("Error", err.response?.data?.message || "Invalid OTP");
+      setVerifying(false)
     }
   };
 
@@ -55,9 +58,17 @@ const ForgotOTPVerification = ({ navigation, route }) => {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.verifyButton} onPress={handleVerify}>
-        <Text style={styles.verifyText}>Confirm</Text>
+      <TouchableOpacity
+        style={[styles.verifyButton, verifying && { opacity: 0.6 }]}
+        disabled={verifying}
+        onPress={() => !verifying && handleVerify()}
+      >
+        <Text style={styles.verifyText}>
+          {verifying ? "Veryfying..." : "Verify"}
+        </Text>
       </TouchableOpacity>
+
+      
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -14,16 +14,19 @@ import { api } from "../api/apiConfig";
 import { useAuth } from "../context/AuthContext";
 
 const EmailOTPVerification = ({ navigation, route }) => {
-
-   const {login} = useAuth();
+  const { login } = useAuth();
   const { email, userName, password } = route?.params;
-  const [otp, setOtp] = useState(["", "", "", "", ""]);
-  const [focusedIndex, setFocusedIndex] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(0); // ⏱️ 2-minute timer
-  const [isResending, setIsResending] = useState(false);
-  const inputRefs = useRef([]);
 
-  // 🧭 Header Component
+  const [otp, setOtp] = useState(["", "", "", "", ""]);
+  const [verifying, setVerifying] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isResending, setIsResending] = useState(false);
+
+  const inputRefs = useRef([]);
+  const firstSend = useRef(true); // ⬅ FIRST send flag
+
+  // HEADER
   const Header = () => (
     <View style={styles.header}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -32,75 +35,92 @@ const EmailOTPVerification = ({ navigation, route }) => {
     </View>
   );
 
-  // 📩 Send OTP (initial + resend)
+  // SEND OTP (initial + resend)
   const handleSendOTP = async () => {
     try {
-      
+      // 🔥 Only show "Resending..." after the first send
+      if (!firstSend.current) {
+        setIsResending(true);
+      }
+
       const res = await api.post("/auth/send-otp", { email });
-      console.log("OTP sent successfully");
-      setTimeLeft(120); // reset timer
+      console.log("OTP sent!");
+
+      setTimeLeft(120);
     } catch (e) {
       console.log(e);
-      Alert.alert("Error", "Failed to resend OTP");
+      Alert.alert("Error", "Failed to send OTP");
     } finally {
-   
+      // ❗ Stop loader only on resend
+      if (!firstSend.current) {
+        setIsResending(false);
+      }
+
+      // After first run → always false
+      firstSend.current = false;
     }
   };
 
-  // ⏳ Timer countdown effect
+  // TIMER HANDLER
   useEffect(() => {
     if (timeLeft <= 0) return;
+
     const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  // Send OTP on mount
+  // SEND OTP ON MOUNT
   useEffect(() => {
     handleSendOTP();
   }, []);
 
-  // ✅ Handle OTP input
+  // OTP INPUT HANDLER
   const handleChange = (text, index) => {
     if (/^\d?$/.test(text)) {
       const newOtp = [...otp];
       newOtp[index] = text;
       setOtp(newOtp);
+
       if (text && index < otp.length - 1) {
         inputRefs.current[index + 1]?.focus();
       }
     }
   };
 
-  // ✅ Handle backspace navigation
+  // BACKSPACE HANDLER
   const handleKeyPress = ({ nativeEvent }, index) => {
     if (nativeEvent.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // 🧩 Verify OTP
+  // VERIFY OTP
   const handleVerify = async () => {
     const code = otp.join("");
     console.log("Entered OTP:", code);
+
     try {
+      setVerifying(true);
+
       const res = await api.post("/auth/verify-otp", {
         email,
         otp: code,
         password,
         userName,
       });
-     
-         alert("Login successful!");
-         navigation.navigate("User Home");
-      
-      
+
+      alert("Login successful!");
+      navigation.replace("User Home");
     } catch (e) {
       console.log(e);
       Alert.alert("Error", "Invalid or expired OTP");
+    } finally {
+      setVerifying(false);
     }
   };
 
-  // Format timer as MM:SS
+  // TIMER FORMATTER
   const formatTime = () => {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
@@ -116,7 +136,7 @@ const EmailOTPVerification = ({ navigation, route }) => {
           We have sent the verification code to your email address.
         </Text>
 
-        {/* OTP Input Boxes */}
+        {/* OTP Inputs */}
         <View style={styles.otpContainer}>
           {otp.map((digit, index) => (
             <TextInput
@@ -137,14 +157,20 @@ const EmailOTPVerification = ({ navigation, route }) => {
           ))}
         </View>
 
-        {/* Verify Button */}
-        <TouchableOpacity style={styles.verifyButton} onPress={handleVerify}>
-          <Text style={styles.verifyText}>Confirm</Text>
+        {/* VERIFY BUTTON */}
+        <TouchableOpacity
+          style={styles.verifyButton}
+          onPress={handleVerify}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.verifyText}>
+            {verifying ? "Verifying..." : "Verify"}
+          </Text>
         </TouchableOpacity>
 
-        {/* Timer + Resend Section */}
+        {/* TIMER + RESEND */}
         <View style={styles.resendContainer}>
-          {timeLeft > 0 && ! isResending ? (
+          {timeLeft > 0 && !isResending ? (
             <Text style={styles.timerText}>
               OTP expires in{" "}
               <Text style={styles.timerHighlight}>{formatTime()}</Text>
@@ -152,7 +178,11 @@ const EmailOTPVerification = ({ navigation, route }) => {
           ) : (
             <>
               <Text style={styles.resendText}>Didn’t receive code?</Text>
-              <TouchableOpacity disabled={isResending} onPress={handleSendOTP}>
+              <TouchableOpacity
+                disabled={isResending}
+                onPress={handleSendOTP}
+                activeOpacity={0.8}
+              >
                 <Text style={styles.resendLink}>
                   {isResending ? "Resending..." : "Resend"}
                 </Text>
@@ -165,14 +195,13 @@ const EmailOTPVerification = ({ navigation, route }) => {
   );
 };
 
-// 🎨 Styles
+// STYLES
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   header: {
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -180,10 +209,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
   },
-  title: { 
-    fontSize: 20, 
-    fontFamily: "Poppins-SemiBold", 
-    color: "#222" 
+  title: {
+    fontSize: 20,
+    fontFamily: "Poppins-SemiBold",
+    color: "#222",
   },
   subtitle: {
     fontSize: 14,
@@ -192,7 +221,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 8,
     lineHeight: 20,
-    fontFamily: "Poppins-Regular"
+    fontFamily: "Poppins-Regular",
   },
   otpContainer: {
     flexDirection: "row",
@@ -220,35 +249,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 50,
   },
-  verifyText: { 
-    color: "#fff", 
-    fontSize: 16, 
-    fontFamily: "Poppins-SemiBold" 
+  verifyText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
   },
   resendContainer: {
     flexDirection: "row",
     marginTop: 25,
     alignItems: "center",
   },
-  resendText: { 
-    color: "#666", 
-    fontFamily: "Poppins-Medium" 
+  resendText: {
+    color: "#666",
+    fontFamily: "Poppins-Medium",
   },
-  resendLink: { 
-    color: Color.DARK, 
+  resendLink: {
+    color: Color.DARK,
     fontFamily: "Poppins-SemiBold",
-    marginLeft: 5 
+    marginLeft: 5,
   },
-  timerText: { 
-    color: "#444", 
+  timerText: {
+    color: "#444",
     fontSize: 14,
-    fontFamily: "Poppins-Medium"
+    fontFamily: "Poppins-Medium",
   },
-  timerHighlight: { 
-    color: Color.DARK, 
-    fontFamily: "Poppins-Bold" 
+  timerHighlight: {
+    color: Color.DARK,
+    fontFamily: "Poppins-Bold",
   },
 });
-
 
 export default EmailOTPVerification;

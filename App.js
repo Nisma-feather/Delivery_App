@@ -1,9 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, ActivityIndicator,Platform } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  Platform,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useFonts } from "expo-font";
 import {
@@ -43,7 +49,8 @@ import ForgotPasswordEmailScreen from "./Screens/ForgotPasswordEmailScreen";
 import ForgotOTPVerification from "./Screens/ForgotOTPVerification";
 import ResetPasswordScreen from "./Screens/ResetPasswordScreen";
 import EditProfileScreen from "./Screens/ProfileSection/EditProfileScreen";
-
+import DeliveryPartnerManagementScreen from "./Screens/HotelScreens/DeliveryPartnerManagementScreen";
+import AddDeliveryPartnerScreen from "./Screens/HotelScreens/AddDeliveryPartnerScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -55,7 +62,6 @@ const HomeStack = () => (
     <Stack.Screen name="Food Details" component={FoodDetailScreen} />
   </Stack.Navigator>
 );
-
 
 //CART STACK
 
@@ -69,36 +75,32 @@ const CartStack = () => (
   </Stack.Navigator>
 );
 
-//FavouriteStack 
+//FavouriteStack
 const FavouriteStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
   </Stack.Navigator>
 );
 
-
-const ProfileStack=()=>{
+const ProfileStack = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-    
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main Profile" component={MainProfileScreen} />
       <Stack.Screen name="Address" component={AddressScreen} />
-      <Stack.Screen name="My Orders" component = {MyOrders}/>
-      <Stack.Screen name="Profile Edit" component={EditProfileScreen}/>
+      <Stack.Screen name="My Orders" component={MyOrders} />
+      <Stack.Screen name="Profile Edit" component={EditProfileScreen} />
       <Stack.Screen name="Order Details" component={OrderDetailsScreen} />
       <Stack.Screen name="Track Order" component={OrderTrackScreen} />
-      <Stack.Screen name="Terms" component={TermsAndConditionsScreen}/>
+      <Stack.Screen name="Terms" component={TermsAndConditionsScreen} />
     </Stack.Navigator>
   );
-}
+};
 
- const UserTabs = () => {
+const UserTabs = () => {
   const { cartLength } = useAuth();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F8F8' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
@@ -107,13 +109,14 @@ const ProfileStack=()=>{
             justifyContent: "center",
             alignItems: "center",
           },
-          // REMOVE position: 'absolute' and use flexbox approach
+          
           tabBarStyle: {
             height: 70,
+            marginTop: 0,
             backgroundColor: "#ffffff",
             elevation: 8,
             borderTopWidth: 1,
-            borderTopColor: '#f0f0f0',
+            borderTopColor: "#f0f0f0",
             paddingBottom: 5,
             paddingTop: 5,
           },
@@ -140,13 +143,7 @@ const ProfileStack=()=>{
               iconName = focused ? "cart" : "cart-outline";
             }
 
-            return (
-              <Ionicons
-                name={iconName}
-                size={iconSize}
-                color={color}
-              />
-            );
+            return <Ionicons name={iconName} size={iconSize} color={color} />;
           },
         })}
       >
@@ -179,6 +176,7 @@ const ProfileStack=()=>{
             },
           }}
         />
+       
       </Tab.Navigator>
     </SafeAreaView>
   );
@@ -186,139 +184,154 @@ const ProfileStack=()=>{
 
 function RootNavigator() {
   const { auth, loading } = useAuth();
-  console.log(auth)
+  console.log(auth);
   // Show loading spinner while verifying token
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Color.DARK}/>
+        <ActivityIndicator size="large" color={Color.DARK} />
         <Text style={{ marginTop: 10 }}>Loading...</Text>
       </View>
     );
   }
 
   return (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    {(auth?.token && auth?.role === "user") ? (
-      <Stack.Screen name="User Home" component={UserTabs} />
-    ) : (auth?.token && auth?.role === "restaurant") ? (
-      <Stack.Screen name="Restaurant" component={MainRestaurantNavigator} />
-    ) : (
-      <>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignUpScreen} />
-        <Stack.Screen name="Email Verification" component={EmailOTPVerification} />
-         <Stack.Screen name="Forgot Email" component={ForgotPasswordEmailScreen}/>
-     <Stack.Screen name="ForgotOTPVerification" component={ForgotOTPVerification}/>
-     <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen}/>
-      </>
-    )}
-  </Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {auth?.token && auth?.role === "user" ? (
+        <Stack.Screen name="User Home" component={UserTabs} />
+      ) : auth?.token && auth?.role === "restaurant" ? (
+        <Stack.Screen name="Restaurant" component={MainRestaurantNavigator} />
+      ) : (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Signup" component={SignUpScreen} />
+
+          <Stack.Screen
+            name="Email Verification"
+            component={EmailOTPVerification}
+          />
+          <Stack.Screen
+            name="Forgot Email"
+            component={ForgotPasswordEmailScreen}
+          />
+          <Stack.Screen
+            name="ForgotOTPVerification"
+            component={ForgotOTPVerification}
+          />
+          <Stack.Screen
+            name="ResetPasswordScreen"
+            component={ResetPasswordScreen}
+          />
+        </>
+      )}
+    </Stack.Navigator>
   );
 }
 
-   const HotelNavigator = () => {
-     return (
-       <Stack.Navigator
-         screenOptions={{ headerShown: false }}
-         initialRouteName="Orders"
-       >
-         <Stack.Screen name="Menu Management" component={MenuManagement} />
-         <Stack.Screen name="Add Menu" component={AddNewMenu} />
-         <Stack.Screen
-           name="Category Management"
-           component={CategoryManagement}
-         />
-         <Stack.Screen name="Orders" component={OrdersScreen} />
-         <Stack.Screen
-           name="Status Update"
-           component={OrderStatusUpdateScreen}
-         />
-       </Stack.Navigator>
-     );
-   };
-   const HotelProfileStack = () => {
-     return (
-       <Stack.Navigator screenOptions={{ headerShown: false }}>
-         <Stack.Screen name="MainProfile" component={HotelProfileScreen} />
-         <Stack.Screen name="Profile Edit" component={EditHotelProfile} />
-         <Stack.Screen name="Terms Conditions" component={TermsAndConditionsScreen}/>
-         
-       </Stack.Navigator>
-     );
-   };
+const HotelNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Orders"
+    >
+      <Stack.Screen name="Menu Management" component={MenuManagement} />
+      <Stack.Screen name="Add Menu" component={AddNewMenu} />
+      <Stack.Screen name="Category Management" component={CategoryManagement} />
+      <Stack.Screen name="Orders" component={OrdersScreen} />
+      <Stack.Screen name="Status Update" component={OrderStatusUpdateScreen} />
+    </Stack.Navigator>
+  );
+};
+const HotelProfileStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainProfile" component={HotelProfileScreen} />
+      <Stack.Screen name="Profile Edit" component={EditHotelProfile} />
+      <Stack.Screen
+        name="Terms Conditions"
+        component={TermsAndConditionsScreen}
+      />
+    </Stack.Navigator>
+  );
+};
 
-   const MenuManagementStack=()=>{
-    return(
-      <Stack.Navigator screenOptions={{headerShown:false}}>
-          <Stack.Screen name="Menu Manangement" component={MenuManagement} />
-          <Stack.Screen name="Add Menu" component={AddNewMenu} />
-      </Stack.Navigator>
-     
-    )
-   }
+const MenuManagementStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Menu Manangement" component={MenuManagement} />
+      <Stack.Screen name="Add Menu" component={AddNewMenu} />
+    </Stack.Navigator>
+  );
+};
 
-   const HotelOrdersManagement=()=>{
-    return (
-      <Stack.Navigator screenOptions={{headerShown:false}}>
-        <Stack.Screen
-          name="Orders"
-          component={OrdersScreen}
-          
-        />
-        <Stack.Screen
-          name="Status Update"
-          component={OrderStatusUpdateScreen}
-          
-        />
-      </Stack.Navigator>
-    );
-   }
+const HotelOrdersManagement = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Orders" component={OrdersScreen} />
+      <Stack.Screen name="Status Update" component={OrderStatusUpdateScreen} />
+    </Stack.Navigator>
+  );
+};
 
-   const MainRestaurantNavigator = () => {
-     return (
-       <Drawer.Navigator
-         screenOptions={{
-           headerShown: false,
-           drawerActiveTintColor: Color.DARK,
-           drawerInactiveTintColor: "#555",
-           drawerActiveBackgroundColor: "#fff",
-           drawerLabelStyle: {
-             fontSize: 16,
-             fontFamily: "Poppins-Medium", // example
-           },
-         }}
-       >
-         <Drawer.Screen
-           name="Menu"
-           component={MenuManagementStack}
-           options={{
-             drawerIcon: ({ focused, color }) => (
-               <Ionicons name="restaurant-outline" color={color} size={26} />
-             ),
-           }}
-         />
+const DeliveryPartnerStack=()=>{
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="Delivery Partner"
+        component={DeliveryPartnerManagementScreen}
+      />
+      <Stack.Screen
+        name="Add New Partner"
+        component={AddDeliveryPartnerScreen}
+      />
+    </Stack.Navigator>
+  );
+}
 
-         <Drawer.Screen
-           name="Category Management"
-           component={CategoryManagement}
-           options={{
-             drawerIcon: ({ focused, color }) => (
-               <Ionicons name="fast-food-outline" color={color} size={24} />
-             ),
-           }}
-         />
-         <Drawer.Screen
-           name="Orders Screen"
-           component={HotelOrdersManagement}
-           options={{
-             title: "Orders",
-             drawerIcon: ({ focused, color }) => (
-               <Feather name="shopping-bag" color={color} size={24} />
-             ),
-           }}
-         />
-         {/* <Drawer.Screen
+const MainRestaurantNavigator = () => {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        headerShown: false,
+        drawerActiveTintColor: Color.DARK,
+        drawerInactiveTintColor: "#555",
+        drawerActiveBackgroundColor: "#fff",
+        drawerLabelStyle: {
+          fontSize: 16,
+          fontFamily: "Poppins-Medium", // example
+        },
+      }}
+    >
+      <Drawer.Screen
+        name="Menu"
+        component={MenuManagementStack}
+        options={{
+          drawerIcon: ({ focused, color }) => (
+            <Ionicons name="restaurant-outline" color={color} size={26} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Category Management"
+        component={CategoryManagement}
+        options={{
+          drawerIcon: ({ focused, color }) => (
+            <Ionicons name="fast-food-outline" color={color} size={24} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Orders Screen"
+        component={HotelOrdersManagement}
+        options={{
+          title: "Orders",
+          drawerIcon: ({ focused, color }) => (
+            <Feather name="shopping-bag" color={color} size={24} />
+          ),
+        }}
+      />
+      {/* <Drawer.Screen
            name="Status Update"
            component={OrderStatusUpdateScreen}
            options={{
@@ -327,19 +340,20 @@ function RootNavigator() {
              ),
            }}
          /> */}
-         <Drawer.Screen
-           name="Profile"
-           component={HotelProfileStack}
-           options={{
-             drawerIcon: ({ focused, color }) => (
-               <Ionicons name="person-outline" color={color} size={24} />
-             ),
-           }}
-         />
-       </Drawer.Navigator>
-     );
-   };
-  
+      <Drawer.Screen
+        name="Profile"
+        component={HotelProfileStack}
+        options={{
+          drawerIcon: ({ focused, color }) => (
+            <Ionicons name="person-outline" color={color} size={24} />
+          ),
+        }}
+      />
+       <Drawer.Screen name="Delivery Partner"
+        component={DeliveryPartnerStack} />
+    </Drawer.Navigator>
+  );
+};
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -357,19 +371,21 @@ export default function App() {
   if (!fontsLoaded) {
     return <Text>Loading fonts...</Text>;
   }
-  
 
-  const ForgotPasswordStack=()=>{
-    return(
-<Stack.Navigator>
-    
-     <Stack.Screen name="ForgotOTPVerification" component={ForgotOTPVerification}/>
-     <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen}/>
-   </Stack.Navigator>
-    )
-   
-  }
-
+  const ForgotPasswordStack = () => {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="ForgotOTPVerification"
+          component={ForgotOTPVerification}
+        />
+        <Stack.Screen
+          name="ResetPasswordScreen"
+          component={ResetPasswordScreen}
+        />
+      </Stack.Navigator>
+    );
+  };
 
   return (
     <AuthProvider>
@@ -377,8 +393,7 @@ export default function App() {
         <RootNavigator />
         {/* <HotelNavigator/> */}
         {/* <MainRestaurantNavigator/> */}
-       
-     
+        {/* <ResetPasswordScreen/> */}
       </NavigationContainer>
       <StatusBar style="auto" />
     </AuthProvider>
