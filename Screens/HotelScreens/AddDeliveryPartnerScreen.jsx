@@ -1,51 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Image,
   ScrollView,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 import Color from "../../constants/Color";
 import { api } from "../../api/apiConfig";
 
-const AddDeliveryPartnerScreen = ({ navigation }) => {
-  const [profileImage, setProfileImage] = useState(null);
-  const [fullName, setFullName] = useState("");
+
+const AddDeliveryPartnerScreen = ({ navigation, route }) => {
+  const [partnerId, setPartnerId] = useState(null);
+  const [userName, setUserName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // PICK IMAGE
-//   const pickImage = async () => {
-//     let result = await ImagePicker.launchImageLibraryAsync({
-//       base64: true,
-//       allowsEditing: true,
-//       quality: 0.7,
-//     });
+  // ---------- PREFILL WHEN EDITING ----------
+  useEffect(() => {
+    if (route?.params) {
+      setPartnerId(route?.params?._id || null);
+      setUserName(route?.params?.userName || "");
+      setEmail(route?.params?.email || "");
+      setMobile(route?.params?.mobile || "");
 
-//     if (!result.canceled) {
-//       const base64 = "data:image/jpeg;base64," + result.assets[0].base64;
-//       setProfileImage(base64);
-//     }
-//   };
+      // Plain password returned from backend
+      setPassword(route?.params?.plainPassword || "");
+    }
+  }, [route?.params]);
 
-  // VALIDATION
   const validate = () => {
     const newErrors = {};
 
-    if (!fullName.trim()) newErrors.fullName = "Full Name is required";
+    if (!userName.trim()) newErrors.userName = "Full Name is required";
     if (!mobile.trim()) newErrors.mobile = "Mobile Number is required";
     if (!email.trim()) newErrors.email = "Email is required";
     if (!password.trim()) newErrors.password = "Password is required";
@@ -54,22 +50,31 @@ const AddDeliveryPartnerScreen = ({ navigation }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // ---------- CREATE OR UPDATE ----------
   const onSave = async () => {
     if (!validate()) return;
 
     const data = {
-      name: fullName,
+      userName,
       mobile,
       email,
       password,
       role: "delivery",
- 
     };
- 
+
     try {
       setLoading(true);
-      await api.post("/hotel/create-delivery-partner", data);
-      alert("Delivery Partner Added Successfully!");
+
+      if (partnerId) {
+        // UPDATE
+        await api.put(`/delivery/partner/${partnerId}`, data);
+        alert("Delivery Partner Updated Successfully!");
+      } else {
+        // CREATE
+        await api.post("/delivery/partner", data);
+        alert("Delivery Partner Added Successfully!");
+      }
+
       navigation.goBack();
     } catch (e) {
       console.log("Error:", e);
@@ -91,41 +96,27 @@ const AddDeliveryPartnerScreen = ({ navigation }) => {
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
 
-          <Text style={styles.headerTitle}>Add Delivery Partner</Text>
+          <Text style={styles.headerTitle}>
+            {partnerId ? "Edit Delivery Partner" : "Add Delivery Partner"}
+          </Text>
+
           <View style={{ width: 24 }} />
         </View>
 
-        {/* Profile Image */}
-        {/* <View style={styles.imageWrap}>
-          <TouchableOpacity onPress={pickImage}>
-            {profileImage ? (
-              <Image
-                source={{ uri: profileImage }}
-                style={styles.profileImage}
-              />
-            ) : (
-              <View style={styles.imagePlaceholder}>
-                <Feather name="camera" size={28} color="#777" />
-              </View>
-            )}
-          </TouchableOpacity>
-        </View> */}
-
-        {/* FORM */}
         <View style={styles.form}>
           {/* Full Name */}
           <Text style={styles.label}>Full Name</Text>
           <TextInput
             style={styles.input}
-            value={fullName}
+            value={userName}
             placeholder="Enter full name"
             onChangeText={(text) => {
-              setFullName(text);
-              setErrors({ ...errors, fullName: "" });
+              setUserName(text);
+              setErrors({ ...errors, userName: "" });
             }}
           />
-          {errors.fullName && (
-            <Text style={styles.error}>{errors.fullName}</Text>
+          {errors.userName && (
+            <Text style={styles.error}>{errors.userName}</Text>
           )}
 
           {/* Mobile */}
@@ -187,14 +178,16 @@ const AddDeliveryPartnerScreen = ({ navigation }) => {
 
       {/* Save Button */}
       <TouchableOpacity
-        style={styles.saveBtn}
+        style={[styles.saveBtn, loading && {opacity:0.7}]}
         onPress={onSave}
         disabled={loading}
       >
         {loading ? (
           <ActivityIndicator size="small" color="#000" />
         ) : (
-          <Text style={styles.saveText}>Create Delivery Partner</Text>
+          <Text style={styles.saveText}>
+            {partnerId ? "Update Delivery Partner" : "Create Delivery Partner"}
+          </Text>
         )}
       </TouchableOpacity>
     </SafeAreaView>
@@ -217,17 +210,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Poppins-SemiBold",
   },
-  imageWrap: { alignItems: "center", marginTop: 20 },
-  profileImage: { width: 110, height: 110, borderRadius: 60 },
-  imagePlaceholder: {
-    width: 110,
-    height: 110,
-    borderRadius: 60,
-    backgroundColor: "#EDEDED",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   form: { paddingHorizontal: 20, marginTop: 20 },
+
   label: {
     fontSize: 14,
     marginTop: 12,
@@ -235,6 +220,7 @@ const styles = StyleSheet.create({
     color: "#333",
     fontFamily: "Poppins-SemiBold",
   },
+
   input: {
     backgroundColor: "#fff",
     padding: 12,
@@ -243,6 +229,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     fontFamily: "Poppins-Regular",
   },
+
   passwordContainer: {
     borderWidth: 1,
     borderRadius: 10,
@@ -252,19 +239,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingRight: 10,
   },
+
   eyeIcon: { paddingHorizontal: 4 },
+
   error: {
     color: "red",
     fontSize: 12,
     marginTop: 3,
-    marginBottom: -5,
     fontFamily: "Poppins-Regular",
   },
+
   saveBtn: {
     backgroundColor: Color.DARK,
     padding: 18,
     alignItems: "center",
   },
+
   saveText: {
     fontSize: 16,
     fontFamily: "Poppins-Bold",

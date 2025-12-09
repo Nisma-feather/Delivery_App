@@ -127,7 +127,7 @@ const OrdersScreen = ({navigation}) => {
               { color: getStatusColor(item.orderStatus) }
             ]}
           >
-            {item.orderStatus?.replace(/_/g, " ") || "UNKNOWN"}
+            {item.orderStatus==="CONFIRMED" && item.deliveryPartnerId ? "ASsIGNED":item.orderStatus?.replace(/_/g, " ") || "UNKNOWN"}
           </Text>
         </View>
 

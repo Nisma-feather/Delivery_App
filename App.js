@@ -52,6 +52,8 @@ import EditProfileScreen from "./Screens/ProfileSection/EditProfileScreen";
 import DeliveryPartnerManagementScreen from "./Screens/HotelScreens/DeliveryPartnerManagementScreen";
 import AddDeliveryPartnerScreen from "./Screens/HotelScreens/AddDeliveryPartnerScreen";
 
+import AssignDeliveryPartner from "./Screens/HotelScreens/AssignDeliveryPartnerScreen";
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -269,6 +271,10 @@ const HotelOrdersManagement = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Orders" component={OrdersScreen} />
       <Stack.Screen name="Status Update" component={OrderStatusUpdateScreen} />
+      <Stack.Screen
+        name="AssignDeliveryPartner"
+        component={AssignDeliveryPartner}
+      />
     </Stack.Navigator>
   );
 };
@@ -284,6 +290,7 @@ const DeliveryPartnerStack=()=>{
         name="Add New Partner"
         component={AddDeliveryPartnerScreen}
       />
+    
     </Stack.Navigator>
   );
 }
