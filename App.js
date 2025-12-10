@@ -55,6 +55,7 @@ import AddDeliveryPartnerScreen from "./Screens/HotelScreens/AddDeliveryPartnerS
 import AssignDeliveryPartner from "./Screens/HotelScreens/AssignDeliveryPartnerScreen";
 import DeliveryPartnerHomeScreen from "./Screens/DeliveryPartnerScreens/DeliveryPartnerHomeScreen";
 import DeliveryPartnerOrderDetails from "./Screens/DeliveryPartnerScreens/DeliveryPartnerOrderDetails";
+import DeliveredOrderScreen from "./Screens/DeliveryPartnerScreens/DeliveredOrderScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -203,11 +204,12 @@ const DeliveryPartnerHomeStack=()=>{
 
 
 const DeliveryPartneryTabs=()=>{
-  return(
-    <Tab.Navigator screenOptions={{headerShown:false}}>
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Delivery Home" component={DeliveryPartnerHomeStack} />
+      <Tab.Screen name="Delivered Order" component={DeliveredOrderScreen} />
     </Tab.Navigator>
-  )
+  );
 }
 
 function RootNavigator() {
@@ -306,6 +308,10 @@ const HotelOrdersManagement = () => {
     </Stack.Navigator>
   );
 };
+
+
+
+
 
 const DeliveryPartnerStack=()=>{
   return (
