@@ -66,7 +66,7 @@ const OrderDetailsScreen = ({ route, navigation }) => {
   const formattedDate = new Date(order.createdAt).toLocaleString();
 
   const renderDeliveryPartnerSection = () => {
-    if (!order.deliveryPartnerId) {
+    if (!order.deliveryPartnerId && order.orderStatus !== "PLACED") {
       return (
         <View style={styles.partnerStickyCard}>
           <Text style={styles.partnerSub}>Delivery Person not Assigned</Text>
@@ -83,7 +83,7 @@ const OrderDetailsScreen = ({ route, navigation }) => {
         </View>
       );
     }
-
+  if (order.deliveryPartnerId && order.orderStatus !== "PLACED")
     return (
       <View style={styles.partnerStickyCard}>
         <Ionicons
@@ -401,8 +401,7 @@ const styles = StyleSheet.create({
   partnerStickyCard: {
     position: "absolute",
     bottom: 70, // stays above bottom button
-    left: 10,
-    right: 10,
+    
     backgroundColor: "#fff",
     padding: 15,
     borderRadius: 10,

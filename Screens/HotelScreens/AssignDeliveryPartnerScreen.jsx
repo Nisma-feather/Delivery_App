@@ -41,7 +41,7 @@ const AssignDeliveryPartner = ({ route, navigation }) => {
         deliveryPartnerId: selectedPartner,
       });
 
-      navigation.replace("Status Update");
+      navigation.replace("Status Update",{orderId});
     } catch (err) {
       console.log(err);
     }

@@ -53,6 +53,8 @@ import DeliveryPartnerManagementScreen from "./Screens/HotelScreens/DeliveryPart
 import AddDeliveryPartnerScreen from "./Screens/HotelScreens/AddDeliveryPartnerScreen";
 
 import AssignDeliveryPartner from "./Screens/HotelScreens/AssignDeliveryPartnerScreen";
+import DeliveryPartnerHomeScreen from "./Screens/DeliveryPartnerScreens/DeliveryPartnerHomeScreen";
+import DeliveryPartnerOrderDetails from "./Screens/DeliveryPartnerScreens/DeliveryPartnerOrderDetails";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -184,9 +186,33 @@ const UserTabs = () => {
   );
 };
 
+const DeliveryPartnerHomeStack=()=>{
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="Delivery Orders Home"
+        component={DeliveryPartnerHomeScreen}
+      />
+      <Stack.Screen
+        name="Delivery Orders Details"
+        component={DeliveryPartnerOrderDetails}
+      />
+    </Stack.Navigator>
+  );
+}
+
+
+const DeliveryPartneryTabs=()=>{
+  return(
+    <Tab.Navigator screenOptions={{headerShown:false}}>
+      <Tab.Screen name="Delivery Home" component={DeliveryPartnerHomeStack} />
+    </Tab.Navigator>
+  )
+}
+
 function RootNavigator() {
   const { auth, loading } = useAuth();
-  console.log(auth);
+  console.log("auth",auth);
   // Show loading spinner while verifying token
   if (loading) {
     return (
@@ -203,6 +229,8 @@ function RootNavigator() {
         <Stack.Screen name="User Home" component={UserTabs} />
       ) : auth?.token && auth?.role === "restaurant" ? (
         <Stack.Screen name="Restaurant" component={MainRestaurantNavigator} />
+      ) : auth?.token && auth?.role === "delivery" ? (
+        <Stack.Screen name="Delivery" component={DeliveryPartneryTabs} />
       ) : (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -393,6 +421,7 @@ export default function App() {
       </Stack.Navigator>
     );
   };
+
 
   return (
     <AuthProvider>

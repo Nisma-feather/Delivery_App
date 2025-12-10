@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   },
 
   retryButton: {
-    backgroundColor: "#f5a623",
+    backgroundColor: Color.DARK,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
@@ -342,12 +342,12 @@ const styles = StyleSheet.create({
     color: "#b0b0b0",
   },
   activeTabText: {
-    color: "#f5a623",
+    color: "#222",
   },
   activeUnderline: {
     width: 40,
     height: 3,
-    backgroundColor: "#f5a623",
+    backgroundColor: Color.DARK,
     marginTop: 4,
     borderRadius: 20,
   },
