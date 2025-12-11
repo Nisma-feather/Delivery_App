@@ -75,6 +75,7 @@ const PaymentMethodScreen = ({route,navigation}) => {
         console.log("Missing required fields")
         return
       }
+     
       const res = await api.post(`/order/${auth.userId}`,{
         deliveryAddress,
         checkoutItems,

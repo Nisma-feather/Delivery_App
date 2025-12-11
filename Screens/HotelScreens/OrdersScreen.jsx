@@ -13,8 +13,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { api } from "../../api/apiConfig";
 import Color from "../../constants/Color";
+import { io } from "socket.io-client";
+import { useAuth } from "../../context/AuthContext";
 
 const OrdersScreen = ({navigation}) => {
+  const {auth} = useAuth();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("PLACED");
   const [orders, setOrders] = useState([]);
@@ -22,8 +25,29 @@ const OrdersScreen = ({navigation}) => {
   const [error, setError] = useState(null);
   const [page,setPage] =useState(1);
   const [hasMore,setHasMore] = useState(true);
-  const [fetchingMore,setFetchingMore] = useState(false)
-  
+  const [fetchingMore,setFetchingMore] = useState(false);
+  const [socket,setSocket] =useState(null);
+
+
+  //socket connection
+useEffect(() => {
+  if (!auth) return;
+
+  const newSocket = io("http://192.168.1.22:8000/api");
+  setSocket(newSocket);
+
+  newSocket.emit("register", { role: "restaurant", userId: auth.userId });
+
+  newSocket.on("new-order", (order) => {
+    Alert.alert("New Order!", `Order #${order.orderNumber} has been placed.`);
+    setOrders((prevOrders) => [order, ...prevOrders]);
+  });
+
+  return () => {
+    newSocket.disconnect();
+  };
+}, [auth]);
+
 
   /* ---------------- API CALL TO FETCH ORDERS ---------------- */
 const fetchOrders = async (nextPage = 1, searchText = "") => {
@@ -114,18 +138,7 @@ const handleSearchText = (text) => {
   };
 
   /* ---------------- FILTER ORDERS BASED ON SEARCH ---------------- */
-  const filteredOrders = orders.filter((order) => {
-    if (!search) return true;
-    
-    const searchTerm = search.toLowerCase();
-    const customerEmail = order.userId?.email?.toLowerCase() || "";
-    const orderNumber = order.orderNumber?.toString() || "";
-    
-    return (
-      customerEmail.includes(searchTerm) ||
-      orderNumber.includes(searchTerm)
-    );
-  });
+ 
 
   /* ---------------- ORDER CARD COMPONENT ---------------- */
   const OrderCard = ({ item }) => {
