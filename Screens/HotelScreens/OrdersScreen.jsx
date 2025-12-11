@@ -20,30 +20,63 @@ const OrdersScreen = ({navigation}) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page,setPage] =useState(1);
+  const [hasMore,setHasMore] = useState(true);
+  const [fetchingMore,setFetchingMore] = useState(false)
+  
 
   /* ---------------- API CALL TO FETCH ORDERS ---------------- */
-  const fetchOrders = async () => {
-    try {
+const fetchOrders = async (nextPage = 1, searchText = "") => {
+  try {
+    if (nextPage === 1) {
       setLoading(true);
-      setError(null);
-      const res = await api.get(`/order/based-status?status=${activeTab}`);
-      
-      if (res.data && res.data.orders) {
-        setOrders(res.data.orders);
-      } else {
-        setOrders([]);
-      }
-    } catch (e) {
-      console.log("Error fetching orders:", e);
-      setError("Failed to load orders");
-      setOrders([]);
-    } finally {
-      setLoading(false);
+    } else {
+      setFetchingMore(true);
     }
-  };
+
+    setError(null);
+
+    const res = await api.get(
+      `/order/based-status?status=${activeTab}&page=${nextPage}&limit=3&search=${searchText}`
+    );
+
+    if (res.data?.orders) {
+      setOrders((prev) =>
+        nextPage === 1 ? res.data.orders : [...prev, ...res.data.orders]
+      );
+
+      setHasMore(nextPage < res.data.totalPages);
+    } else {
+      setOrders([]);
+      setHasMore(false);
+    }
+  } catch (e) {
+    console.log("Error fetching orders:", e);
+    setError("Failed to load orders");
+  } finally {
+    setLoading(false);
+    setFetchingMore(false);
+  }
+};
+
+const handleLoadMore = () => {
+  if (!hasMore || fetchingMore) return;
+
+  const nextPage = page + 1;
+  setPage(nextPage);
+  fetchOrders(nextPage, search);
+};
+
+const handleSearchText = (text) => {
+  setSearch(text);
+  setPage(1);
+  fetchOrders(1, text);
+};
+
+
 
   useEffect(() => {
-    fetchOrders();
+    fetchOrders(1,search);
   }, [activeTab]);
 
   /* ---------------- FORMAT DATE FUNCTION ---------------- */
@@ -140,14 +173,14 @@ const OrdersScreen = ({navigation}) => {
   };
 
   /* ---------------- RENDER LOADING STATE ---------------- */
-  if (loading) {
-    return (
-      <SafeAreaView style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color={Color.DARK} />
-        <Text style={styles.loadingText}>Loading orders...</Text>
-      </SafeAreaView>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <SafeAreaView style={[styles.container, styles.centerContent]}>
+  //       <ActivityIndicator size="large" color={Color.DARK} />
+  //       <Text style={styles.loadingText}>Loading orders...</Text>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   /* ---------------- RENDER ERROR STATE ---------------- */
   if (error) {
@@ -169,32 +202,32 @@ const OrdersScreen = ({navigation}) => {
       {/* SEARCH BAR */}
       <View style={styles.topContainer}>
         <View style={styles.headingContainer}>
-                  {/* Title */}
-                  <Text style={styles.title}>Menu Management</Text>
-        
-                  {/* Menu Icon (Right Side) */}
-                  <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                    <Ionicons name="menu" size={28} color="#000" />
-                  </TouchableOpacity>
-                </View>
+          {/* Title */}
+          <Text style={styles.title}>Menu Management</Text>
+
+          {/* Menu Icon (Right Side) */}
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
+            <Ionicons name="menu" size={28} color="#000" />
+          </TouchableOpacity>
+        </View>
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={22} color="#444" />
           <TextInput
             style={styles.searchInput}
             value={search}
             placeholder="Search by email or order number..."
-            onChangeText={setSearch}
+            onChangeText={handleSearchText}
           />
         </View>
 
         {/* ---------------- TABS ---------------- */}
-        <FlatList 
+        <FlatList
           data={[
             { key: "PLACED", label: "NEW" },
             { key: "CONFIRMED", label: "CONFIRMED" },
             { key: "OUT_FOR_DELIVERY", label: "OUT FOR DELIVERY" },
             { key: "DELIVERED", label: "PAST" },
-          ]} 
+          ]}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.tabContainer}
@@ -212,14 +245,24 @@ const OrdersScreen = ({navigation}) => {
               >
                 {item.label}
               </Text>
-              {activeTab === item.key && <View style={styles.activeUnderline} />}
+              {activeTab === item.key && (
+                <View style={styles.activeUnderline} />
+              )}
             </TouchableOpacity>
           )}
         />
       </View>
 
       {/* ORDER LIST */}
-      {filteredOrders.length === 0 ? (
+      {loading ?
+
+        <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color={Color.DARK} />
+        <Text style={styles.loadingText}>Loading orders...</Text>
+       </View>
+        
+        :
+        orders.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="receipt-outline" size={64} color="#ccc" />
           <Text style={styles.emptyText}>
@@ -229,12 +272,23 @@ const OrdersScreen = ({navigation}) => {
       ) : (
         <FlatList
           contentContainerStyle={{ padding: 15, paddingBottom: 40 }}
-          data={filteredOrders}
+          data={orders} // 👈 NO filteredOrders
           renderItem={({ item }) => <OrderCard item={item} />}
           keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
           refreshing={loading}
-          onRefresh={fetchOrders}
+          onRefresh={() => fetchOrders(1, search)}
+          onEndReached={handleLoadMore} // 👈 Pagination
+          onEndReachedThreshold={0.5} // 👈 Load when 50% from bottom
+          ListFooterComponent={
+            fetchingMore ? (
+              <ActivityIndicator
+                style={{ marginVertical: 20 }}
+                size="small"
+                color={Color.DARK}
+              />
+            ) : null
+          }
         />
       )}
     </SafeAreaView>

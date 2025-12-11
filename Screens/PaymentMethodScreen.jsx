@@ -89,7 +89,11 @@ const PaymentMethodScreen = ({route,navigation}) => {
           [
             {
               text: "OK",
-              onPress: () => navigation.replace("CartScreen"),
+              onPress: () =>
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Cart Screen" }],
+                }),
             },
           ],
           { cancelable: false }

@@ -91,8 +91,8 @@ const DeliveryPartnerOrderDetails = ({ route, navigation }) => {
                   });
 
                   // Update payment status
-                  await api.post(`/order/update-payment-status`, {
-                    orderId: orderId,
+                  await api.put(`/order/payment-status/${orderId}`, {
+                 
                     paymentStatus: "PAID",
                   });
 

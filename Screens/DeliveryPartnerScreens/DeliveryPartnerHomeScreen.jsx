@@ -1,83 +1,92 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
+  SafeAreaView,
   View,
   Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
   TextInput,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+  StatusBar,
+  StyleSheet
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
-import Color from "../../constants/Color";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../../context/AuthContext"; // adjust import
+ // adjust import
+import Color from "../../constants/Color"; // adjust import
 import { api } from "../../api/apiConfig";
-import { useAuth } from "../../context/AuthContext";
+
 
 const DeliveryHome = ({ navigation }) => {
+  const { auth } = useAuth();
+
   const [orders, setOrders] = useState([]);
-  const {auth} = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [hasMore, setHasMore] = useState(true);
 
-  const [filteredOrders, setFilteredOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("CONFIRMED");
 
-  useFocusEffect(
-    useCallback(() => {
-        if(auth){
-  fetchNewOrders();
-        }
-    
-    }, [auth])
-  );
-
-  const fetchNewOrders = async () => {
+  // Fetch orders from backend with pagination and optional search
+  const fetchOrders = async (pageNumber = 1, searchText = search) => {
     try {
-      setLoading(true);
-     console.log(auth.userId)
-      const res = await api.post("/delivery/my-orders/CONFIRMED", {
-        deliveryPartnerId:auth.userId
-      }); // sample route
-      console.log(res.data)
-        setOrders(res.data.orders);
-        setFilteredOrders(res.data.orders);
-       
-      
+      if (pageNumber === 1) setLoading(true);
+      else setLoadingMore(true);
+
+     const response = await api.post(
+       `/delivery/my-orders/${activeTab}?page=${pageNumber}&limit=${limit}&search=${searchText}`,
+       {
+         deliveryPartnerId: auth.userId,
+       }
+     );
+
+
+      const newOrders = response.data.orders;
+
+      if (pageNumber === 1) {
+        setOrders(newOrders);
+      } else {
+        setOrders((prev) => [...prev, ...newOrders]);
+      }
+
+      // Determine if more pages are available
+      const totalPages = response.data.totalPages;
+      setHasMore(pageNumber < totalPages);
     } catch (error) {
       console.log("Error fetching orders", error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  // SEARCH FUNCTION
+  // Initial fetch — when auth or activeTab changes
+  useFocusEffect(
+    useCallback(() => {
+      if (auth) {
+        setPage(1);
+        fetchOrders(1, search);
+      }
+    }, [auth, activeTab])
+  );
+
+  // Handler for search input
   const handleSearch = (text) => {
     setSearch(text);
+    setPage(1);
+    fetchOrders(1, text);
+  };
 
-    if (!text.trim()) {
-      setFilteredOrders(orders);
-      return;
-    }
-
-    const lower = text.toLowerCase();
-
-    const results = orders.filter((o) => {
-      const address = o.deliveryAddress?.fullAddress?.toLowerCase() || "";
-      const city = o.deliveryAddress?.city?.toLowerCase() || "";
-      const orderNum = o.orderNumber?.toString() || "";
-      const contact = o.contactNo || "";
-
-      return (
-        orderNum.includes(text) ||
-        contact.includes(text) ||
-        address.includes(lower) ||
-        city.includes(lower)
-      );
-    });
-
-    setFilteredOrders(results);
+  // Load more when user scrolls near bottom
+  const loadMore = () => {
+    if (loadingMore || !hasMore) return;
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchOrders(nextPage, search);
   };
 
   const renderOrderCard = ({ item }) => (
@@ -86,12 +95,16 @@ const DeliveryHome = ({ navigation }) => {
         <Text style={styles.orderNumber}>Order #{item.orderNumber}</Text>
 
         <Text style={styles.statusBadge}>
-          {item.deliveryAccepted ? "ASSIGNED" : "NEW"}
+          {item.orderStatus
+            ? "DELIVERED"
+            : item.deliveryAccepted
+            ? "ASSIGNED"
+            : "NEW"}
         </Text>
       </View>
 
       <Text style={styles.addressText}>
-        {item.deliveryAddress?.fullAddress}
+        {item.userId?.userName}, {item.deliveryAddress?.fullAddress}
       </Text>
       <Text style={styles.addressText}>{item.deliveryAddress?.city}</Text>
 
@@ -106,7 +119,9 @@ const DeliveryHome = ({ navigation }) => {
           navigation.navigate("Delivery Orders Details", { orderId: item._id })
         }
       >
-        <Text style={styles.acceptText}>View & Accept</Text>
+        <Text style={styles.acceptText}>
+          {!item.deliveryAccepted ? "View & Accept" : "View"}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -118,7 +133,7 @@ const DeliveryHome = ({ navigation }) => {
       {/* HEADER */}
       <View style={styles.topContainer}>
         <View style={styles.headingContainer}>
-          <Text style={styles.title}>New Orders</Text>
+          <Text style={styles.title}>Orders</Text>
         </View>
 
         {/* SEARCH BAR */}
@@ -131,22 +146,70 @@ const DeliveryHome = ({ navigation }) => {
             onChangeText={handleSearch}
           />
         </View>
+
+        {/* TABS */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            onPress={() => setActiveTab("CONFIRMED")}
+            style={styles.tab}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "CONFIRMED" && styles.activeTabText,
+              ]}
+            >
+              NEW
+            </Text>
+            {activeTab === "CONFIRMED" && (
+              <View style={styles.activeUnderline} />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveTab("DELIVERED")}
+            style={styles.tab}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "DELIVERED" && styles.activeTabText,
+              ]}
+            >
+              DELIVERED
+            </Text>
+            {activeTab === "DELIVERED" && (
+              <View style={styles.activeUnderline} />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* LIST */}
       <View style={{ paddingHorizontal: 15, flex: 1 }}>
-        {loading ? (
+        {loading && page === 1 ? (
           <ActivityIndicator size="large" color={Color.DARK} />
         ) : (
           <FlatList
-            data={filteredOrders}
+            data={orders}
             keyExtractor={(item) => item._id}
             renderItem={renderOrderCard}
             showsVerticalScrollIndicator={false}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.2}
             ListEmptyComponent={
               <View style={styles.empty}>
-                <Text>No new orders found</Text>
+                <Text>No orders found</Text>
               </View>
+            }
+            ListFooterComponent={
+              loadingMore ? (
+                <ActivityIndicator
+                  size="small"
+                  color={Color.DARK}
+                  style={{ marginVertical: 10 }}
+                />
+              ) : null
             }
           />
         )}
@@ -156,6 +219,9 @@ const DeliveryHome = ({ navigation }) => {
 };
 
 export default DeliveryHome;
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -201,6 +267,34 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 14,
   },
+   /* TABS */
+    tabContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginTop: 15,
+      flexWrap: "wrap",
+    },
+    tab: {
+      marginHorizontal: 15,
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    tabText: {
+      fontSize: 13,
+      fontFamily: "Poppins-SemiBold",
+      color: "#b0b0b0",
+    },
+    activeTabText: {
+      color: "#222",
+    },
+    activeUnderline: {
+      width: 40,
+      height: 3,
+      backgroundColor: Color.DARK,
+      marginTop: 4,
+      borderRadius: 20,
+    },
+  
 
   orderCard: {
     backgroundColor: "#fff",

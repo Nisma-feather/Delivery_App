@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -55,7 +56,9 @@ import AddDeliveryPartnerScreen from "./Screens/HotelScreens/AddDeliveryPartnerS
 import AssignDeliveryPartner from "./Screens/HotelScreens/AssignDeliveryPartnerScreen";
 import DeliveryPartnerHomeScreen from "./Screens/DeliveryPartnerScreens/DeliveryPartnerHomeScreen";
 import DeliveryPartnerOrderDetails from "./Screens/DeliveryPartnerScreens/DeliveryPartnerOrderDetails";
-import DeliveredOrderScreen from "./Screens/DeliveryPartnerScreens/DeliveredOrderScreen";
+import CurrentOrderScreen from "./Screens/DeliveryPartnerScreens/CurrentOrderScreen";
+import DeliveryProfileScreen from "./Screens/DeliveryPartnerScreens/DeliveryProfileScreen";
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -202,12 +205,91 @@ const DeliveryPartnerHomeStack=()=>{
   );
 }
 
+const DeliveryCurrentOrderStack=()=>{
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="Delivery Orders Home"
+        component={CurrentOrderScreen}
+      />
+      <Stack.Screen
+        name="Delivery Orders Details"
+        component={DeliveryPartnerOrderDetails}
+      />
+    </Stack.Navigator>
+  );
+}
+
 
 const DeliveryPartneryTabs=()=>{
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Delivery Home" component={DeliveryPartnerHomeStack} />
-      <Tab.Screen name="Delivered Order" component={DeliveredOrderScreen} />
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: true,
+        tabBarItemStyle: {
+          justifyContent: "center",
+          alignItems: "center",
+        },
+
+        tabBarStyle: {
+          height: 70,
+          marginTop: 0,
+          backgroundColor: "#ffffff",
+          elevation: 8,
+          borderTopWidth: 1,
+          borderTopColor: "#f0f0f0",
+          paddingBottom: 5,
+          paddingTop: 5,
+        },
+        tabBarActiveTintColor: Color.DARK,
+        tabBarInactiveTintColor: "#8e8e8e",
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: "600",
+          textTransform: "uppercase",
+          marginBottom: 0,
+          fontFamily: "Inter-SemiBold",
+        },
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          const iconSize = 22;
+
+          if (route.name === "Delivery Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline";
+          } else if (route.name === "Favourite") {
+            iconName = focused ? "heart" : "heart-outline";
+          } else if (route.name === "Cart") {
+            iconName = focused ? "cart" : "cart-outline";
+          }
+
+          return <Ionicons name={iconName} size={iconSize} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Delivery Home"
+        component={DeliveryPartnerHomeStack}
+        options={{
+          title: "Home",
+        }}
+      />
+      <Tab.Screen
+        name="Current Order"
+        component={DeliveryCurrentOrderStack}
+        options={{
+          tabBarIcon: ({ focused, size, color }) => (
+            <MaterialCommunityIcons
+              name={focused ? "truck-delivery" : "truck-delivery-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen name="Profile" component={DeliveryProfileScreen} />
     </Tab.Navigator>
   );
 }
@@ -390,8 +472,20 @@ const MainRestaurantNavigator = () => {
           ),
         }}
       />
-       <Drawer.Screen name="Delivery Partner"
-        component={DeliveryPartnerStack} />
+      {/* <MaterialCommunityIcons name="truck-outline" color="#000" size={24} /> */}
+      <Drawer.Screen
+        name="Delivery Partner"
+        component={DeliveryPartnerStack}
+        options={{
+          drawerIcon: ({ focused, color }) => (
+            <MaterialCommunityIcons
+              name="truck-outline"
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 };
@@ -430,15 +524,17 @@ export default function App() {
 
 
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <RootNavigator />
-        {/* <HotelNavigator/> */}
-        {/* <MainRestaurantNavigator/> */}
-        {/* <ResetPasswordScreen/> */}
-      </NavigationContainer>
-      <StatusBar style="auto" />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <RootNavigator />
+          {/* <HotelNavigator/> */}
+          {/* <MainRestaurantNavigator/> */}
+          {/* <ResetPasswordScreen/> */}
+        </NavigationContainer>
+        <StatusBar style="auto" />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 
