@@ -92,7 +92,7 @@ const PaymentMethodScreen = ({route,navigation}) => {
               onPress: () =>
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: "Cart Screen" }],
+                  routes: [{ name: "CartScreen" }],
                 }),
             },
           ],

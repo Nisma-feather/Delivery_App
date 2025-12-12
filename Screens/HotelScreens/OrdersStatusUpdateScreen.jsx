@@ -29,6 +29,30 @@ const OrderDetailsScreen = ({ route, navigation }) => {
      }
   }, [orderId]));
 
+  const markOrderAsRead = async (orderId, isRead) => {
+    try {
+      // Only update if it's not already read
+      if (isRead) return;
+
+      const res = await api.patch(`/order/read-status/${orderId}`, {
+        readByRestaurant: true,
+      });
+
+      
+    } catch (err) {
+      console.error("Failed to mark order as read:", err);
+    }
+  };
+
+ 
+    useEffect(() => {
+      if (orderId && order && order.readByRestaurant === false) {
+        markOrderAsRead(orderId, order.readByRestaurant);
+      }
+    }, [orderId, order?.readByRestaurant]);
+   
+ 
+
   const fetchOrderDetails = async () => {
     try {
       const res = await api.get(`/order/getById/${orderId}`);

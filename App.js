@@ -58,6 +58,7 @@ import DeliveryPartnerHomeScreen from "./Screens/DeliveryPartnerScreens/Delivery
 import DeliveryPartnerOrderDetails from "./Screens/DeliveryPartnerScreens/DeliveryPartnerOrderDetails";
 import CurrentOrderScreen from "./Screens/DeliveryPartnerScreens/CurrentOrderScreen";
 import DeliveryProfileScreen from "./Screens/DeliveryPartnerScreens/DeliveryProfileScreen";
+import NewOrdersScreen from "./Screens/HotelScreens/NewOrderScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -277,6 +278,13 @@ const DeliveryPartneryTabs=()=>{
         }}
       />
       <Tab.Screen
+        name="Test"
+        component={NewOrdersScreen}
+        options={{
+          title: "Home",
+        }}
+      />
+      <Tab.Screen
         name="Current Order"
         component={DeliveryCurrentOrderStack}
         options={{
@@ -425,6 +433,7 @@ const MainRestaurantNavigator = () => {
         },
       }}
     >
+       {/* <Drawer.Screen name="NEw ORder" component={NewOrdersScreen}/> */}
       <Drawer.Screen
         name="Menu"
         component={MenuManagementStack}

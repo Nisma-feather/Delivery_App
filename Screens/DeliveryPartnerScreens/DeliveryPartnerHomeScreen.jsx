@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -8,9 +8,11 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   StatusBar,
-  StyleSheet
+  StyleSheet,
+  Alert
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { io } from "socket.io-client";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext"; // adjust import
  // adjust import
@@ -30,6 +32,42 @@ const DeliveryHome = ({ navigation }) => {
 
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("CONFIRMED");
+  const [socket,setSocket] =useState(null);
+
+   useEffect(() => {
+      if (!auth) return;
+  
+      const newSocket = io("https://food-delivery-backend-qk0w.onrender.com", {
+        transports: ["websocket"],
+      });
+       console.log("setSocketID",newSocket.id)
+      setSocket(newSocket);
+  
+      // Register restaurant
+      newSocket.emit("register", { role: "delivery", userId: auth.userId });
+  
+      // Debug: log any event
+      newSocket.onAny((event, ...args) => {
+        console.log("Socket received event:", event, args);
+      });
+  
+      // Listen for new orders
+      newSocket.on("order-assigned", (order) => {
+        console.log("New order received:", order);
+        // setTimeout(() => {
+        //   Alert.alert(
+        //     "New Order!",
+        //     `Order #${order.orderNumber} has been placed.`
+        //   );
+        // }, 0);
+        setOrders((prevOrders) => [order, ...prevOrders]);
+      });
+  
+      return () => {
+        newSocket.disconnect();
+      };
+    }, [auth]);
+  
 
   // Fetch orders from backend with pagination and optional search
   const fetchOrders = async (pageNumber = 1, searchText = search) => {
@@ -95,11 +133,14 @@ const DeliveryHome = ({ navigation }) => {
         <Text style={styles.orderNumber}>Order #{item.orderNumber}</Text>
 
         <Text style={styles.statusBadge}>
-          {item.orderStatus
+          {!item.readByDeliveryPartner ?
+           "NEW" :
+          
+          item.orderStatus==="DELIVERED"
             ? "DELIVERED"
             : item.deliveryAccepted
-            ? "ASSIGNED"
-            : "NEW"}
+            ? "ASSIGNED" 
+            : null}
         </Text>
       </View>
 

@@ -31,6 +31,25 @@ const DeliveryPartnerOrderDetails = ({ route, navigation }) => {
     }, [orderId])
   );
 
+  const markOrderAsReadByDelivery = async (orderId, isRead) => {
+    try {
+      if (isRead) return; // already read → do nothing
+
+      await api.patch(`/order/delivery-read-status/${orderId}`, {
+        readByDelivery: true,
+      });
+    } catch (err) {
+      console.error("Failed to mark delivery order as read:", err);
+    }
+  };
+  useEffect(() => {
+    if (orderId && order && order.readByDelivery === false) {
+      markOrderAsReadByDelivery(orderId, order.readByDelivery);
+    }
+  }, [orderId, order?.readByDelivery]);
+
+
+
   const fetchOrderDetails = async () => {
     try {
       const res = await api.get(`/order/getById/${orderId}`);

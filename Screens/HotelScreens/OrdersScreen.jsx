@@ -26,28 +26,48 @@ const OrdersScreen = ({navigation}) => {
   const [page,setPage] =useState(1);
   const [hasMore,setHasMore] = useState(true);
   const [fetchingMore,setFetchingMore] = useState(false);
+  const [unreadCount,setUnReadCount] = useState(0)
   const [socket,setSocket] =useState(null);
 
 
   //socket connection
 useEffect(() => {
-  if (!auth) return;
+    if (!auth) return;
 
-  const newSocket = io("http://192.168.1.22:8000/api");
-  setSocket(newSocket);
+    const newSocket = io("https://food-delivery-backend-qk0w.onrender.com", {
+      transports: ["websocket"],
+    });
 
-  newSocket.emit("register", { role: "restaurant", userId: auth.userId });
+    setSocket(newSocket);
 
-  newSocket.on("new-order", (order) => {
-    Alert.alert("New Order!", `Order #${order.orderNumber} has been placed.`);
-    setOrders((prevOrders) => [order, ...prevOrders]);
-  });
+    // Register restaurant
+    newSocket.emit("register", { role: "restaurant", userId: auth.userId });
 
-  return () => {
-    newSocket.disconnect();
-  };
-}, [auth]);
+    // Debug: log any event
+    newSocket.onAny((event, ...args) => {
+      console.log("Socket received event:", event, args);
+    });
 
+    // Listen for new orders
+    newSocket.on("new-order", (order) => {
+      console.log("New order received:", order);
+        // setTimeout(() => {
+        //   Alert.alert(
+        //     "New Order!",
+        //     `Order #${order.orderNumber} has been placed.`
+        //   );
+        // }, 0);
+        setUnReadCount((prev) => prev + 1);
+        if(activeTab === "PLACED"){
+          setOrders((prevOrders) => [...prevOrders,order ]);
+        }
+     
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [auth]);
 
   /* ---------------- API CALL TO FETCH ORDERS ---------------- */
 const fetchOrders = async (nextPage = 1, searchText = "") => {
@@ -59,16 +79,29 @@ const fetchOrders = async (nextPage = 1, searchText = "") => {
     }
 
     setError(null);
+    let sort = activeTab ==="DELIVERED"? -1 :1;
 
     const res = await api.get(
-      `/order/based-status?status=${activeTab}&page=${nextPage}&limit=3&search=${searchText}`
+      `/order/based-status?status=${activeTab}&page=${nextPage}&limit=2&search=${searchText}&sort=${sort}`
     );
+ 
 
     if (res.data?.orders) {
-      setOrders((prev) =>
-        nextPage === 1 ? res.data.orders : [...prev, ...res.data.orders]
-      );
+      setOrders((prev) => {
+        const newOrders =
+          nextPage === 1 ? res.data.orders : [...prev, ...res.data.orders];
 
+        // Remove duplicates by _id
+        const uniqueOrders = Array.from(
+          new Map(newOrders.map((item) => [item._id, item])).values()
+        );
+       
+
+        return uniqueOrders;
+      });
+       if (nextPage === 1) {
+         setUnReadCount(res.data.unreadCount || 0);
+       }
       setHasMore(nextPage < res.data.totalPages);
     } else {
       setOrders([]);
@@ -100,6 +133,9 @@ const handleSearchText = (text) => {
 
 
   useEffect(() => {
+    setPage(1);  
+     setHasMore(true); // reset pagination state
+     setOrders([]); 
     fetchOrders(1,search);
   }, [activeTab]);
 
@@ -151,31 +187,38 @@ const handleSearchText = (text) => {
     const displayDate = item.timeline?.placedAt || item.createdAt;
 
     return (
-      <TouchableOpacity style={styles.card} onPress={()=> navigation.navigate("Status Update",{orderId:item._id})}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() =>
+          navigation.navigate("Status Update", { orderId: item._id })
+        }
+      >
+        {!item.readByRestaurant && (
+          <View style={styles.newBadge}>
+            <Text style={styles.newBadgeText}>NEW</Text>
+          </View>
+        )}
         <View style={styles.rowBetween}>
-          <Text style={styles.name}>
-            {item.userId?.userName || "Customer"}
-          </Text>
-          <Text style={styles.price}>₹{item.orderTotal || 0}</Text>
+          <Text style={styles.name}>{item.userId?.userName || "Customer"}</Text>
         </View>
 
-        <Text style={styles.subText}>
-          Ordered on {formatDate(displayDate)}
-        </Text>
+        <Text style={styles.subText}>Ordered on {formatDate(displayDate)}</Text>
 
         <View style={styles.rowBetween}>
           <Text style={styles.subText}>
-            Order #{item.orderNumber || item._id?.slice(-6)} • {totalItems} Items
+            Order #{item.orderNumber || item._id?.slice(-6)} • {totalItems}{" "}
+            Items
           </Text>
-          <Text 
-            style={[
-              styles.status, 
-              { color: getStatusColor(item.orderStatus) }
-            ]}
+
+          <Text
+            style={[styles.status, { color: getStatusColor(item.orderStatus) }]}
           >
-            {item.orderStatus==="CONFIRMED" && item.deliveryPartnerId ? "ASsIGNED":item.orderStatus?.replace(/_/g, " ") || "UNKNOWN"}
+            {item.orderStatus === "CONFIRMED" && item.deliveryPartnerId
+              ? "ASsIGNED"
+              : item.orderStatus?.replace(/_/g, " ") || "UNKNOWN"}
           </Text>
         </View>
+        <Text style={styles.price}>Total Amount - ₹ {item.orderTotal || 0}</Text>
 
         {/* Display payment method */}
         <Text style={[styles.subText, { marginTop: 4 }]}>
@@ -250,14 +293,21 @@ const handleSearchText = (text) => {
               onPress={() => setActiveTab(item.key)}
               style={styles.tab}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === item.key && styles.activeTabText,
-                ]}
-              >
-                {item.label}
-              </Text>
+              <View style={{flexDirection:"row"}}>
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeTab === item.key && styles.activeTabText,
+                  ]}
+                >
+                  {item.label}
+                </Text>
+                {item.key === "PLACED" && unreadCount > 0 && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{unreadCount}</Text>
+                  </View>
+                )}
+              </View>
               {activeTab === item.key && (
                 <View style={styles.activeUnderline} />
               )}
@@ -267,15 +317,12 @@ const handleSearchText = (text) => {
       </View>
 
       {/* ORDER LIST */}
-      {loading ?
-
+      {loading ? (
         <View style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color={Color.DARK} />
-        <Text style={styles.loadingText}>Loading orders...</Text>
-       </View>
-        
-        :
-        orders.length === 0 ? (
+          <ActivityIndicator size="large" color={Color.DARK} />
+          <Text style={styles.loadingText}>Loading orders...</Text>
+        </View>
+      ) : orders.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="receipt-outline" size={64} color="#ccc" />
           <Text style={styles.emptyText}>
@@ -290,7 +337,12 @@ const handleSearchText = (text) => {
           keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
           refreshing={loading}
-          onRefresh={() => fetchOrders(1, search)}
+          onRefresh={() => {
+            setPage(1);
+            setHasMore(true); // reset pagination state
+            setOrders([]);
+            fetchOrders(1, search);
+          }}
           onEndReached={handleLoadMore} // 👈 Pagination
           onEndReachedThreshold={0.5} // 👈 Load when 50% from bottom
           ListFooterComponent={
@@ -437,7 +489,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   price: {
-    fontSize: 16,
+    fontSize: 13,
     color: "#333",
     fontFamily: "Poppins-Bold",
   },
@@ -456,7 +508,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,
-    marginBottom:10,
+    marginBottom: 10,
     backgroundColor: "#fff",
     justifyContent: "space-between", // TITLE LEFT | MENU RIGHT
   },
@@ -464,6 +516,37 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Poppins-SemiBold",
     color: "#000",
-   
+  },
+  badge: {
+    backgroundColor: "red",
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 6,
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: "white",
+    fontSize: 10,
+    fontFamily: "Poppins-Bold",
+  },
+  newBadge: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "#FF3B30", // red color for visibility
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    zIndex: 10,
+  },
+
+  newBadgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontFamily: "Poppins-Bold",
+    textTransform: "uppercase",
   },
 });
