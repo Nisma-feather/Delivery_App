@@ -146,10 +146,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
+    color:"#222",
     marginBottom: 30,
     textAlign: "center",
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-SemiBold",
   },
   inputContainer: {
     position: "relative",
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 12,
     padding: 12,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Poppins-Regular",
     paddingRight: 40, // space for eye icon
   },
@@ -171,21 +172,21 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-    fontSize: 12,
+    fontSize: 11,
     marginBottom: 5,
     marginLeft: 5,
     fontFamily: "Poppins-Regular",
   },
   button: {
     backgroundColor: Color.DARK,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: 25,
     alignItems: "center",
     marginTop: 15,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
   },
 });

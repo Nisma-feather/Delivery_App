@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { api } from "../api/apiConfig";
 import { useAuth } from "../context/AuthContext";
+import Color from "../constants/Color";
 
 // --- Mock Data for Payment Methods ---
 const mockPayments = [
@@ -59,7 +60,7 @@ const PaymentMethodScreen = ({route,navigation}) => {
           <MaterialCommunityIcons
             name="check-circle"
             size={24}
-            color="#ff4d4d"
+            color={Color.DARK}
           />
         ) : (
           <View style={styles.unselectedCircle} />
@@ -113,7 +114,7 @@ const PaymentMethodScreen = ({route,navigation}) => {
   }
   
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Select Payment Method</Text>
       </View>
@@ -145,7 +146,7 @@ const PaymentMethodScreen = ({route,navigation}) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -164,8 +165,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerTitle: {
-    fontSize: 20,
-    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
     textAlign: "center",
     color: "#333",
   },
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginBottom: 10,
@@ -199,19 +200,19 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   selectedCard: {
-    borderColor: "#ff4d4d", // Red border for selected card
+    borderColor: Color.DARK, // Red border for selected card
   },
   cardDetails: {
     flex: 1,
     marginLeft: 15,
   },
   cardType: {
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
     color: "#333",
   },
   cardDescription: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: "Poppins-Regular",
     color: "#6e6e6e",
     marginTop: 2,
@@ -235,14 +236,14 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     backgroundColor: "#000",
-    paddingVertical: 18,
+    paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   confirmButtonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 13,
     fontFamily: "Poppins-Bold",
   },
 });

@@ -56,7 +56,7 @@ const PasswordInput = ({
             <Text style={styles.inputLabel}>{label}</Text>
             <View style={styles.inputContainer}>
                 {/* Lock Icon */}
-                <Text style={styles.inputIcon}> <Octicons name="lock" color="#888" size={22} /></Text>
+                <Text style={styles.inputIcon}> <Octicons name="lock" color="#888" size={18} /></Text>
                 
                 {/* TextInput */}
                 <TextInput
@@ -75,7 +75,7 @@ const PasswordInput = ({
                     onPress={onTogglePassword}
                 >
                     
-                      <Ionicons name={isPasswordVisible ?"eye-outline":"eye-off-outline"} color="#777" size={24} />
+                      <Ionicons name={isPasswordVisible ?"eye-outline":"eye-off-outline"} color="#777" size={20} />
                        
                   
                 </TouchableOpacity>
@@ -97,7 +97,7 @@ const EmailInput = ({ label, value, onChangeText }) => {
         <View style={styles.inputSection}>
             <Text style={styles.inputLabel}>{label}</Text>
             <View style={styles.inputContainer}>
-                <Text style={styles.inputIcon}><Fontisto name="email" color="#888" size={22} /></Text>
+                <Text style={styles.inputIcon}><Fontisto name="email" color="#888" size={18} /></Text>
                 <TextInput
                     style={styles.input}
                     value={value}
@@ -154,7 +154,7 @@ const LoginScreen = ({ navigation }) => {
                 );
 
                 Alert.alert("Success", "Login successful!");
-                navigation.navigate("User Home");
+                // navigation.navigate("User Home");
             } else {
                 Alert.alert("Error", "Invalid response from server");
             }
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingHorizontal: width * 0.1, 
+        paddingHorizontal: width * 0.06, 
         paddingTop: width * 0.15, // Reduced slightly for better balance
         paddingBottom: 40,
     },
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     inputLabel: {
-        fontSize: 13,
+        fontSize: 12,
         fontFamily: 'Poppins-SemiBold',
         color: MOCK_COLORS.secondaryText,
         marginBottom: 10,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: MOCK_COLORS.inputBackground,
         borderRadius: 16, // Slightly more rounded
-        height: 48, // Increased height
+        height: 53, // Increased height
         paddingHorizontal: 18,
         ...Platform.select({
             ios: {
@@ -351,14 +351,14 @@ const styles = StyleSheet.create({
         }),
     },
     inputIcon: {
-        fontSize: 22,
+        fontSize: 16,
         marginRight: 14,
         color: MOCK_COLORS.secondaryText,
     },
     input: {
         flex: 1,
         height: '100%',
-        fontSize: 16,
+        fontSize: 12,
         fontFamily: 'Poppins-Medium',
         color: MOCK_COLORS.primaryText,
         paddingVertical: 0,
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end', // Align to the right
     },
     forgotText: {
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: 'Poppins-SemiBold',
         color: MOCK_COLORS.accent,
         letterSpacing: 0.3,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 25,
-        height: 45,
+        height: 50,
         borderRadius: 31,
         width: '65%', // Slightly wider
         alignSelf: 'flex-end',
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     },
     loginButtonText: {
         color: MOCK_COLORS.inputBackground,
-        fontSize: 16,
+        fontSize: 13,
         fontFamily: 'Poppins-Bold',
         marginRight: 12,
         letterSpacing: 0.8,
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
     },
     signUpText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: 'Poppins-Regular',
         color: MOCK_COLORS.secondaryText,
         marginRight: 8,

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { api } from "../api/apiConfig";
 import Color from "../constants/Color";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ForgotOTPVerification = ({ navigation, route }) => {
   const { email } = route.params;
@@ -40,7 +41,7 @@ const ForgotOTPVerification = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Verify OTP</Text>
       <Text style={styles.subtitle}>Enter the OTP sent to your email</Text>
 
@@ -69,7 +70,7 @@ const ForgotOTPVerification = ({ navigation, route }) => {
       </TouchableOpacity>
 
       
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -78,17 +79,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    marginTop:40,
     backgroundColor: "#fff",
   },
   title: {
-    fontSize: 20,
-  
-    fontFamily: "Poppins-Bold", // Poppins bold
+    fontSize: 18,
+    color:"#222",
+    fontFamily: "Poppins-SemiBold", // Poppins bold
   },
   subtitle: {
     color: "#666",
     marginBottom: 30,
+    fontSize:13,
     fontFamily: "Poppins-Regular", // Poppins regular
   },
   otpContainer: {
@@ -102,14 +104,14 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 10,
     textAlign: "center",
-    fontSize: 15,
+    fontSize: 13,
     marginHorizontal: 5,
     color: "#222",
     fontFamily: "Poppins-Regular", // Poppins regular
   },
   verifyButton: {
     backgroundColor: Color.DARK,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: 25,
     alignItems: "center",
     marginTop: 40,
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
   },
   verifyText: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 13,
     
     fontFamily: "Poppins-SemiBold", // Poppins semi-bold
   },

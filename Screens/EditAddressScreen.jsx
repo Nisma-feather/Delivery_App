@@ -305,8 +305,9 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    fontSize: 20,
-    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    COLOR:"#222",
+    fontFamily: "Poppins-SemiBold",
     marginVertical: 20,
   },
 
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
   },
 
   addrText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
     lineHeight: 18,
   },
@@ -369,7 +370,7 @@ const styles = StyleSheet.create({
   },
   addBtnText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
     marginLeft: 8,
   },
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
   },
   continueText: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
   },
 
@@ -405,8 +406,8 @@ const styles = StyleSheet.create({
   },
 
   modalHeader: {
-    fontSize: 18,
-    fontFamily: "Poppins-Bold",
+    fontSize: 15,
+    fontFamily: "Poppins-SemiBold",
     marginBottom: 15,
   },
 
@@ -416,7 +417,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Poppins-Regular",
   },
 
@@ -430,7 +431,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginBottom: 10,
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "Poppins-Regular",
   },
 
@@ -442,7 +443,7 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
     textAlign: "center",
   },

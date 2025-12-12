@@ -114,7 +114,7 @@ const AddressChoose = ({ navigation, route }) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <View style={styles.container}>
         {/* TOP FIXED SECTION → Address + Phone */}
         <View>
@@ -250,7 +250,7 @@ const AddressChoose = ({ navigation, route }) => {
           <Text style={styles.payNowText}>Pay Now</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20 },
 
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: "Poppins-SemiBold",
     marginBottom: 8,
   },
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
   addressTextContainer: { flex: 1, marginLeft: 12 },
 
   addrText: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: "Poppins-Medium",
   },
 
@@ -305,14 +305,14 @@ const styles = StyleSheet.create({
   phoneText: {
     flex: 1,
     marginLeft: 12,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Poppins-Medium",
   },
 
   phoneInput: {
     flex: 1,
     marginLeft: 12,
-    fontSize: 14,
+    fontSize: 12,
     borderBottomWidth: 1,
     borderColor: "#ccc",
     paddingBottom: 2,
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
 
   changeText: {
     color: "#007bff",
-    fontSize: 13,
+    fontSize: 12.5,
     fontFamily: "Poppins-SemiBold",
   },
 
@@ -364,24 +364,24 @@ const styles = StyleSheet.create({
   },
 
   totalValue: {
-    fontSize: 18,
+    fontSize: 14,
     fontFamily: "Poppins-Bold",
   },
 
   payNowButton: {
     position: "absolute",
-    bottom: 20,
+    bottom:10,
     left: 20,
     right: 20,
     backgroundColor: "black",
-    paddingVertical: 14,
+    paddingVertical: 10,
     borderRadius: 10,
     alignItems: "center",
   },
 
   payNowText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: "Poppins-Bold",
   },
 });
@@ -421,18 +421,18 @@ const itemsStyles = StyleSheet.create({
   infoContainer: { flex: 1 },
 
   itemName: {
-    fontSize: 13,
+    fontSize: 11.5,
     fontFamily: "Poppins-Medium",
   },
 
   itemQuantity: {
-    fontSize: 11,
+    fontSize: 10,
     color: "#777",
     fontFamily: "Poppins-Regular",
   },
 
   itemPrice: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: "Poppins-SemiBold",
   },
 });

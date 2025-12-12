@@ -195,7 +195,7 @@ const EditProfileScreen = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -279,7 +279,7 @@ const EditProfileScreen = ({ navigation, route }) => {
           </Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
+    fontSize: 13,
     color: '#666',
     fontFamily: 'Poppins-Regular',
   },
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   headerTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     color: '#333',
   },
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
    
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
     color: '#333',
     marginBottom: 20,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputLabel: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Poppins-Medium',
     color: '#333',
     marginBottom: 8,
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Poppins-Regular',
     color: '#333',
     borderWidth: 1,
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   errorText: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Poppins-Regular',
     color: '#D9534F',
     marginTop: 4,
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
-    paddingVertical: 15,
+    paddingVertical: 10,
     marginBottom: 20,
     shadowColor: Color.DARK,
     shadowOffset: { width: 0, height: 4 },
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     shadowColor: 'transparent',
   },
   updateButtonText: {
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: 'Poppins-SemiBold',
     color: '#FFF',
     marginLeft: 8,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     borderColor: '#D1E9FF',
   },
   noteText: {
-    fontSize: 13,
+    fontSize: 11.5,
     fontFamily: 'Poppins-Regular',
     color: '#666',
     marginLeft: 8,

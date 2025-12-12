@@ -72,6 +72,14 @@ const HomeStack = () => (
   </Stack.Navigator>
 );
 
+//Favourite stack 
+const FavouriteStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
+    <Stack.Screen name="Food Details" component={FoodDetailScreen} />
+  </Stack.Navigator>
+);
+
 //CART STACK
 
 const CartStack = () => (
@@ -85,11 +93,6 @@ const CartStack = () => (
 );
 
 //FavouriteStack
-const FavouriteStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="FavouriteScreen" component={FavouriteScreen} />
-  </Stack.Navigator>
-);
 
 const ProfileStack = () => {
   return (
@@ -513,7 +516,10 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return <Text>Loading fonts...</Text>;
+    return <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={Color.DARK} />
+        <Text style={{ marginTop: 10 }}>Loading...</Text>
+      </View>;
   }
 
   const ForgotPasswordStack = () => {
@@ -537,6 +543,7 @@ export default function App() {
       <AuthProvider>
         <NavigationContainer>
           <RootNavigator />
+        
           {/* <HotelNavigator/> */}
           {/* <MainRestaurantNavigator/> */}
           {/* <ResetPasswordScreen/> */}

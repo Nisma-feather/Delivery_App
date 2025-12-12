@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins-SemiBold",
     color: "#222",
   },
@@ -237,21 +237,21 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 12,
     textAlign: "center",
-    fontSize: 22,
+    fontSize: 15,
     fontFamily: "Poppins-Medium",
     color: "#222",
   },
   verifyButton: {
     backgroundColor: Color.DARK,
     width: "80%",
-    paddingVertical: 15,
+    paddingVertical: 10,
     borderRadius: 25,
     alignItems: "center",
     marginTop: 50,
   },
   verifyText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Poppins-SemiBold",
   },
   resendContainer: {
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
   timerText: {
     color: "#444",
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-Medium",
   },
   timerHighlight: {

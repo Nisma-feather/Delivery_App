@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import { FontAwesome, Octicons } from "@expo/vector-icons";
 import Color from "../../constants/Color";
 
@@ -60,9 +60,9 @@ const OrderTrackScreen = ({ navigation, route }) => {
 
   if (!order || !order.timeline) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ActivityIndicator size="large" color={Color.DARK} />
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -116,7 +116,7 @@ const OrderTrackScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -188,7 +188,7 @@ const OrderTrackScreen = ({ navigation, route }) => {
           })}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -203,11 +203,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 15,
-    height: 60,
+    height: 70,
+  
   },
   backButton: {
     padding: 5,
-    marginRight: 15,
+    marginRight: 25,
     height: 40,
     width: 40,
     backgroundColor: "transparent",
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
   },
   orderIdText: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
     color: IMAGE_DARK,
   },
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   trackingHeader: {
-    fontSize: 18,
+    fontSize: 15,
     fontFamily: "Poppins-Bold",
     color: "#333",
     marginBottom: 10,
@@ -253,13 +254,13 @@ const mapStyles = StyleSheet.create({
     backgroundColor: Color.DARK,
     borderRadius: 20,
   },
-  statusBadgeText: { color: "#fff", fontFamily: "Poppins-Bold" },
+  statusBadgeText: { color: "#fff", fontFamily: "Poppins-SemiBold",fontSize:13 },
   mapPlaceholder: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  mapText: { color: "#555", fontFamily: "Poppins-Regular" },
+  mapText: { color: "#555", fontFamily: "Poppins-Regular", },
 });
 
 const timelineStyles = StyleSheet.create({
@@ -285,11 +286,11 @@ const timelineStyles = StyleSheet.create({
   },
   timelineLineActive: { backgroundColor: Color.DARK },
   timelineContent: { flex: 1 },
-  statusTitle: { fontSize: 15, fontFamily: "Poppins-SemiBold", color: "#666" },
-  statusTitleActive: { color: "#000", fontFamily: "Poppins-Bold" },
+  statusTitle: { fontSize: 13.5, fontFamily: "Poppins-SemiBold", color: "#666" },
+  statusTitleActive: { color: "#000", fontFamily: "Poppins-Bold" ,fontSize: 13.5},
   statusDateText: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: "Poppins-Regular",
-    color: "#999",
+    color: "#888",
   },
 });

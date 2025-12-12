@@ -93,7 +93,7 @@ const MainProfileScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+    <View style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{ paddingBottom: 30 }}
@@ -175,7 +175,7 @@ const MainProfileScreen = ({ navigation }) => {
           onPress={handleLogout}
         />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -194,15 +194,15 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
+    fontSize: 13,
     color: "#666",
     fontFamily: "Poppins-Regular",
   },
   title: {
-    fontSize: 22,
-    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
     marginBottom: 20,
-    color: "#000",
+    color: "#222",
   },
   profileRow: {
     flexDirection: "row",
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
   },
   userName: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
     color: "#000",
   },
@@ -241,10 +241,10 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
   menuText: {
-    fontSize: 16,
+    fontSize: 13,
     marginLeft: 14,
     fontFamily: "Poppins-Medium",
   },

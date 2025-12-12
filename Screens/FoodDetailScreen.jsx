@@ -105,7 +105,7 @@ const FoodDetailScreen = ({ navigation, route }) => {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar
         translucent
         backgroundColor="rgba(255,255,255,0.2)"
@@ -142,7 +142,7 @@ const FoodDetailScreen = ({ navigation, route }) => {
 
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => toggleFavourite(foodItemId)}
+              onPress={() =>  toggleFavourite(foodItemId)}
             >
               <Octicons
                 name={isFav ? "heart-fill" : "heart"}
@@ -226,7 +226,7 @@ const FoodDetailScreen = ({ navigation, route }) => {
           <Text style={styles.cartButtonText}>Go to Cart</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   title: {
-    fontSize: 17, // Reduced from 28
+    fontSize: 15, // Reduced from 28
     fontFamily: "Poppins-SemiBold",
     marginBottom: 12,
     color: "#333",
@@ -304,21 +304,21 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   priceValue: {
-    fontSize: 20, // Reduced from 24
-    color: PRIMARY_COLOR,
+    fontSize: 14, // Reduced from 24
+    color: "#222",
     fontFamily: "Poppins-SemiBold",
     marginTop: 2,
   },
   addToCartButton: {
     backgroundColor: Color.DARK,
     paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 8,
   },
   addToCartText: {
     color: "#fff",
     fontFamily: "Poppins-SemiBold",
-    fontSize: 14,
+    fontSize: 13,
   },
 
   // --- Quantity Control Styles ---
@@ -352,22 +352,22 @@ const styles = StyleSheet.create({
     backgroundColor: PRIMARY_COLOR,
   },
   minusButtonText: {
-    fontSize: 20, // Reduced from 24
+    fontSize: 14, // Reduced from 24
     color: "#333",
     fontFamily: "Poppins-SemiBold",
     lineHeight: 20,
   },
   plusButtonText: {
-    fontSize: 20, // Reduced from 24
+    fontSize: 14, // Reduced from 24
     color: "#fff",
     fontFamily: "Poppins-SemiBold",
     lineHeight: 20,
   },
   quantityCount: {
-    fontSize: 16, // Reduced from 18
+    fontSize: 14, // Reduced from 18
     fontFamily: "Poppins-SemiBold",
     color: "#333",
-    minWidth: 28,
+    minWidth: 45,
     textAlign: "center",
   },
 
@@ -376,16 +376,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   descLabel: {
-    fontSize: 16, // Reduced from 18
+    fontSize: 13, // Reduced from 18
     fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginBottom: 8,
   },
   descText: {
-    fontSize: 14, // Reduced from 15
+    fontSize: 13, // Reduced from 15
     color: "#555",
     fontFamily: "Poppins-Regular",
-    lineHeight: 22,
+    lineHeight: 19,
   },
 
   // --- Sticky Footer Styles ---
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
   orderButton: {
     flex: 1,
     backgroundColor: PRIMARY_COLOR,
-    paddingVertical: 13,
+    paddingVertical: 10,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
@@ -423,12 +423,12 @@ const styles = StyleSheet.create({
   },
   orderButtonText: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
   },
   cartButton: {
     backgroundColor: "#333",
-    paddingVertical: 13,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 10,
     justifyContent: "center",
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   },
   cartButtonText: {
     color: "white",
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
   },
 });

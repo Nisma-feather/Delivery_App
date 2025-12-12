@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingHorizontal: width * 0.1, 
+        paddingHorizontal: width * 0.06,   // SAME AS LOGIN
         paddingTop: width * 0.15,
         paddingBottom: 40,
     },
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     },
     topBlob: {
         position: 'absolute',
-        borderRadius: width * 0.4, 
+        borderRadius: width * 0.4,
     },
     topBlobMain: {
         top: -width * 0.4,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
         width: width * 0.8,
         height: width * 0.8,
         backgroundColor: MOCK_COLORS.buttonEnd,
-        transform: [{ rotate: '20deg' }], 
+        transform: [{ rotate: '20deg' }],
     },
     topBlobAccent: {
         top: -width * 0.25,
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
         height: width * 0.7,
         backgroundColor: MOCK_COLORS.buttonStart,
         opacity: 0.7,
-        transform: [{ rotate: '5deg' }], 
+        transform: [{ rotate: '5deg' }],
     },
 
     // --- Header Styles ---
@@ -375,20 +375,20 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     inputLabel: {
-        fontSize: 13,
+        fontSize: 12,                         // SAME AS LOGIN
         fontFamily: 'Poppins-SemiBold',
         color: MOCK_COLORS.secondaryText,
-        marginBottom: 10,
+        marginBottom: 7,
         marginLeft: 12,
         letterSpacing: 0.5,
-        textTransform: 'uppercase',
+       
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: MOCK_COLORS.inputBackground,
         borderRadius: 16,
-        height: 48,
+        height: 53,                             // SAME HEIGHT AS LOGIN
         paddingHorizontal: 18,
         ...Platform.select({
             ios: {
@@ -403,39 +403,39 @@ const styles = StyleSheet.create({
         }),
     },
     inputIcon: {
+        fontSize: 16,                          // SAME AS LOGIN
         marginRight: 14,
+        color: MOCK_COLORS.secondaryText,
     },
     input: {
         flex: 1,
         height: '100%',
-        fontSize: 16,
+        fontSize: 12,                          // SAME AS LOGIN
         fontFamily: 'Poppins-Medium',
         color: MOCK_COLORS.primaryText,
         paddingVertical: 0,
         letterSpacing: 0.3,
     },
-    
-    // Eye Icon Styles
+
     eyeButton: {
         paddingLeft: 12,
         paddingRight: 4,
     },
-    
-    // Error Text Styles
+
     errorText: {
         color: 'red',
-        fontSize: 13,
+        fontSize: 12,
         fontFamily: 'Poppins-Regular',
         marginTop: 5,
         marginLeft: 12,
     },
 
-    // --- Remember Me / Privacy Policy Styles ---
+    // --- Terms / Remember ---
     rememberMeContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 8,
-        marginBottom: 20,
+        marginBottom: 35,                     // SAME AS LOGIN spacing
         marginLeft: 2,
     },
     checkbox: {
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Bold',
     },
     rememberMeText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: 'Poppins-Medium',
         color: MOCK_COLORS.secondaryText,
         letterSpacing: 0.2,
@@ -469,15 +469,15 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-SemiBold',
     },
 
-    // --- Sign Up Button Styles ---
+    // --- Sign Up Button (same as login button) ---
     loginButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 25,
-        height: 45,
+        height: 50,                            // SAME AS LOGIN
         borderRadius: 31,
-        width: '65%',
+        width: '65%',                          // SAME AS LOGIN
         alignSelf: 'flex-end',
         backgroundColor: MOCK_COLORS.buttonStart,
         ...Platform.select({
@@ -494,19 +494,19 @@ const styles = StyleSheet.create({
     },
     loginButtonText: {
         color: MOCK_COLORS.inputBackground,
-        fontSize: 16,
+        fontSize: 13,                           // SAME AS LOGIN
         fontFamily: 'Poppins-Bold',
         marginRight: 12,
         letterSpacing: 0.8,
     },
     loginButtonArrow: {
         color: MOCK_COLORS.inputBackground,
-        fontSize: 20,
+        fontSize: 16,
         fontFamily: 'Poppins-Bold',
         marginTop: 2,
     },
 
-    // --- Separator Styles ---
+    // --- Social Separator ---
     separatorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
     },
 
-    // --- Social Login Styles ---
+    // --- Social Login ---
     socialContainer: {
         alignItems: 'center',
         marginBottom: 30,
@@ -555,27 +555,29 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
 
-    // --- Footer Styles ---
+    // --- Footer ---
     signUpContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 30,
-        paddingVertical: 10,
+        marginTop: 50,
+        paddingVertical: 20,
     },
     signUpText: {
-        fontSize: 15,
+        fontSize: 13,                          // SAME AS LOGIN
         fontFamily: 'Poppins-Regular',
         color: MOCK_COLORS.secondaryText,
         marginRight: 8,
         letterSpacing: 0.3,
     },
     signInLink: {
-        fontSize: 15,
+        fontSize: 14,
         fontFamily: 'Poppins-SemiBold',
         color: MOCK_COLORS.accent,
         letterSpacing: 0.3,
     },
 });
+
+
 
 export default SignUpScreen;

@@ -223,7 +223,7 @@ const updateCartItem = (updatedItem) => {
   );
 };
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
   {/* Header */}
   <View style={styles.header}>
     <Pressable onPress={() => navigation.goBack()}>
@@ -300,7 +300,7 @@ const updateCartItem = (updatedItem) => {
         >
           Total amount
         </Text>
-        <Text style={[styles.totalPriceText, { fontSize: 17 }]}>
+        <Text style={[styles.totalPriceText, { fontSize: 14 }]}>
           ₹{(totalAmount + 40).toFixed(2)}
         </Text>
       </View>
@@ -316,13 +316,13 @@ const updateCartItem = (updatedItem) => {
         disabled={selectedItems.length === 0}
         onPress={() => navigation.navigate("CheckoutScreen", { selectedItems })}
       >
-        <Text style={[styles.checkoutButtonText, { fontSize: 15 }]}>
+        <Text style={[styles.checkoutButtonText, { fontSize: 13 }]}>
           CHECKOUT
         </Text>
       </TouchableOpacity>
     </View>
   )}
-</SafeAreaView>
+</View>
 
   )
 };
@@ -344,8 +344,8 @@ const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 18,
-    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
   },
 
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   },
 
   foodName: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginBottom: 4,
@@ -394,6 +394,7 @@ const styles = StyleSheet.create({
   priceValue: {
     fontFamily: "Poppins-SemiBold",
     color: "#333",
+    fontSize:12
   },
 
   quantityControl: {
@@ -414,7 +415,7 @@ const styles = StyleSheet.create({
   },
 
   emptyText: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#888",
     fontFamily: "Poppins-SemiBold",
   },
@@ -455,6 +456,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginLeft: "auto",
     paddingRight: 10,
+    fontSize:13
   },
 
   deleteButton: {
@@ -463,7 +465,7 @@ const styles = StyleSheet.create({
   },
 
   itemTotalPrice: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#333",
     fontFamily: "Poppins-SemiBold",
   },
@@ -482,20 +484,20 @@ const styles = StyleSheet.create({
   },
 
   totalText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-Regular",
     color: "#888",
   },
 
   totalPriceText: {
-    fontSize: 15,
-    fontFamily: "Poppins-Bold",
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
     color: Color.DARK,
   },
 
   checkoutButton: {
     backgroundColor: Color.DARK,
-    padding: 10,
+    padding:10,
     borderRadius: 10,
     alignItems: "center",
   },
@@ -506,7 +508,7 @@ const styles = StyleSheet.create({
 
   checkoutButtonText: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: "Poppins-Bold",
   },
 });

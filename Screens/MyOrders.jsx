@@ -99,7 +99,7 @@ const MyOrders = ({ navigation }) => {
       : orders.filter((o) => o.orderStatus === "DELIVERED");
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
        
@@ -153,7 +153,7 @@ const MyOrders = ({ navigation }) => {
         )}
         contentContainerStyle={styles.listContent}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#f0f0f0",
   },
   headerTitle: {
-    fontSize: 19,
-    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
   },
   iconButton: { padding: 5 },
   iconText: { fontSize: 24 },
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
     marginHorizontal: 15,
-    marginVertical: 20,
+    marginVertical: 13,
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#E0E0E0",
   },
   tabButton: { flex: 1, paddingVertical: 7, alignItems: "center" },
-  tabText: { fontSize: 15, fontFamily: "Poppins-Medium", color: "#000" },
+  tabText: { fontSize: 13, fontFamily: "Poppins-Medium", color: "#000" },
   activeTab: { backgroundColor: Color.DARK, borderRadius: 30 },
   activeTabText: { color: "#fff", fontFamily: "Poppins-SemiBold" },
 
@@ -204,9 +204,9 @@ const styles = StyleSheet.create({
   orderImage: { width: 70, height: 70, marginRight: 15, borderRadius: 10 },
   orderDetailContainer: { flex: 1 },
 
-  orderName: { fontSize: 13, fontFamily: "Poppins-SemiBold" },
+  orderName: { fontSize: 12, fontFamily: "Poppins-SemiBold" },
   orderDescription: {
-    fontSize: 13,
+    fontSize: 11,
     fontFamily: "Poppins-Regular",
     color: "#777",
     marginTop: 2,
@@ -215,18 +215,18 @@ const styles = StyleSheet.create({
 
   trackButton: {
     backgroundColor: Color.DARK,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 20,
   },
-  trackButtonText: { color: "#fff", fontFamily: "Poppins-SemiBold" },
+  trackButtonText: { color: "#fff", fontFamily: "Poppins-SemiBold",fontSize:12 },
 
   viewDetailsButton: {
     marginTop: 6,
     borderWidth: 1,
     borderColor: Color.DARK,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 7,
+    paddingVertical: 10,
     borderRadius: 20,
     width: 120,
   },
@@ -234,6 +234,7 @@ const styles = StyleSheet.create({
     color: Color.DARK,
     fontFamily: "Poppins-SemiBold",
     textAlign: "center",
+    fontSize:12
   },
 });
 

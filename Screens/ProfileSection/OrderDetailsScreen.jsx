@@ -9,6 +9,8 @@ import {
   Image,
   FlatList,
 } from "react-native";
+import Color from "../../constants/Color";
+import { FontAwesome, Octicons } from "@expo/vector-icons";
 
 // --- Dummy Data (Simulating data that might be passed via navigation or fetched) ---
 
@@ -96,15 +98,15 @@ const OrderDetailsScreen = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.iconButton}
-        >
-          <Text style={styles.iconText}>←</Text>
-        </TouchableOpacity>
+                  onPress={() => navigation.goBack()}
+                  style={styles.backButton}
+                >
+                  <Octicons name="arrow-left" color="#000" size={24} />
+                </TouchableOpacity>
         <Text style={styles.headerTitle}>Order Details</Text>
         <View style={{ width: 24 }} />
       </View>
@@ -135,7 +137,7 @@ const OrderDetailsScreen = ({ route, navigation }) => {
 
         <View style={{ height: 40 }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -151,6 +153,7 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
+    height:70,
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 15,
@@ -160,15 +163,15 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
   },
   headerTitle: {
-    fontSize: 18,
-    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
     color: "#000",
   },
   iconButton: { padding: 5 },
   iconText: { fontSize: 24, color: "#000" },
 
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Poppins-Bold",
     color: "#333",
     marginBottom: 10,
@@ -188,28 +191,28 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   orderIdText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontFamily: "Poppins-SemiBold",
     color: "#000",
     marginBottom: 5,
   },
   orderDateText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Poppins-Regular",
     color: "#666",
     marginBottom: 10,
   },
   statusBadge: {
     alignSelf: "flex-start",
-    backgroundColor: "#C8E6C9",
+    backgroundColor: Color.DARK,
     borderRadius: 15,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   statusText: {
-    color: "#2E7D32",
+    color: "#000",
     fontFamily: "Poppins-SemiBold",
-    fontSize: 13,
+    fontSize: 12,
   },
 });
 
@@ -242,20 +245,20 @@ const itemsStyles = StyleSheet.create({
   },
   infoContainer: { flex: 1 },
   itemName: {
-    fontSize: 15,
+    fontSize: 12.5,
     fontFamily: "Poppins-SemiBold",
     color: "#000",
   },
   itemQuantity: {
-    fontSize: 13,
+    fontSize: 11,
     fontFamily: "Poppins-Regular",
     color: "#666",
     marginTop: 2,
   },
   itemPrice: {
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: "Poppins-Bold",
-    color: "#1E8449",
+    color: "#444",
   },
 });
 
@@ -277,29 +280,29 @@ const priceStyles = StyleSheet.create({
     paddingVertical: 5,
   },
   priceLabel: {
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: "Poppins-Regular",
     color: "#666",
   },
   priceValue: {
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: "Poppins-Medium",
     color: "#333",
   },
   separator: {
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    marginVertical: 10,
+    marginVertical: 7,
   },
   totalLabel: {
-    fontSize: 15,
-    fontFamily: "Poppins-Bold",
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
     color: "#000",
   },
   totalValue: {
     fontSize: 15,
     fontFamily: "Poppins-Bold",
-    color: "#1E8449",
+    color: Color.DARK,
   },
 });
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { api } from "../api/apiConfig";
 import Color from '../constants/Color';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ForgotPasswordEmailScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -32,7 +33,7 @@ const ForgotPasswordEmailScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Forgot Password</Text>
       <Text style={styles.subtitle}>
         Enter registered email to reset password
@@ -61,7 +62,7 @@ const ForgotPasswordEmailScreen = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <Text style={styles.backLogin}>Back to Login</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -69,19 +70,26 @@ const styles = StyleSheet.create({
   container:{ 
     flex:1,
     backgroundColor:"#fff",
-    justifyContent:"center",
+      marginTop: 40,
     paddingHorizontal:30 
   },
-  title:{ 
-    fontSize:20,
-    fontFamily:"Poppins-Bold",
-    marginBottom:10 
+  title: {
+    fontSize: 18,
+    fontFamily: "Poppins-SemiBold",
+    color: "#222",
+     textAlign:"center",
+   
   },
-  subtitle:{ 
-    color:"#777",
-    fontSize:14,
-    fontFamily:"Poppins-Regular",
-    marginBottom:30 
+ subtitle: {
+    fontSize: 13,
+    color: "#666",
+  
+    alignSelf: "flex-start",
+    marginTop: 8,
+    lineHeight: 20,
+
+    fontFamily: "Poppins-Regular",
+     marginBottom:12,
   },
   input:{ 
     backgroundColor:"#fff",
@@ -89,6 +97,7 @@ const styles = StyleSheet.create({
     borderRadius:10,
     paddingHorizontal:15,
     height:50,
+    fontSize:12,
     fontFamily:"Poppins-Regular",
     marginBottom:20 
   },
@@ -102,13 +111,14 @@ const styles = StyleSheet.create({
   },
   buttonText:{ 
     color:"#fff",
-    fontSize:16,
+    fontSize:13,
     fontFamily:"Poppins-SemiBold"
   },
   backLogin:{ 
     textAlign:"center",
     color:Color.DARK,
     fontFamily:"Poppins-Medium",
+    fontSize:13,
     marginTop:20 
   },
 });

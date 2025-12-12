@@ -67,10 +67,7 @@ export const FoodCard = ({ item, handlePress, isFav, onToggleFav }) => (
           ₹{item.price ? item.price.toFixed(2) : "0.00"}
         </Text>
 
-        <View style={styles.cardRating}>
-          <Ionicons name="star" size={14} color={Color.DARK} />
-          <Text style={styles.cardRatingText}>{item.rating || "4.5"}</Text>
-        </View>
+       
       </View>
     </View>
   </TouchableOpacity>
@@ -245,7 +242,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header with Search */}
       <View style={styles.headerSection}>
         {/* <View style={styles.headerConatiner}>
@@ -263,7 +260,7 @@ const HomeScreen = ({ navigation }) => {
             <Ionicons
               name="search-outline"
               color="#444"
-              size={24}
+              size={19}
               style={styles.searchIcon}
             />
             <TextInput
@@ -296,7 +293,7 @@ const HomeScreen = ({ navigation }) => {
 
       {/* Main Content - Shows loading or food list */}
       {renderContent()}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -349,7 +346,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 40,
     paddingRight: 40,
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: "Poppins-Medium",
     color: "#333",
   },
@@ -377,7 +374,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   categoryPill: {
-    paddingVertical: 7,
+    paddingVertical: 5,
     paddingHorizontal: 20,
     backgroundColor: "#F8F8F8",
     borderRadius: 20,
@@ -390,7 +387,7 @@ const styles = StyleSheet.create({
     borderColor: Color.DARK ,
   },
   categoryText: {
-    fontSize: 13,
+    fontSize: 12.5,
     color: "#444",
     fontFamily: "Poppins-SemiBold",
   },
@@ -408,7 +405,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 15,
+    fontSize: 14,
     color: "#666",
     fontFamily: "Poppins-Medium",
   },
@@ -508,13 +505,13 @@ const styles = StyleSheet.create({
   },
 
   cardTitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#000",
     fontFamily: "Poppins-SemiBold",
   },
 
   cardDescription: {
-    fontSize: 12,
+    fontSize: 10.5,
     color: "#777",
     marginVertical: 3,
     fontFamily: "Poppins-Regular",
@@ -528,8 +525,8 @@ const styles = StyleSheet.create({
   },
 
   cardPrice: {
-    fontSize: 13,
-    color: "#000",
+    fontSize: 12.5,
+    color: "#444",
     fontFamily: "Poppins-Bold",
   },
 

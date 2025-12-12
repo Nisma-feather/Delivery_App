@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
-    color: "#000",
+    color: "#222",
     flex: 1,
     // textAlign: "center",
     marginHorizontal: 10,
