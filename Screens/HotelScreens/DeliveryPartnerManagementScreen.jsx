@@ -101,7 +101,7 @@ const DeliveryPartnerManagementScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.topContainer}>
         <View style={styles.headingContainer}>
@@ -152,7 +152,7 @@ const DeliveryPartnerManagementScreen = ({ navigation }) => {
       >
         <MaterialIcons name="add" size={22} color="white" />
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -160,13 +160,14 @@ export default DeliveryPartnerManagementScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F5F5" },
-  topContainer: { backgroundColor: "white", padding: 15, paddingBottom: 20 },
+  topContainer: { backgroundColor: "white", padding: 20, paddingBottom: 20 },
   headingContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    
     alignItems: "center",
   },
-  title: { fontSize: 18, fontFamily: "Poppins-SemiBold", color: "#000" },
+  title: { fontSize: 16, fontFamily: "Poppins-SemiBold", color: "#000" },
   searchContainer: {
     marginTop: 12,
     flexDirection: "row",
@@ -181,8 +182,9 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     marginLeft: 8,
+    height:55,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 12,
   },
   card: {
     backgroundColor: "#fff",
@@ -192,8 +194,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  name: { fontSize: 15, fontFamily: "Poppins-SemiBold" },
-  subText: { fontSize: 13, color: "#555", fontFamily: "Poppins-Regular" },
+  name: { fontSize: 13, fontFamily: "Poppins-SemiBold" },
+  subText: { fontSize: 12, color: "#555", fontFamily: "Poppins-Regular" },
   actionsContainer: { flexDirection: "row", alignItems: "center" },
   addButton: {
     position: "absolute",

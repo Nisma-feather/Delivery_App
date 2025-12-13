@@ -49,7 +49,7 @@ const FloatingInput = ({
     }),
     fontSize: animation.interpolate({
       inputRange: [0, 1],
-      outputRange: [16, 14],
+      outputRange: [14.5, 13.5],
     }),
     color: animation.interpolate({
       inputRange: [0, 1],
@@ -294,7 +294,7 @@ const AddNewMenu = ({ navigation, route }) => {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <View style={{ backgroundColor: "#eee" }}>
           {/* Header */}
@@ -304,7 +304,7 @@ const AddNewMenu = ({ navigation, route }) => {
             </TouchableOpacity>
 
             <Text style={styles.headerTitle}>
-              {isUpdate ? "Update Menu Item" : "Add Menu Item"}
+              {isUpdate ? "Update Menu " : "Add Menu"}
             </Text>
 
             <View style={styles.availabilityContainer}>
@@ -426,7 +426,7 @@ const AddNewMenu = ({ navigation, route }) => {
           )}
         </View>
       </TouchableHighlight>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -440,8 +440,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
+
   },
   availabilityContainer: {
     flexDirection: "row",
@@ -449,7 +450,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   availabilityText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Poppins-Medium",
     color: "#555",
   },
@@ -459,7 +460,8 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   title: {
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-SemiBold",
+    fontSize:12.5,
     color: "#555",
     textTransform: "uppercase",
     marginBottom: 10,
@@ -470,8 +472,8 @@ const styles = StyleSheet.create({
     gap: 30,
   },
   imagePreview: {
-    height: 100,
-    width: 100,
+    height: 120,
+    width: 120,
     borderRadius: 8,
   },
   uploadButton: {
@@ -482,6 +484,7 @@ const styles = StyleSheet.create({
   uploadText: {
     color: Color.DARK,
     fontFamily: "Poppins-Medium",
+    fontSize:12.5
   },
   categoriesContainer: {
     flexDirection: "row",
@@ -501,7 +504,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.DARK,
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: 12.5,
     color: "#333",
     fontFamily: "Poppins-Medium",
   },
@@ -511,14 +514,14 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-    fontSize: 12,
+    fontSize: 11,
     marginTop: 5,
     fontFamily: "Poppins-Regular",
   },
   buttonContainer: {
     backgroundColor: Color.DARK,
     paddingHorizontal: 5,
-    paddingVertical: 10,
+    paddingVertical: 13,
     borderRadius: 10,
     marginHorizontal: 10,
     alignItems: "center",
@@ -537,7 +540,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontFamily: "Poppins-Bold",
     color: "#fff",
-    fontSize: 16,
+    fontSize: 13,
   },
 });
 
@@ -551,7 +554,8 @@ const floatingInputStyles = StyleSheet.create({
     position: "absolute",
     left: 0,
     zIndex: 10,
-    fontFamily: "Poppins-Medium",
+    fontFamily: "Poppins-SemiBold",
+    
   },
   input: {
     borderBottomWidth: 1,
@@ -559,7 +563,7 @@ const floatingInputStyles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: 8,
     backgroundColor: "#fff",
-    fontSize: 16,
+    fontSize: 13,
     height: 45,
   },
   multilineInput: {

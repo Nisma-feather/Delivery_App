@@ -424,6 +424,9 @@ const DeliveryPartnerStack=()=>{
 
 const MainRestaurantNavigator = () => {
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+
+    
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
@@ -499,6 +502,7 @@ const MainRestaurantNavigator = () => {
         }}
       />
     </Drawer.Navigator>
+    </SafeAreaView>
   );
 };
 

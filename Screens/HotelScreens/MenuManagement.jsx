@@ -90,6 +90,10 @@ const MenuManagement = ({ navigation }) => {
   const [menu, setMenu] = useState([]);
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+const [hasMore, setHasMore] = useState(true);
+const [fetchingMore, setFetchingMore] = useState(false);
+
   const [searchTimeout, setSearchTimeout] = useState(null);
 
   useEffect(() => {
@@ -98,31 +102,71 @@ const MenuManagement = ({ navigation }) => {
   }, []);
 
   // Fetch food items with backend filtering
-  const fetchFoodItems = async () => {
-    try {
+  const fetchFoodItems = async (nextPage = 1, searchText = "") => {
+  try {
+    if (nextPage === 1) {
       setLoading(true);
-
-      // Build query parameters for backend filtering
-      const params = {};
-      if (activeCategory !== "ALL") {
-        params.category = activeCategory;
-      }
-
-      if (search.trim() !== "") {
-        params.search = search.trim();
-      }
-
-      const res = await api.get("/foodItem", { params });
-      setMenu(res.data?.foodItems || []);
-    } catch (e) {
-      console.log("Error fetching food items:", e);
-      Alert.alert("Error", "Failed to load menu items");
-      setMenu([]);
-    } finally {
-      setLoading(false);
+    } else {
+      setFetchingMore(true);
     }
-  };
 
+    const params = {
+      page: nextPage,
+      limit: 10,
+      search: searchText,
+    };
+
+    if (activeCategory !== "ALL") {
+      params.category = activeCategory;
+    }
+
+    const res = await api.get("/foodItem", { params });
+
+    if (res.data?.foodItems) {
+      setMenu((prev) => {
+        const merged =
+          nextPage === 1
+            ? res.data.foodItems
+            : [...prev, ...res.data.foodItems];
+
+        // ✅ DUPLICATE SAFE (same as Orders)
+        return Array.from(
+          new Map(merged.map((item) => [item._id, item])).values()
+        );
+      });
+
+      setHasMore(nextPage < res.data.totalPages);
+    } else {
+      setMenu([]);
+      setHasMore(false);
+    }
+  } catch (e) {
+    console.log("Error fetching food items:", e);
+    Alert.alert("Error", "Failed to load menu items");
+  } finally {
+    setLoading(false);
+    setFetchingMore(false);
+  }
+};
+
+const handleSearchChange = (text) => {
+  setSearch(text);
+
+  if (searchTimeout) {
+    clearTimeout(searchTimeout);
+  }
+
+  const timeout = setTimeout(() => {
+    setPage(1);
+    setHasMore(true);
+    setMenu([]);
+    fetchFoodItems(1, text);
+  }, 500);
+
+  setSearchTimeout(timeout);
+};
+
+  
   const fetchCategories = async () => {
     try {
       const res = await api.get("/category");
@@ -138,10 +182,7 @@ const MenuManagement = ({ navigation }) => {
   };
 
   // Handle category change
-  const handleCategoryChange = (categoryId) => {
-    setActiveCategory(categoryId);
-  };
-
+ 
   
   // Update stock status on server and refresh data
 
@@ -156,13 +197,33 @@ const MenuManagement = ({ navigation }) => {
       }
     />
   );
+  const handleCategoryChange = (categoryId) => {
+  setActiveCategory(categoryId);
+  setPage(1);
+  setHasMore(true);
+  setMenu([]);
+};
+
+const handleLoadMore = () => {
+  if (!hasMore || fetchingMore) return;
+
+  const nextPage = page + 1;
+  setPage(nextPage);
+  fetchFoodItems(nextPage, search);
+};
+
 
   //fetching the menu on the focus
+
 useFocusEffect(
   useCallback(() => {
-    fetchFoodItems();
-  }, [activeCategory,search])
+    setPage(1);
+    setHasMore(true);
+    setMenu([]);
+    fetchFoodItems(1, search);
+  }, [activeCategory])
 );
+
 
 
 
@@ -188,7 +249,7 @@ useFocusEffect(
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container} >
       <StatusBar style="dark" backgroundColor="white" />
 
       {/* Header */}
@@ -208,7 +269,7 @@ useFocusEffect(
             style={styles.searchInput}
             value={search}
             placeholder="Search by email or order number..."
-            onChangeText={(val)=>setSearch(val)}
+           onChangeText={handleSearchChange}
           />
         </View>
 
@@ -232,17 +293,22 @@ useFocusEffect(
           </View>
         ) : (
           <FlatList
-            data={menu}
-            keyExtractor={(item) => item.id || item._id} // Handle both id and _id
-            renderItem={renderMenuItem}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text>No menu items found</Text>
-              </View>
-            }
-          />
+  data={menu}
+  keyExtractor={(item) => item._id}
+  renderItem={renderMenuItem}
+  onEndReached={handleLoadMore}
+  onEndReachedThreshold={0.5}
+  showsVerticalScrollIndicator={false}
+  ListFooterComponent={
+    fetchingMore ? <Text style={{ textAlign: "center" }}>Loading...</Text> : null
+  }
+  ListEmptyComponent={
+    <View style={styles.emptyContainer}>
+      <Text>No menu items found</Text>
+    </View>
+  }
+/>
+
         )}
       </View>
       {/* Floating Action Button (FAB) - Orange '+' */}
@@ -252,7 +318,7 @@ useFocusEffect(
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -263,8 +329,8 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    fontSize: 28,
-    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
     marginTop: 10,
     marginBottom: 20,
     color: "#333",
@@ -278,14 +344,14 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 12,
     paddingHorizontal: 10,
-    height: 45,
+    height: 48,
     backgroundColor: "#fff",
   },
   searchInput: {
     flex: 1,
     marginLeft: 8,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 12,
   },
 
   // --- Tabs Styles ---
@@ -293,15 +359,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   tabsContentContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
   tabContainer: {
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingHorizontal: 15,
     marginRight: 10,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-Medium",
     color: "#888",
   },
@@ -343,7 +409,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   itemName: {
-    fontSize: 14,
+    fontSize: 12.5,
     fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginBottom: 4,
@@ -375,7 +441,7 @@ const styles = StyleSheet.create({
   },
 
   itemPrice: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#555",
     fontFamily: "Poppins-Medium",
   },

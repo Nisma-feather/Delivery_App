@@ -228,38 +228,30 @@ const handleSearchText = (text) => {
     );
   };
 
-  /* ---------------- RENDER LOADING STATE ---------------- */
-  // if (loading) {
-  //   return (
-  //     <SafeAreaView style={[styles.container, styles.centerContent]}>
-  //       <ActivityIndicator size="large" color={Color.DARK} />
-  //       <Text style={styles.loadingText}>Loading orders...</Text>
-  //     </SafeAreaView>
-  //   );
-  // }
+  
 
   /* ---------------- RENDER ERROR STATE ---------------- */
   if (error) {
     return (
-      <SafeAreaView style={[styles.container, styles.centerContent]}>
+      <View style={[styles.container, styles.centerContent]}>
         <Ionicons name="alert-circle-outline" size={64} color="#ff6b6b" />
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.retryButton} onPress={fetchOrders}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="white" />
 
       {/* SEARCH BAR */}
       <View style={styles.topContainer}>
         <View style={styles.headingContainer}>
           {/* Title */}
-          <Text style={styles.title}>Menu Management</Text>
+          <Text style={styles.title}>Orders Management</Text>
 
           {/* Menu Icon (Right Side) */}
           <TouchableOpacity onPress={() => navigation.openDrawer()}>
@@ -356,7 +348,7 @@ const handleSearchText = (text) => {
           }
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -377,14 +369,14 @@ const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 16,
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: "Poppins-Medium",
     color: "#666",
   },
 
   errorText: {
     marginTop: 16,
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: "Poppins-Medium",
     color: "#666",
     textAlign: "center",
@@ -401,7 +393,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     color: "white",
     fontFamily: "Poppins-SemiBold",
-    fontSize: 14,
+    fontSize: 13,
   },
 
   emptyContainer: {
@@ -413,7 +405,7 @@ const styles = StyleSheet.create({
 
   emptyText: {
     marginTop: 16,
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: "Poppins-Medium",
     color: "#999",
     textAlign: "center",
@@ -433,14 +425,14 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 12,
     paddingHorizontal: 10,
-    height: 45,
+    height: 50,
     backgroundColor: "#fff",
   },
   searchInput: {
     flex: 1,
     marginLeft: 8,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 12,
   },
 
   /* TABS */
@@ -456,7 +448,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   tabText: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: "Poppins-SemiBold",
     color: "#b0b0b0",
   },
@@ -484,23 +476,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   name: {
-    fontSize: 15,
-    fontFamily: "Poppins-Bold",
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
     color: "#333",
   },
   price: {
     fontSize: 13,
     color: "#333",
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-SemiBold",
   },
   subText: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#666",
     marginTop: 4,
     fontFamily: "Poppins-Regular",
   },
   status: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "Poppins-SemiBold",
     textTransform: "uppercase",
   },
@@ -513,14 +505,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // TITLE LEFT | MENU RIGHT
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
-    color: "#000",
+    color: "#222",
   },
   badge: {
     backgroundColor: "red",
-    minWidth: 18,
-    height: 18,
+    minWidth: 19,
+    height: 19,
     borderRadius: 9,
     justifyContent: "center",
     alignItems: "center",
@@ -529,7 +521,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: "white",
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: "Poppins-Bold",
   },
   newBadge: {
@@ -546,7 +538,7 @@ const styles = StyleSheet.create({
   newBadgeText: {
     color: "#fff",
     fontSize: 10,
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-SemiBold",
     textTransform: "uppercase",
   },
 });

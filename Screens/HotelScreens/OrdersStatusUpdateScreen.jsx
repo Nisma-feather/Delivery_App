@@ -85,7 +85,8 @@ const OrderDetailsScreen = ({ route, navigation }) => {
     }
   };
 
-  if (!order) return <Text>Loading...</Text>;
+  if (!order) return 
+  <Text>Loading...</Text>;
 
   const formattedDate = new Date(order.createdAt).toLocaleString();
 
@@ -314,12 +315,12 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
   },
   customerName: {
-    fontSize: 20,
+    fontSize: 16,
     color: "#000",
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-SemiBold",
   },
   orderId: {
-    fontSize: 13,
+    fontSize: 12,
     marginTop: 5,
     color: "#6c6c6c",
     fontFamily: "Poppins-Regular",
@@ -336,8 +337,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     marginLeft: 20,
-    fontSize: 13,
-    color: "#6c6c6c",
+    fontSize: 12.5,
+    color: "#444",
     fontFamily: "Poppins-SemiBold",
   },
   itemRow: {
@@ -351,21 +352,21 @@ const styles = StyleSheet.create({
   },
   itemName: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12.5,
     color: "#000",
     fontFamily: "Poppins-Medium",
   },
   qty: {
     width: 30,
     textAlign: "center",
-    fontSize: 15,
+    fontSize: 13,
     color: "#444",
     fontFamily: "Poppins-Regular",
   },
   price: {
     width: 70,
     textAlign: "right",
-    fontSize: 15,
+    fontSize: 13,
     color: "#000",
     fontFamily: "Poppins-Medium",
   },
@@ -379,12 +380,12 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
   },
   payLabel: {
-    fontSize: 15,
+    fontSize: 13,
     color: "#6c6c6c",
     fontFamily: "Poppins-Regular",
   },
   payValue: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: "#000",
     fontFamily: "Poppins-Medium",
   },
@@ -397,14 +398,14 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
   },
   addressText: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#444",
     marginBottom: 3,
     fontFamily: "Poppins-Regular",
   },
   bottomBtn: {
     backgroundColor: Color.DARK,
-    padding: 18,
+    padding: 16,
     alignItems: "center",
     position: "absolute",
     bottom: 0,
@@ -418,13 +419,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
   },
   bottomText: {
-    fontSize: 18,
+    fontSize: 13.5,
     color: "#000",
     fontFamily: "Poppins-Bold",
   },
   partnerStickyCard: {
     position: "absolute",
-    bottom: 70, // stays above bottom button
+    bottom: 68, // stays above bottom button
     
     backgroundColor: "#fff",
     padding: 15,
@@ -438,7 +439,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   partnerName: {
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: "Poppins-Medium",
     color: "#000",
   },

@@ -135,7 +135,7 @@ const CategoryManagement = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Search */}
       <View style={styles.topContainer}>
         <View style={styles.headingContainer}>
@@ -243,7 +243,7 @@ const CategoryManagement = ({navigation}) => {
         <MaterialIcons name="add" size={22} color="white" />
      
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
   },
   header: {
-    fontSize: 28,
+    fontSize: 16,
     fontWeight: "800",
     marginTop: 10,
     marginBottom: 30,
@@ -277,8 +277,9 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     marginLeft: 8,
+    height:63,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 12,
   },
 
   addButton: {
@@ -299,9 +300,9 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: "white",
-    fontSize: 15,
+    fontSize: 13,
     marginLeft: 6,
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-SemiBold",
   },
 
   card: {
@@ -314,7 +315,7 @@ const styles = StyleSheet.create({
 
   },
   categoryTitle: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontFamily: "Poppins-SemiBold",
     color: "#333",
   },
@@ -337,7 +338,7 @@ const styles = StyleSheet.create({
   },
 
   modalTitle: {
-    fontSize: 17,
+    fontSize: 15,
     marginBottom: 20,
     color: "#333",
     fontFamily: "Poppins-Bold",
@@ -347,8 +348,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
+    height:50,
     padding: 7,
     marginBottom: 30,
+    fontSize:12,
     fontFamily: "Poppins-Regular",
   },
   errorText: { color: "red", marginBottom: 10 },
@@ -369,13 +372,13 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     textAlign: "center",
     color: "#333",
-    fontSize: 15,
-    fontFamily: "Poppins-Bold",
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
   },
 
   confirmButton: {
     backgroundColor: Color.DARK,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 10,
     flex: 1,
     marginLeft: 10,
@@ -383,14 +386,14 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     textAlign: "center",
     color: "white",
-    fontSize: 15,
-    fontFamily: "Poppins-Bold",
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
   },
 
   emptyText: {
     textAlign: "center",
     marginTop: 50,
-    fontSize: 16,
+    fontSize: 13,
     color: "#888",
   },
   topContainer: {
@@ -408,8 +411,8 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
-    color: "#000",
+    color: "#222",
   },
 });

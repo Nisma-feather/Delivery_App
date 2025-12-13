@@ -75,39 +75,89 @@ export const FoodCard = ({ item, handlePress, isFav, onToggleFav }) => (
 
 const HomeScreen = ({ navigation }) => {
   const { favourites, toggleFavourite } = useAuth();
+    const [categories, setCategoriesList] = useState([]);
+   const [foodItems, setFoodItems] = useState([]);
+const [page, setPage] = useState(1);
+const [hasMore, setHasMore] = useState(true);
+const [loading, setLoading] = useState(true);
+const [fetchingMore, setFetchingMore] = useState(false);
+const [search, setSearch] = useState("");
+const [activeCategory, setActiveCategory] = useState("ALL");
 
-  const [search, setSearch] = useState("");
-  const [foodItems, setFoodItems] = useState([]);
-  const [categories, setCategoriesList] = useState([]);
-  const [activeCategory, setActiveCategory] = useState("ALL");
-  const [loading, setLoading] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
 
   // Fetch Food Items with search and category filtering
-  const fetchFoodItems = async () => {
-    try {
+  const fetchFoodItems = async (nextPage = 1, searchText = "") => {
+  try {
+    if (nextPage === 1) {
       setLoading(true);
-
-      // Build query parameters for backend filtering
-      const params = {};
-      if (activeCategory !== "ALL") {
-        params.category = activeCategory;
-      }
-
-      if (search.trim() !== "") {
-        params.search = search.trim();
-      }
-
-      const res = await api.get("/foodItem", { params });
-      setFoodItems(res.data?.foodItems || []);
-    } catch (e) {
-      console.log("Food error:", e);
-      Alert.alert("Error", "Failed to load food items");
-      setFoodItems([]);
-    } finally {
-      setLoading(false);
+    } else {
+      setFetchingMore(true);
     }
-  };
+
+    const params = {
+      page: nextPage,
+      limit: 10,
+      search: searchText,
+    };
+
+    if (activeCategory !== "ALL") {
+      params.category = activeCategory;
+    }
+
+    const res = await api.get("/foodItem", { params });
+
+    if (res.data?.foodItems) {
+      setFoodItems((prev) => {
+        const newItems =
+          nextPage === 1
+            ? res.data.foodItems
+            : [...prev, ...res.data.foodItems];
+
+        // ✅ SAME duplicate removal as OrdersScreen
+        return Array.from(
+          new Map(newItems.map((item) => [item._id, item])).values()
+        );
+      });
+
+      // ✅ SAME pagination logic as OrdersScreen
+      setHasMore(nextPage < res.data.totalPages);
+    } else {
+      setFoodItems([]);
+      setHasMore(false);
+    }
+  } catch (e) {
+    console.log("Error fetching food items", e);
+  } finally {
+    setLoading(false);
+    setFetchingMore(false);
+  }
+};
+
+const handleLoadMore = () => {
+  if (!hasMore || fetchingMore) return;
+
+  const nextPage = page + 1;
+  setPage(nextPage);
+  fetchFoodItems(nextPage, search);
+};
+
+
+useEffect(() => {
+  setPage(1);
+  setHasMore(true);
+  setFoodItems([]);
+  fetchFoodItems(1, search);
+}, [activeCategory]);
+
+
+useEffect(()=>{
+  fetchCategories()
+})
+
+
+
+
 
   // Fetch Categories
   const fetchCategories = async () => {
@@ -125,21 +175,22 @@ const HomeScreen = ({ navigation }) => {
   };
 
   // Handle search input with debouncing
-  const handleSearchChange = (text) => {
-    setSearch(text);
+ const handleSearchChange = (text) => {
+  setSearch(text);
 
-    // Clear previous timeout
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
+  if (searchTimeout) {
+    clearTimeout(searchTimeout);
+  }
 
-    // Set new timeout for debouncing (500ms delay)
-    const timeout = setTimeout(() => {
-      fetchFoodItems();
-    }, 500);
+  const timeout = setTimeout(() => {
+    setPage(1);
+    setHasMore(true);
+    setFoodItems([]);
+    fetchFoodItems(1, text);
+  }, 500);
 
-    setSearchTimeout(timeout);
-  };
+  setSearchTimeout(timeout);
+};
 
   // Handle category change
   const handleCategoryChange = (categoryId) => {
@@ -167,12 +218,7 @@ const HomeScreen = ({ navigation }) => {
   );
 
   // Fetch data on focus and when dependencies change
-  useFocusEffect(
-    useCallback(() => {
-      fetchFoodItems();
-      fetchCategories();
-    }, [activeCategory, search])
-  );
+
 
   // Clear timeout on component unmount
   useEffect(() => {
@@ -195,49 +241,44 @@ const HomeScreen = ({ navigation }) => {
     }
 
     return (
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={() => (
-          <>
-            {/* Banner Image */}
-            {/* <Image
-              source={require("../assets/Banner.png")}
-              style={styles.bannerImage}
-            /> */}
-
-            {/* Categories Section */}
-           
-          </>
-        )}
-        data={foodItems}
-        keyExtractor={(item) => item._id}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={[
-          styles.listContainer,
-          foodItems.length === 0 && styles.emptyListContainer,
-        ]}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No food items found</Text>
-            {search.length > 0 && (
-              <Text style={styles.emptySubText}>
-                Try a different search term
-              </Text>
-            )}
-          </View>
-        }
-        renderItem={({ item }) => (
-          <FoodCard
-            item={item}
-            isFav={favourites.some((f) => f._id === item._id)}
-            onToggleFav={toggleFavourite}
-            handlePress={() =>
-              navigation.navigate("Food Details", { foodItemId: item._id })
-            }
-          />
-        )}
+      
+<FlatList
+  data={foodItems}
+  numColumns={2}
+  keyExtractor={(item) => item._id}
+  showsVerticalScrollIndicator={false}
+  columnWrapperStyle={styles.row}
+  contentContainerStyle={{ padding: 15, paddingBottom: 40 }}
+  renderItem={({ item }) => (
+    <FoodCard
+      item={item}
+      handlePress={() =>
+        navigation.navigate("Food Details", { foodItemId: item._id })
+      }
+      isFav={favourites.some((f) => f._id === item._id)}
+      onToggleFav={toggleFavourite}
+    />
+  )}
+  refreshing={loading}
+  onRefresh={() => {
+    setPage(1);
+    setHasMore(true);
+    setFoodItems([]);
+    fetchFoodItems(1, search);
+  }}
+  onEndReached={handleLoadMore}
+  onEndReachedThreshold={0.5}
+  ListFooterComponent={
+    fetchingMore ? (
+      <ActivityIndicator
+        style={{ marginVertical: 20 }}
+        size="small"
+        color={Color.DARK}
       />
+    ) : null
+  }
+/>
+
     );
   };
 

@@ -85,7 +85,7 @@ const AddDeliveryPartnerScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+    <View style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
@@ -190,7 +190,7 @@ const AddDeliveryPartnerScreen = ({ navigation, route }) => {
           </Text>
         )}
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -207,14 +207,14 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
   },
 
   form: { paddingHorizontal: 20, marginTop: 20 },
 
   label: {
-    fontSize: 14,
+    fontSize: 13,
     marginTop: 12,
     marginBottom: 5,
     color: "#333",
@@ -228,6 +228,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
     fontFamily: "Poppins-Regular",
+    fontSize:12
   },
 
   passwordContainer: {
@@ -244,19 +245,19 @@ const styles = StyleSheet.create({
 
   error: {
     color: "red",
-    fontSize: 12,
+    fontSize: 11,
     marginTop: 3,
     fontFamily: "Poppins-Regular",
   },
 
   saveBtn: {
     backgroundColor: Color.DARK,
-    padding: 18,
+    padding: 15,
     alignItems: "center",
   },
 
   saveText: {
-    fontSize: 16,
+    fontSize: 13.5,
     fontFamily: "Poppins-Bold",
     color: "#000",
   },
