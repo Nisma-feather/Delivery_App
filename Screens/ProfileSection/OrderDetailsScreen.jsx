@@ -25,38 +25,29 @@ const ItemsChosen = ({ items }) => {
     <View style={itemsStyles.itemsContainer}>
       <Text style={styles.sectionTitle}>Your Items</Text>
 
-      <FlatList
-        data={items}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <View style={itemsStyles.itemRow}>
-            {item?.foodItemId?.image ? (
-              <Image
-                source={{ uri: item?.foodItemId?.image }}
-                style={itemsStyles.itemImage}
-              />
-            ) : (
-              <Image
-                source={require("../../assets/biriyani.png")}
-                style={itemsStyles.itemImage}
-              />
-            )}
+      {/* Fixed: Removed FlatList for simple list rendering since it's inside ScrollView */}
+      {items.map((item) => (
+        <View key={item._id} style={itemsStyles.itemRow}>
+          {item?.foodItemId?.image ? (
+            <Image
+              source={{ uri: item?.foodItemId?.image }}
+              style={itemsStyles.itemImage}
+            />
+          ) : null}
 
-            <View style={itemsStyles.infoContainer}>
-              <Text style={itemsStyles.itemName} numberOfLines={1}>
-                {item.foodItemId?.name}
-              </Text>
-              <Text style={itemsStyles.itemQuantity}>Qty: {item.quantity}</Text>
-            </View>
-
-            <Text style={itemsStyles.itemPrice}>₹{item.totalPrice}</Text>
+          <View style={itemsStyles.infoContainer}>
+            <Text style={itemsStyles.itemName} numberOfLines={1}>
+              {item.foodItemId?.name}
+            </Text>
+            <Text style={itemsStyles.itemQuantity}>Qty: {item.quantity}</Text>
           </View>
-        )}
-      />
+
+          <Text style={itemsStyles.itemPrice}>₹{item.totalPrice}</Text>
+        </View>
+      ))}
     </View>
   );
 };
-
 
 // ====================================================================
 // COMPONENT 2: Price Breakdown
@@ -100,7 +91,7 @@ const PriceBreakdown = ({ order }) => {
 const OrderDetailsScreen = ({ route, navigation }) => {
   const { orderDetails } = route?.params;
 
-  console.log(orderDetails.items)
+  console.log(orderDetails.items);
 
   if (!orderDetails) {
     return <Text style={{ padding: 20 }}>Loading Order Details...</Text>;
@@ -111,16 +102,19 @@ const OrderDetailsScreen = ({ route, navigation }) => {
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  style={styles.backButton}
-                >
-                  <Octicons name="arrow-left" color="#000" size={24} />
-                </TouchableOpacity>
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Octicons name="arrow-left" color="#000" size={24} />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Order Details</Text>
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* ORDER INFO */}
         <View style={styles.infoCard}>
           <Text style={styles.orderIdText}>
@@ -150,8 +144,6 @@ const OrderDetailsScreen = ({ route, navigation }) => {
   );
 };
 
-
-
 // ====================================================================
 // STYLES
 // ====================================================================
@@ -162,7 +154,7 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
-    height:70,
+    height: 70,
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 15,
@@ -314,6 +306,5 @@ const priceStyles = StyleSheet.create({
     color: Color.DARK,
   },
 });
-
 
 export default OrderDetailsScreen;
