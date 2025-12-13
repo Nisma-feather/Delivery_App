@@ -11,6 +11,7 @@ import { api } from "../api/apiConfig";
 import { useAuth } from "../context/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Color from "../constants/Color";
+import {Ionicons} from "@expo/vector-icons"
 
 
 const OrderItem = ({ item, navigation }) => {
@@ -29,11 +30,9 @@ const OrderItem = ({ item, navigation }) => {
   return (
     <View style={styles.orderItemContainer}>
       {/* Food Icon */}
-      <Image
-        source={require("../assets/biriyani.png")}
-        style={styles.orderImage}
-      />
-
+      <View style={styles.orderIconContainer}>
+        <Ionicons name="fast-food-outline" size={25} color="#fff" />
+      </View>
       {/* Order Details */}
       <View style={styles.orderDetailContainer}>
         <Text style={styles.orderName}>{foodNames + moreCount}</Text>
@@ -56,19 +55,20 @@ const OrderItem = ({ item, navigation }) => {
       </View>
 
       {/* Track Button (only if not delivered) */}
-   
-        <TouchableOpacity
-          style={styles.trackButton}
-          onPress={() => navigation.navigate("Track Order",{
-             trackOrder:{
-               orderStatus: item.orderStatus,
-               timeline: item.timeline
-             }
-          })}
-        >
-          <Text style={styles.trackButtonText}>Track</Text>
-        </TouchableOpacity>
-   
+
+      <TouchableOpacity
+        style={styles.trackButton}
+        onPress={() =>
+          navigation.navigate("Track Order", {
+            trackOrder: {
+              orderStatus: item.orderStatus,
+              timeline: item.timeline,
+            },
+          })
+        }
+      >
+        <Text style={styles.trackButtonText}>Track</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -82,7 +82,7 @@ const MyOrders = ({ navigation }) => {
   const fetchOrders = async () => {
     try {
       const res = await api.get(`/order/${auth.userId}`);
-      setOrders(res.data.orders);
+      setOrders(res.data?.orders || []);
     } catch (e) {
       console.log(e);
     }
@@ -102,9 +102,7 @@ const MyOrders = ({ navigation }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-       
         <Text style={styles.headerTitle}>My Orders</Text>
-       
       </View>
 
       {/* Tabs */}
@@ -150,6 +148,11 @@ const MyOrders = ({ navigation }) => {
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <OrderItem item={item} navigation={navigation} />
+        )}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No orders found.</Text>
+          </View>
         )}
         contentContainerStyle={styles.listContent}
       />
@@ -219,14 +222,18 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 20,
   },
-  trackButtonText: { color: "#fff", fontFamily: "Poppins-SemiBold",fontSize:12 },
+  trackButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 12,
+  },
 
   viewDetailsButton: {
     marginTop: 6,
     borderWidth: 1,
     borderColor: Color.DARK,
     paddingHorizontal: 7,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 20,
     width: 120,
   },
@@ -234,7 +241,27 @@ const styles = StyleSheet.create({
     color: Color.DARK,
     fontFamily: "Poppins-SemiBold",
     textAlign: "center",
-    fontSize:12
+    fontSize: 12,
+  },
+  orderIconContainer: {
+    width: 55,
+    height: 55,
+    marginRight: 15,
+    borderRadius: 10,
+    backgroundColor: "#999", // or "#FF7043"
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 13,
+    color: "#777",
+    fontFamily: "Poppins-Medium",
   },
 });
 

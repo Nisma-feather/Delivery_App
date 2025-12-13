@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 12,
   },
   orderCard: {
     backgroundColor: "#fff",
@@ -205,10 +205,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Poppins-Medium",
   },
-  addressText: { fontFamily: "Poppins-Regular", color: "#555", marginTop: 4 },
+  addressText: { fontFamily: "Poppins-Regular", color: "#555", marginTop: 4 ,fontSize:12.5},
   totalAmount: {
     fontFamily: "Poppins-SemiBold",
-    fontSize: 16,
+    fontSize: 14,
     color: Color.DARK,
   },
   itemsCount: { fontFamily: "Poppins-Medium", color: "#666" },
@@ -221,6 +221,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
   },
-  acceptText: { color: "#fff", fontSize: 14, fontFamily: "Poppins-SemiBold" },
+  acceptText: { color: "#fff", fontSize: 13, fontFamily: "Poppins-SemiBold" },
   empty: { alignItems: "center", marginTop: 40 },
 });

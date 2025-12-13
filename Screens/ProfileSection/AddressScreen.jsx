@@ -272,9 +272,9 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginVertical: 20,
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
+    marginVertical: 15,
   },
 
   addressCard: {
@@ -287,12 +287,13 @@ const styles = StyleSheet.create({
   },
 
   addrText: {
-    fontSize: 15,
-    fontWeight: "bold",
+    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
   },
 
   addrSub: {
-    fontSize: 14,
+    fontSize: 12.5,
+    fontFamily: "Poppins-Regular",
     color: "#555",
   },
 
@@ -303,14 +304,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 15,
+    marginVertical: 10,
   },
 
   addBtnText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 13,
     marginLeft: 8,
-    fontWeight: "bold",
+    fontFamily: "Poppins-SemiBold",
   },
 
   modalContainer: {
@@ -327,8 +328,8 @@ const styles = StyleSheet.create({
   },
 
   modalHeader: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 15,
+    fontFamily: "Poppins-SemiBold",
     marginBottom: 15,
   },
 
@@ -337,26 +338,30 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 10,
     padding: 12,
+    fontFamily: "Poppins-Regular",
+    fontSize: 12,
     marginBottom: 12,
   },
 
   errorText: {
     color: "red",
     marginBottom: 10,
+    fontSize: 11,
+    fontFamily: "Poppins-Regular",
   },
 
   saveBtn: {
     backgroundColor: Color.DARK,
-    padding: 15,
+    padding: 10,
     borderRadius: 10,
     marginTop: 10,
   },
 
   saveBtnText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 13,
     textAlign: "center",
-    fontWeight: "bold",
+    fontFamily: "Poppins-SemiBold",
   },
 
   cancelBtn: {
@@ -365,7 +370,8 @@ const styles = StyleSheet.create({
 
   cancelBtnText: {
     textAlign: "center",
-    fontSize: 15,
+    fontSize: 13,
     color: "red",
+    fontFamily: "Poppins-Medium",
   },
 });

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import {
-  SafeAreaView,
+  
   View,
   Text,
   TextInput,
@@ -132,16 +132,16 @@ const DeliveryHome = ({ navigation }) => {
       <View style={styles.rowBetween}>
         <Text style={styles.orderNumber}>Order #{item.orderNumber}</Text>
 
-        <Text style={styles.statusBadge}>
-          {!item.readByDeliveryPartner ?
-           "NEW" :
-          
-          item.orderStatus==="DELIVERED"
-            ? "DELIVERED"
-            : item.deliveryAccepted
-            ? "ASSIGNED" 
-            : null}
-        </Text>
+      
+          {item.orderStatus === "DELIVERED" ? (
+            <Text style={styles.statusBadge}>DELIVERED</Text>
+          ) : item.deliveryAccepted ? (
+            <Text style={styles.statusBadge}>ASSIGNED</Text>
+          ) : item.readByDeliveryPartner === false ? (
+             <Text style={styles.statusBadge}>NEW</Text>
+          ) : null
+          }
+     
       </View>
 
       <Text style={styles.addressText}>
@@ -168,7 +168,7 @@ const DeliveryHome = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="white" />
 
       {/* HEADER */}
@@ -255,7 +255,7 @@ const DeliveryHome = ({ navigation }) => {
           />
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -304,9 +304,10 @@ const styles = StyleSheet.create({
 
   searchInput: {
     flex: 1,
+    height:50,
     marginLeft: 8,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 12,
   },
    /* TABS */
     tabContainer: {
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
 
   orderNumber: {
     fontFamily: "Poppins-SemiBold",
-    fontSize: 15,
+    fontSize: 13.5,
   },
 
   statusBadge: {
@@ -368,11 +369,12 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     color: "#555",
     marginTop: 4,
+    fontSize:13
   },
 
   totalAmount: {
     fontFamily: "Poppins-SemiBold",
-    fontSize: 16,
+    fontSize: 13.5,
     color: Color.DARK,
   },
 
@@ -393,7 +395,7 @@ const styles = StyleSheet.create({
 
   acceptText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
   },
 

@@ -58,7 +58,7 @@ import DeliveryPartnerHomeScreen from "./Screens/DeliveryPartnerScreens/Delivery
 import DeliveryPartnerOrderDetails from "./Screens/DeliveryPartnerScreens/DeliveryPartnerOrderDetails";
 import CurrentOrderScreen from "./Screens/DeliveryPartnerScreens/CurrentOrderScreen";
 import DeliveryProfileScreen from "./Screens/DeliveryPartnerScreens/DeliveryProfileScreen";
-import NewOrdersScreen from "./Screens/HotelScreens/NewOrderScreen";
+
 
 
 const Stack = createNativeStackNavigator();
@@ -227,81 +227,77 @@ const DeliveryCurrentOrderStack=()=>{
 
 const DeliveryPartneryTabs=()=>{
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarShowLabel: true,
-        tabBarItemStyle: {
-          justifyContent: "center",
-          alignItems: "center",
-        },
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarShowLabel: true,
+          tabBarItemStyle: {
+            justifyContent: "center",
+            alignItems: "center",
+          },
 
-        tabBarStyle: {
-          height: 70,
-          marginTop: 0,
-          backgroundColor: "#ffffff",
-          elevation: 8,
-          borderTopWidth: 1,
-          borderTopColor: "#f0f0f0",
-          paddingBottom: 5,
-          paddingTop: 5,
-        },
-        tabBarActiveTintColor: Color.DARK,
-        tabBarInactiveTintColor: "#8e8e8e",
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: "600",
-          textTransform: "uppercase",
-          marginBottom: 0,
-          fontFamily: "Inter-SemiBold",
-        },
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          const iconSize = 22;
+          tabBarStyle: {
+            height: 70,
+            marginTop: 0,
+            backgroundColor: "#ffffff",
+            elevation: 8,
+            borderTopWidth: 1,
+            borderTopColor: "#f0f0f0",
+            paddingBottom: 5,
+            paddingTop: 5,
+          },
+          tabBarActiveTintColor: Color.DARK,
+          tabBarInactiveTintColor: "#8e8e8e",
+          tabBarLabelStyle: {
+            fontSize: 10,
+            fontWeight: "600",
+            textTransform: "uppercase",
+            marginBottom: 0,
+            fontFamily: "Inter-SemiBold",
+          },
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            const iconSize = 22;
 
-          if (route.name === "Delivery Home") {
-            iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Profile") {
-            iconName = focused ? "person" : "person-outline";
-          } else if (route.name === "Favourite") {
-            iconName = focused ? "heart" : "heart-outline";
-          } else if (route.name === "Cart") {
-            iconName = focused ? "cart" : "cart-outline";
-          }
+            if (route.name === "Delivery Home") {
+              iconName = focused ? "home" : "home-outline";
+            } else if (route.name === "Profile") {
+              iconName = focused ? "person" : "person-outline";
+            } else if (route.name === "Favourite") {
+              iconName = focused ? "heart" : "heart-outline";
+            } else if (route.name === "Cart") {
+              iconName = focused ? "cart" : "cart-outline";
+            }
 
-          return <Ionicons name={iconName} size={iconSize} color={color} />;
-        },
-      })}
-    >
-      <Tab.Screen
-        name="Delivery Home"
-        component={DeliveryPartnerHomeStack}
-        options={{
-          title: "Home",
-        }}
-      />
-      <Tab.Screen
-        name="Test"
-        component={NewOrdersScreen}
-        options={{
-          title: "Home",
-        }}
-      />
-      <Tab.Screen
-        name="Current Order"
-        component={DeliveryCurrentOrderStack}
-        options={{
-          tabBarIcon: ({ focused, size, color }) => (
-            <MaterialCommunityIcons
-              name={focused ? "truck-delivery" : "truck-delivery-outline"}
-              color={color}
-              size={24}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen name="Profile" component={DeliveryProfileScreen} />
-    </Tab.Navigator>
+            return <Ionicons name={iconName} size={iconSize} color={color} />;
+          },
+        })}
+      >
+        <Tab.Screen
+          name="Delivery Home"
+          component={DeliveryPartnerHomeStack}
+          options={{
+            title: "Home",
+          }}
+        />
+       
+        <Tab.Screen
+          name="Current Order"
+          component={DeliveryCurrentOrderStack}
+          options={{
+            tabBarIcon: ({ focused, size, color }) => (
+              <MaterialCommunityIcons
+                name={focused ? "truck-delivery" : "truck-delivery-outline"}
+                color={color}
+                size={24}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen name="Profile" component={DeliveryProfileScreen} />
+      </Tab.Navigator>
+    </SafeAreaView>
   );
 }
 

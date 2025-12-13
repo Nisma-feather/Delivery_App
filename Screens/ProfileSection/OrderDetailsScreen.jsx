@@ -30,10 +30,17 @@ const ItemsChosen = ({ items }) => {
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <View style={itemsStyles.itemRow}>
-            <Image
-              source={require("../../assets/biriyani.png")}
-              style={itemsStyles.itemImage}
-            />
+            {item?.foodItemId?.image ? (
+              <Image
+                source={{ uri: item?.foodItemId?.image }}
+                style={itemsStyles.itemImage}
+              />
+            ) : (
+              <Image
+                source={require("../../assets/biriyani.png")}
+                style={itemsStyles.itemImage}
+              />
+            )}
 
             <View style={itemsStyles.infoContainer}>
               <Text style={itemsStyles.itemName} numberOfLines={1}>
@@ -92,6 +99,8 @@ const PriceBreakdown = ({ order }) => {
 // ====================================================================
 const OrderDetailsScreen = ({ route, navigation }) => {
   const { orderDetails } = route?.params;
+
+  console.log(orderDetails.items)
 
   if (!orderDetails) {
     return <Text style={{ padding: 20 }}>Loading Order Details...</Text>;

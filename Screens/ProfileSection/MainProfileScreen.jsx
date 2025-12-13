@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   menuText: {
-    fontSize: 13,
+    fontSize: 14,
     marginLeft: 14,
     fontFamily: "Poppins-Medium",
   },

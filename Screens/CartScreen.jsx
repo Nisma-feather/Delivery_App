@@ -156,13 +156,13 @@ const CartScreen = ({ navigation }) => {
     }
   };
   
-   const handleTotalAmountCaluclation=()=>{
-       const updatedAmount = cart
-      .filter((item) => selectedItems.includes(item.foodItem._id))
-      .reduce((sum, item) => sum + item.totalPrice, 0);
+  const handleTotalAmountCaluclation = () => {
+    const updatedAmount = cart
+      .filter((item) => selectedItems.includes(item.foodItem?._id))
+      .reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
-      setTotalAmount(updatedAmount)
-   }
+    setTotalAmount(updatedAmount);
+  };
   useEffect(()=>{
     if(cart && !loading){
           handleTotalAmountCaluclation();
@@ -176,7 +176,7 @@ const CartScreen = ({ navigation }) => {
       
       setLoading(true)
       const res = await api.get(`/cart/${auth.userId}`);
-      const cartData = res.data?.Items?.cartItems;
+      const cartData = res.data?.Items?.cartItems || [];
       setCart(cartData);
       setSelectedItems(cartData.map((item) => item.foodItem._id));
     } catch (e) {
@@ -246,8 +246,8 @@ const updateCartItem = (updatedItem) => {
         <CartCard
           item={item}
           onhandleSelect={() => handleAddToCheckout(item?.foodItem?._id)}
-          onDelete={() => handleCartDelete(item.foodItem._id)}
-          checked={selectedItems.includes(item.foodItem._id)}
+          onDelete={() => handleCartDelete(item.foodItem?._id)}
+          checked={selectedItems.includes(item.foodItem?._id)}
           updateItem={updateCartItem}
         />
       )}

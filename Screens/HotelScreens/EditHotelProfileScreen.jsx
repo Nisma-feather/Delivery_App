@@ -151,7 +151,7 @@ const EditHotelProfile = ({ navigation }) => {
   }, []);
 
  return (
-   <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+   <View style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
      <ScrollView
        contentContainerStyle={{ paddingBottom: 40 }}
        showsVerticalScrollIndicator={false}
@@ -307,7 +307,7 @@ const EditHotelProfile = ({ navigation }) => {
          <Text style={styles.saveText}>Save Changes</Text>
        )}
      </TouchableOpacity>
-   </SafeAreaView>
+   </View>
  );
 
 };
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     elevation: 1,
   },
-  headerTitle: { fontSize: 18, fontFamily: "Poppins-SemiBold" },
+  headerTitle: { fontSize: 16, fontFamily: "Poppins-SemiBold" },
   imageWrap: { alignItems: "center", marginTop: 20 },
   profileImage: { width: 110, height: 110, borderRadius: 60 },
   imagePlaceholder: {
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   },
   form: { paddingHorizontal: 20, marginTop: 20 },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     marginTop: 12,
     marginBottom: 5,
     color: "#444",
@@ -346,13 +346,15 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "#fff",
-    padding: 12,
+    padding: 10,
+    height:45,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#ddd",
     fontFamily: "Poppins-Regular",
+    fontSize:12
   },
-  saveBtn: { backgroundColor: Color.DARK, padding: 18, alignItems: "center" },
+  saveBtn: { backgroundColor: Color.DARK, padding: 15, alignItems: "center" },
   saveText: { fontSize: 16, fontFamily: "Poppins-Bold", color: "#000" },
   error: { color: "red", fontSize: 12, marginTop: 3, marginBottom: -5 },
 });

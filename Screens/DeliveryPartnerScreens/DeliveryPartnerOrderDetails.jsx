@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator
 } from "react-native";
 import Color from "../../constants/Color";
 import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
@@ -18,7 +19,10 @@ import { useAuth } from "../../context/AuthContext";
 const DeliveryPartnerOrderDetails = ({ route, navigation }) => {
   const { orderId } = route.params;
   const { auth } = useAuth();
-  const [order, setOrder] = useState(null);
+const [order, setOrder] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
   const [showItems, setShowItems] = useState(false); // State to toggle items visibility
   const [showPaymentDetails, setShowPaymentDetails] = useState(false); // State to toggle payment details visibility
   const [isUpdating, setIsUpdating] = useState(false); // Loading state for update
@@ -35,29 +39,43 @@ const DeliveryPartnerOrderDetails = ({ route, navigation }) => {
     try {
       if (isRead) return; // already read → do nothing
 
-      await api.patch(`/order/delivery-read-status/${orderId}`, {
-        readByDelivery: true,
+      await api.patch(`/order/read-status/${orderId}`, {
+        readByDeliveryPartner: true,
       });
     } catch (err) {
       console.error("Failed to mark delivery order as read:", err);
     }
   };
   useEffect(() => {
-    if (orderId && order && order.readByDelivery === false) {
-      markOrderAsReadByDelivery(orderId, order.readByDelivery);
+    if (orderId && order && order.readByDeliveryPartner === false) {
+      console.log("its running");
+      markOrderAsReadByDelivery(orderId, order.readByDeliveryPartner);
     }
-  }, [orderId, order?.readByDelivery]);
+  }, [orderId, order?.readByDeliveryPartner]);
 
 
 
-  const fetchOrderDetails = async () => {
-    try {
-      const res = await api.get(`/order/getById/${orderId}`);
-      setOrder(res.data.order);
-    } catch (err) {
-      console.log("Fetch order error:", err);
-    }
-  };
+ const fetchOrderDetails = async () => {
+   try {
+     setLoading(true);
+     setError(null);
+
+     const res = await api.get(`/order/getById/${orderId}`);
+
+     if (!res.data?.order) {
+       setOrder(null);
+       setError("Order not found");
+       return;
+     }
+
+     setOrder(res.data.order);
+   } catch (err) {
+     console.log("Fetch order error:", err);
+     setError("Unable to fetch order details");
+   } finally {
+     setLoading(false);
+   }
+ };
 
   const updateStatus = async () => {
     if (isUpdating) return;
@@ -181,7 +199,15 @@ const DeliveryPartnerOrderDetails = ({ route, navigation }) => {
     }
   };
 
-  if (!order) return <Text>Loading...</Text>;
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={Color.DARK} />
+        <Text style={styles.loadingText}>Loading order details...</Text>
+      </View>
+    );
+  }
+
 
   const formattedDate = new Date(order.createdAt).toLocaleString();
   const totalPrice =
@@ -501,9 +527,9 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
   },
   customerName: {
-    fontSize: 20,
+    fontSize: 16,
     color: "#000",
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-SemiBold",
   },
   orderId: {
     fontSize: 13,
@@ -528,7 +554,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#222",
     fontFamily: "Poppins-SemiBold",
   },
@@ -557,7 +583,7 @@ const styles = StyleSheet.create({
   },
   itemName: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 13,
     color: "#000",
     fontFamily: "Poppins-Medium",
   },
@@ -571,14 +597,14 @@ const styles = StyleSheet.create({
   price: {
     width: 70,
     textAlign: "right",
-    fontSize: 15,
+    fontSize: 13,
     color: "#000",
     fontFamily: "Poppins-Medium",
   },
   paymentRow: {
     flexDirection: "row",
     backgroundColor: "#fff",
-    paddingVertical: 15,
+    paddingVertical: 13,
     paddingHorizontal: 20,
     justifyContent: "space-between",
     borderBottomWidth: 1,
@@ -593,12 +619,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   totalPriceLabel: {
-    fontSize: 16,
+    fontSize: 14.5,
     color: "#000",
     fontFamily: "Poppins-Bold",
   },
   totalPriceValue: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#000",
     fontFamily: "Poppins-Bold",
   },
@@ -608,7 +634,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   payValue: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#000",
     fontFamily: "Poppins-Medium",
   },
@@ -628,7 +654,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   paymentStatusLabel: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: "#6c6c6c",
     fontFamily: "Poppins-Regular",
   },
@@ -662,7 +688,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   codNoteText: {
-    fontSize: 11,
+    fontSize: 10,
     color: "#666",
     fontFamily: "Poppins-Regular",
     marginLeft: 5,
@@ -677,14 +703,14 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
   },
   addressText: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#444",
     marginBottom: 3,
     fontFamily: "Poppins-Regular",
   },
   bottomBtn: {
     backgroundColor: Color.DARK,
-    padding: 18,
+    padding: 14,
     alignItems: "center",
     position: "absolute",
     bottom: 0,
@@ -701,5 +727,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#000",
     fontFamily: "Poppins-Bold",
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontFamily: "Poppins-Medium",
   },
 });

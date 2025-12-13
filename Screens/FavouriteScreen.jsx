@@ -25,7 +25,11 @@ const FavouriteScreen = ({ navigation }) => {
       </Text>
       <TouchableOpacity
         style={styles.browseButton}
-        onPress={() => navigation.navigate("Home")}
+        onPress={() =>
+          navigation.navigate("HomeStack", {
+            screen: "Home",
+          })
+        }
       >
         <Text style={styles.browseButtonText}>Browse Menu</Text>
       </TouchableOpacity>
@@ -132,14 +136,14 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 14,
     fontFamily: "Poppins-SemiBold",
     color: "#333",
     marginTop: 20,
     marginBottom: 8,
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-Regular",
     color: "#666",
     textAlign: "center",
@@ -149,12 +153,12 @@ const styles = StyleSheet.create({
   browseButton: {
     backgroundColor: Color.DARK,
     paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderRadius: 8,
   },
   browseButtonText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins-SemiBold",
   },
 });

@@ -89,7 +89,7 @@ const DeliveryProfileScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+    <View style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{ paddingBottom: 30 }}
@@ -123,7 +123,7 @@ const DeliveryProfileScreen = ({ navigation }) => {
           onPress={handleLogout}
         />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   title: {
-    fontSize: 22,
-    fontFamily: "Poppins-Bold",
+    fontSize: 17,
+    fontFamily: "Poppins-SemiBold",
     marginBottom: 20,
     color: "#000",
   },
@@ -171,14 +171,14 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
   },
   userName: {
-    fontSize: 18,
+    fontSize: 15,
     fontFamily: "Poppins-SemiBold",
     color: "#000",
   },
   profileLink: {
     marginTop: 4,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 13.5,
     color: Color.DARK,
   },
   divider: {
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   menuText: {
-    fontSize: 16,
+    fontSize: 14,
     marginLeft: 14,
     fontFamily: "Poppins-Medium",
   },

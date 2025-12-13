@@ -52,20 +52,15 @@ const HotelProfileScreen = ({navigation}) => {
        {/* PROFILE SECTION */}
        <View style={styles.profileRow}>
          <View style={styles.imageWrapper}>
-           {data?.name ? (
-             <Image
-               source={require("../../assets/biriyani.png")}
-               style={styles.profileImage}
-             />
-           ) : (
+           
              <View style={styles.placeholder}>
                <Ionicons name="person" size={30} color="gray" />
              </View>
-           )}
+          
          </View>
 
          <View style={{ marginLeft: 12 }}>
-           <Text style={styles.hotelName}>{data?.restaurantName}</Text>
+           <Text style={[styles.hotelName,{fontSize:15}]}>{data?.restaurantName}</Text>
 
            <View style={styles.locationRow}>
              <Ionicons name="location" size={14} color="#888" />
@@ -142,8 +137,8 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 22,
-    fontFamily: "Poppins-Bold",
+    fontSize: 17,
+    fontFamily: "Poppins-SemiBold",
     marginBottom: 20,
     color: "#000",
   },
@@ -193,7 +188,7 @@ const styles = StyleSheet.create({
   profileLink: {
     marginTop: 4,
     fontFamily: "Poppins-Medium",
-    fontSize: 14,
+    fontSize: 13,
     color: Color.DARK,
   },
 
@@ -210,7 +205,7 @@ const styles = StyleSheet.create({
   },
 
   menuText: {
-    fontSize: 16,
+    fontSize: 14,
     marginLeft: 14,
     fontFamily: "Poppins-Medium",
   },
